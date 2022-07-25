@@ -1,0 +1,51 @@
+---
+import "../styles/global.scss";
+const {
+	title = "Edsel Serrano",
+	description = "Software Engineer, entrepreneur of Technology and travel lover",
+} = Astro.props;
+---
+
+<meta charset="UTF-8" />
+<meta name="description" property="og:description" content={description} />
+<meta name="viewport" content="width=device-width" />
+<title>{title}</title>
+
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- Google Tag Manager -->
+<script>	(function (w, d, s, l, i) {
+		w[l] = w[l] || []; w[l].push({
+			'gtm.start':
+				new Date().getTime(), event: 'gtm.js'
+		}); var f = d.getElementsByTagName(s)[0],
+			j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+				'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+		})(window,document,'script','dataLayer','GTM-KW47SVK');</script>
+<!-- End Google Tag Manager -->
+
+<link rel="stylesheet" href="/css/skel.css" />
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet" href="/css/style-wide.css" />
+
+
+
+<link rel="preload" href="/css/skel.css" as="style">
+<link rel="preload" href="/css/style.css" as="style">
+<link rel="preload" href="/css/font-awesome.min.css" as="style">
+
+<link rel="preload"
+	href="https://fonts.gstatic.com/s/sourcesanspro/v13/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwlxdu3cOWxw.woff2" as="font"
+	type="font/woff2" crossorigin>
+<link rel="preload"
+	href="https://fonts.gstatic.com/s/sourcesanspro/v13/6xKydSBYKcSV-LCoeQqfX1RYOo3iu4nwlxdu3cOWxw.woff2" as="font"
+	type="font/woff2" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,900" as="font" crossorigin>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/2.1.3/tsparticles.bundle.min.js"
+	integrity="sha512-klu0y6k0isDbuEW4o6MrEv7Ge1pPfP0ejiX5aW8RHk3k2oV97cL9/oOwKWmszHpQh/0+Kgg69CU2nMy2sIeclQ=="
+	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<link rel="preload" href="/js/app.js" as="script">
