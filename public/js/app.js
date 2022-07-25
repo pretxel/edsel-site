@@ -6,10 +6,10 @@ tsParticles.load("tsparticles", {
     "fpsLimit": 120,
     "particles": {
         "number": {
-            "value": 100,
+            "value": 30,
             "density": {
                 "enable": true,
-                "value_area": 800
+                "value_area": 900
             }
         },
         "color": {
@@ -29,7 +29,7 @@ tsParticles.load("tsparticles", {
             }
         },
         "size": {
-            "value": 10,
+            "value": 6,
             "random": true,
             "anim": {
                 "enable": true,
@@ -53,7 +53,7 @@ tsParticles.load("tsparticles", {
             "straight": false,
             "out_mode": "out",
             "attract": {
-                "enable": false,
+                "enable": true,
                 "rotateX": 600,
                 "rotateY": 1200
             }
@@ -61,19 +61,6 @@ tsParticles.load("tsparticles", {
     },
     "interactivity": {
         "events": {
-            // "onhover": {
-            //     "enable": true,
-            //     "mode": "grab",
-            //     "parallax": {
-            //         "enable": true,
-            //         "smooth": 10,
-            //         "force": 60
-            //     }
-            // },
-            "onclick": {
-                "enable": true,
-                "mode": "push"
-            },
             "resize": true
         },
         "modes": {
@@ -104,7 +91,6 @@ tsParticles.load("tsparticles", {
     "retina_detect": true,
     "background": {
         "color": "#000000",
-        "image": "",
         "position": "50% 50%",
         "repeat": "no-repeat",
         "size": "cover"
