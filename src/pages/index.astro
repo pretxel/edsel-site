@@ -1,47 +1,31 @@
 ---
 // Component Imports
 import MainHead from "../components/MainHead.astro";
+import Body from "../components/Body";
 ---
 
 <html lang="en">
+  <head>
+    <MainHead
+      title="Edsel Serrano"
+      description="Edsel Serrano: Software Engineer, Machine learning lover, and Entrepreneur of Technology..."
+    />
+  </head>
 
-<head>
-	<MainHead title="Edsel Serrano"
-		description="Edsel Serrano: Software Engineer, Machine learning lover, and Entrepreneur of Technology..." />
-</head>
-
-<body>
-	<!-- Google Tag Manager (noscript) -->
-	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KW47SVK" height="0" width="0"
-			style="display:none;visibility:hidden"></iframe></noscript>
-	<!-- End Google Tag Manager (noscript) -->
-	<div id="wrapper">
-		<div id="main">
-			<header id="header">
-				<h1>Edsel Serrano</h1>
-				<p>Software Engineer &nbsp;&bull;&nbsp; Entrepreneur of Technology &nbsp;&bull;&nbsp; Chatbot developer
-					&nbsp;&bull;&nbsp; Machine learning lover &nbsp;&bull;&nbsp; IoT developer</p>
-				<nav>
-					<ul>
-						<li><a href="https://twitter.com/pretxelcom" class="fa fa-twitter"><span>Twitter</span></a></li>
-						<li><a href="https://www.facebook.com/serranomontiel"
-								class="fa fa-facebook"><span>Facebook</span></a></li>
-						<li><a href="https://github.com/pretxel" class="fa fa-github"><span>Github</span></a></li>
-						<li><a href="https://mx.linkedin.com/in/edselserrano"
-								class="fa fa-linkedin"><span>Linkedin</span></a></li>
-						<li><a href="https://medium.com/@edselserranomontiel"
-								class="fa fa-medium"><span>Medium</span></a></li>
-						<li><a href="mailto:pretxel100@gmail.com?Subject=Hello"
-								class="fa fa-envelope-o"><span>Email</span></a></li>
-					</ul>
-				</nav>
-			</header>
-			<div id="tsparticles"></div>
-		</div>
-	</div>
-
-</body>
-<script is:inline src="/assets/js/particles.min.js"></script>
-<script defer is:inline src="/assets/js/app.js"></script>
-
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KW47SVK"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <div id="wrapper">
+      <div id="main">
+        <Body />
+      </div>
+    </div>
+  </body>
 </html>

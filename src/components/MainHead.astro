@@ -1,8 +1,8 @@
 ---
 import "../styles/global.scss";
 const {
-	title = "Edsel Serrano",
-	description = "Software Engineer, entrepreneur of Technology and travel lover",
+  title = "Edsel Serrano",
+  description = "Software Engineer, entrepreneur of Technology and travel lover",
 } = Astro.props;
 ---
 
@@ -14,22 +14,32 @@ const {
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
 <!-- Google Tag Manager -->
-<script defer>	(function (w, d, s, l, i) {
-		w[l] = w[l] || []; w[l].push({
-			'gtm.start':
-				new Date().getTime(), event: 'gtm.js'
-		}); var f = d.getElementsByTagName(s)[0],
-			j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-				'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-		})(window,document,'script','dataLayer','GTM-KW47SVK');</script>
+<script defer>
+  (function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({
+      "gtm.start": new Date().getTime(),
+      event: "gtm.js",
+    });
+    var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s),
+      dl = l != "dataLayer" ? "&l=" + l : "";
+    j.async = true;
+    j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, "script", "dataLayer", "GTM-KW47SVK");
+</script>
 <!-- End Google Tag Manager -->
 
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="dns-prefetch" href="https://fonts.googleapis.com">
-
-<link rel="preload" href="/assets/css/skel.css" as="style">
-<link rel="preload" href="/assets/js/app.js" as="script">
-<link rel="preload" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,900" as="font" crossorigin>
+<link rel="preload" href="/assets/css/skel.css" as="style" />
+<link
+  rel="preload"
+  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,900"
+  as="font"
+  crossorigin
+/>
 
 <link rel="stylesheet" href="/assets/css/skel.css" />
