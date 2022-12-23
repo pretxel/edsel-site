@@ -2,6 +2,7 @@
 // Component Imports
 import MainHead from "../components/MainHead.astro";
 import Body from "../components/Body";
+import Nav from "../components/Nav/index.jsx";
 ---
 
 <html lang="en">
@@ -22,13 +23,14 @@ import Body from "../components/Body";
         style="display:none;visibility:hidden"></iframe>
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
+    <Nav />
     <div id="wrapper">
       <div id="main">
         <Body />
         <div id="tsparticles"></div>
       </div>
     </div>
-    <script is:inline src="/assets/js/particles.min.js"></script>
+     <script is:inline src="/assets/js/particles.min.js"></script>
     <script defer is:inline src="/assets/js/app.js"></script>
   </body>
 </html>
