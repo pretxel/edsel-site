@@ -1,18 +1,11 @@
 ---
 layout: ../../layouts/BaseLayout.astro
-title: My Blog Post
+title: Potato Daily
 draft: true
 author: "Matthew Phillips"
 date: "09 Aug 2022"
 ---
 
-# Hi there
+# Potato Daily
 
-This Markdown file creates a page at `your-domain.com/page-1/`
-
-It probably isn't styled much, but Markdown does support:
-
-- **bold** and _italics._
-- lists
-- [links](https://astro.build)
-- and more!
+A finales del 2022 se lanzó por fin Potato Daily
