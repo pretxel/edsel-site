@@ -1,11 +1,10 @@
 import React from 'react'
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
-import { inject } from'@vercel/analytics';
 
 const App = () => {
-    inject();
-    
+
+
   const particlesInit = async (main) => {
         await loadFull(main);
       };
