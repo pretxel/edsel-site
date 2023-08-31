@@ -3,6 +3,7 @@
 import MainHead from "../components/MainHead.astro";
 import Body from "../components/Body";
 import Nav from "../components/Nav/index.jsx";
+import Particles from "../components/Particles";
 ---
 
 <html lang="en">
@@ -29,10 +30,10 @@ import Nav from "../components/Nav/index.jsx";
     <div id="wrapper">
       <div id="main">
         <Body />
-        <div id="tsparticles"></div>
+        <Particles />
       </div>
     </div>
-     <script is:inline src="/assets/js/particles.min.js"></script>
-    <script defer is:inline src="/assets/js/app.js"></script>
+    
+   
   </body>
 </html>
