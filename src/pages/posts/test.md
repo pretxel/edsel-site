@@ -2,7 +2,7 @@
 layout: ../../layouts/BlogLayout.astro
 title: Potato Daily
 draft: true
-author: "Edsel Serrano"
+author: "Matthew Phillips"
 date: "09 Aug 2022"
 ---
 
