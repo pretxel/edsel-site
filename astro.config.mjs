@@ -4,6 +4,7 @@ import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import svelte from "@astrojs/svelte";
 import vercel from "@astrojs/vercel/serverless";
+import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,10 +14,12 @@ export default defineConfig({
     analytics: true,
   }),
   integrations: [
-	tailwind(), svelte(),
-    react(),
     robotsTxt({
       sitemap: false,
     }),
+    sitemap(),
+    tailwind(),
+    svelte(),
+    react(),
   ],
 });
