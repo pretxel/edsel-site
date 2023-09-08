@@ -3,7 +3,11 @@
 import MainHead from "../components/MainHead.astro";
 import Body from "../components/Body";
 import Nav from "../components/Nav/index.jsx";
-import Particles from "../components/Particles";
+import ParticlesContainer from "../components/Particles/container";
+import "../styles/main.css";
+import { isMobile } from "react-device-detect";
+
+const totalParticles = isMobile ? 20 : 100;
 ---
 
 <html lang="en">
@@ -33,7 +37,14 @@ import Particles from "../components/Particles";
     <div id="wrapper">
       <div id="main">
         <Body />
-        <Particles />
+
+        <div className="container">
+          <ParticlesContainer
+            totalParticles={totalParticles}
+            client:only="react"
+          />
+        </div>
+        <!-- <Particles /> -->
       </div>
     </div>
   </body>
