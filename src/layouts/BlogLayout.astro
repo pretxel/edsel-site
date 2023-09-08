@@ -1,13 +1,9 @@
 ---
 interface Props {
   title: string;
-  image?: string;
 }
 
-const {
-  title = "Home",
-  image = "https://res.cloudinary.com/dp3ppkxo5/image/upload/v1693776174/spotify-astro/playlist_2_f9ymlx.jpg",
-} = Astro.props;
+const { title = "Home" } = Astro.props;
 import { ViewTransitions } from "astro:transitions";
 import "./layout.css";
 ---
@@ -23,9 +19,7 @@ import "./layout.css";
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title} | Spotify Astro</title>
-    <meta property="og:image" content={image} />
-    <meta name="twitter:image" content={image} />
+    <title>{title}</title>
     <ViewTransitions fallback="none" />
   </head>
   <body class="dark">
@@ -39,19 +33,15 @@ import "./layout.css";
       class="fixed hidden bg-red-700 bottom-0 inset-x-0 rounded-t-md text-center py-2 lg:py-4 z-50 font-semibold"
     >
       It seems your browser does not support view transitions yet :( try it
-      using chrome or edge <a
-        class="underline"
-        href="https://github.com/igorm84/spotify-astro-transitions"
-        >(see docs here)</a
-      >
+      using chrome or edge
     </div>
     <script is:inline defer>
       function setContainerColor(dataColor) {
-        const playlistContainer = document.getElementById("playlist-container");
-        const currentColor = playlistContainer?.getAttribute("data-color");
+        const postContainer = document.getElementById("posts-container");
+        const currentColor = postContainer?.getAttribute("data-color");
         if (dataColor && dataColor !== currentColor) {
-          playlistContainer?.style.setProperty("--context-color", dataColor);
-          playlistContainer?.setAttribute("data-color", dataColor);
+          postContainer?.style.setProperty("--context-color", dataColor);
+          postContainer?.setAttribute("data-color", dataColor);
         }
       }
 

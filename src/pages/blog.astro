@@ -1,20 +1,15 @@
 ---
-// import GreetingTitle from "../components/GreetingTitle.svelte";
-import PageHeader from "../components/PageHeader.astro";
-// import PlaylistCard from "../components/PlaylistCard.astro";
-// import PlaylistItemCard from "../components/PlaylistItemCard.astro";
 import Layout from "../layouts/BlogLayout.astro";
 import { posts } from "../lib/data";
 import PostCard from "../components/PostCard.astro";
 ---
 
-<Layout title="Home">
+<Layout title="Blog">
   <div
-    id="playlist-container"
+    id="posts-container"
     class="relative transition-all duration-1000 bg-context"
     style="min-height:300px;--context-color:#030058;"
   >
-    <!-- <PageHeader /> -->
     <h1 class="relative z-10 px-6 text-2xl pt-5">Posts</h1>
     <div class="relative z-10 px-6">
       <div

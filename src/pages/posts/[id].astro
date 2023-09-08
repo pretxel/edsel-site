@@ -8,8 +8,6 @@ import * as greatPost from "../../pages/blog/page-1.md";
 export async function getStaticPaths() {
   const posts = await Astro.glob("../posts/*.md");
 
-  console.log(posts);
-
   return posts.map((post) => ({
     params: {
       slug: post.frontmatter.slug,
@@ -19,7 +17,8 @@ export async function getStaticPaths() {
     },
   }));
 }
-const post = allPosts.find((playlist) => playlist.id === id);
+
+const post = allPosts.find((posts) => posts.id === id);
 ---
 
 <Layout image={post?.cover} title={post?.title || "404"}>
