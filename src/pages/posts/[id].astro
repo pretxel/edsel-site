@@ -3,20 +3,7 @@ const { id } = Astro.params;
 import PageHeader from "../../components/PageHeader.astro";
 import Layout from "../../layouts/BlogLayout.astro";
 import { allPosts } from "../../lib/data";
-import * as greatPost from "../../pages/blog/page-1.md";
-
-export async function getStaticPaths() {
-  const posts = await Astro.glob("../posts/*.md");
-
-  return posts.map((post) => ({
-    params: {
-      slug: post.frontmatter.slug,
-    },
-    props: {
-      post,
-    },
-  }));
-}
+// import * as greatPost from "../../pages/blog/page-1.md";
 
 const post = allPosts.find((posts) => posts.id === id);
 ---
@@ -41,15 +28,15 @@ const post = allPosts.find((posts) => posts.id === id);
         <div>
           <h1 class="title-clamp font-bold block">
             {post?.title}
-            <p>{greatPost.description}</p>
+            <!-- <p>{post?.description}</p> -->
             <span transition:name=`playlist ${post?.id} title`></span>
           </h1>
         </div>
         <div class="flex-1 flex items-end">
           <div class="text-sm">
             <div class="mt-1">
-              <p>Written by: {greatPost.frontmatter.author}</p>
-              <span class="text-gray-300">{greatPost.frontmatter.date}</span>
+              <p>Written by: {post?.author}</p>
+              <span class="text-gray-300">{post?.date}</span>
             </div>
           </div>
         </div>
@@ -61,7 +48,9 @@ const post = allPosts.find((posts) => posts.id === id);
         <div class="ml-4" transition:name=`playlist ${post?.id} play`></div>
       </div>
       <div class="px-6 pt-4">
-        {post?.content}
+        <p class="p-6">{post?.content}</p>
+        <a class="p-6" href={post?.link}>{post?.link}</a>
+        <p class="p-6">{post?.content_p2}</p>
         <!-- <p>{greatPost.frontmatter.title}</p> -->
         <!-- {greatPost.Content} -->
       </div>
