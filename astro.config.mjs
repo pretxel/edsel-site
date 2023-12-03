@@ -15,7 +15,6 @@ export default defineConfig({
     analytics: true,
   }),
   integrations: [
-    Compress(),
     robotsTxt({
       sitemap: false,
     }),
