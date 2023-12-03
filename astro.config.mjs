@@ -5,6 +5,7 @@ import react from "@astrojs/react";
 import svelte from "@astrojs/svelte";
 import vercel from "@astrojs/vercel/serverless";
 import sitemap from "@astrojs/sitemap";
+import compress from "astro-compress";
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,6 +15,7 @@ export default defineConfig({
     analytics: true,
   }),
   integrations: [
+    Compress(),
     robotsTxt({
       sitemap: false,
     }),
@@ -21,5 +23,6 @@ export default defineConfig({
     tailwind(),
     svelte(),
     react(),
+    compress(),
   ],
 });
