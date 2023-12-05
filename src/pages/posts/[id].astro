@@ -3,7 +3,6 @@ const { id } = Astro.params;
 import PageHeader from "../../components/PageHeader.astro";
 import Layout from "../../layouts/BlogLayout.astro";
 import { allPosts } from "../../lib/data";
-// import * as greatPost from "../../pages/blog/page-1.md";
 
 const post = allPosts.find((posts) => posts.id === id);
 ---
@@ -44,9 +43,6 @@ const post = allPosts.find((posts) => posts.id === id);
     </div>
 
     <div class="bg-zinc-900/30 mt-6 flex-1 p-6 blur-100">
-      <div class="flex gap-1 items-center">
-        <div class="ml-4" transition:name=`playlist ${post?.id} play`></div>
-      </div>
       <div class="px-6 pt-4">
         <p class="p-6">{post?.content}</p>
         <a class="p-6" href={post?.link}>{post?.link}</a>

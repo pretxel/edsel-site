@@ -21,12 +21,6 @@ const { post } = Astro.props;
         class="object-cover h-full w-full rounded-md shadow-[5px_0_30px_0px_rgba(0,0,0,0.3)]"
         transition:name=`playlist ${post.id} image`
       />
-      <div
-        class="absolute right-2 bottom-2 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all"
-        transition:name=`playlist ${post.id} play`
-      >
-        <!-- <PlayButton /> -->
-      </div>
     </div>
     <div class="pt-2">
       <div
