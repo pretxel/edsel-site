@@ -2,15 +2,15 @@
 const { id } = Astro.params;
 import PageHeader from "../../components/PageHeader.astro";
 import Layout from "../../layouts/BlogLayout.astro";
-import { allPosts } from "../../lib/data";
+import { posts } from "../../lib/data";
 
-const post = allPosts.find((posts) => posts.id === id);
+const post = posts.find((post) => post.id === id);
 ---
 
 <Layout image={post?.cover} title={post?.title || "404"}>
   <div
     class="relative bg-zinc-900 min-h-full flex flex-col overflow-x-hidden rounded-lg"
-    transition:name=`playlist ${post?.id} box`
+    transition:name=`blog ${post?.id} box`
   >
     <PageHeader />
     <div
@@ -20,14 +20,14 @@ const post = allPosts.find((posts) => posts.id === id);
         <img
           src={post?.cover}
           class="object-cover h-full w-full shadow-[5px_0_30px_0px_rgba(0,0,0,0.3)]"
-          transition:name=`playlist ${post?.id} image`
+          transition:name=`blog ${post?.id} image`
         />
       </div>
       <div class="flex flex-col justify-between">
         <div>
           <h1 class="title-clamp font-bold block">
             {post?.title}
-            <span transition:name=`playlist ${post?.id} title`></span>
+            <span transition:name=`blog ${post?.id} title`></span>
           </h1>
         </div>
         <div class="flex-1 flex items-end">

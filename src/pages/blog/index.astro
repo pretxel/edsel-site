@@ -1,10 +1,10 @@
 ---
-import Layout from "../layouts/BlogLayout.astro";
-import { posts } from "../lib/data";
-import PostCard from "../components/PostCard.astro";
+import Layout from "../../layouts/BlogLayout.astro";
+import { posts } from "../../lib/data";
+import PostCard from "../../components/PostCard.astro";
 ---
 
-<Layout title="Blog">
+<Layout title="Blog" image="path/to/image.jpg">
   <div
     id="posts-container"
     class="relative transition-all duration-1000 bg-context"
