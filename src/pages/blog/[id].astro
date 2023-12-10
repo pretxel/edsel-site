@@ -13,7 +13,7 @@ const post = posts.find((post) => post.id === id);
     transition:name=`blog ${post?.id} box`
     transition:animate="initial"
   >
-    <PageHeader />
+    <!-- <PageHeader /> -->
     <div
       class="flex flex-col items-center md:flex-row md:items-stretch gap-8 px-6"
     >
@@ -39,7 +39,7 @@ const post = posts.find((post) => post.id === id);
         </div>
       </div>
     </div>
-    <!-- <div class="bg-zinc-900/30 mt-6 flex-1 p-6 blur-100">
+    <div class="bg-zinc-900/30 mt-6 flex-1 p-6 blur-100">
       <div class="px-6 pt-4">
         <p class="p-6">{post?.content}</p>
         <a class="p-6" href={post?.link}>{post?.link}</a>
@@ -58,7 +58,7 @@ const post = posts.find((post) => post.id === id);
         class="absolute inset-0 bg-gradient-to-t via-transparent from-zinc-900"
       >
       </div>
-    </div> -->
+    </div>
   </div>
 </Layout>
 
