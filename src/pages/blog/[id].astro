@@ -14,12 +14,7 @@ const post = posts.find((post) => post.id === id);
     transition:animate="initial"
   >
     <!-- <PageHeader /> -->
-    <img
-      src={post?.cover}
-      class="object-cover h-52 w-52 shadow-[5px_0_30px_0px_rgba(0,0,0,0.3)]"
-      transition:name=`blog ${post?.id} image`
-    />
-    <!-- <div
+    <div
       class="flex flex-col items-center md:flex-row md:items-stretch gap-8 px-6"
     >
       <div class="h-52 w-52 flex-none">
@@ -30,12 +25,10 @@ const post = posts.find((post) => post.id === id);
         />
       </div>
       <div class="flex flex-col justify-between">
-        <div>
-          <h1 class="title-clamp font-bold block">
-            {post?.title}
-            <span transition:name=`blog ${post?.id} title`></span>
-          </h1>
-        </div>
+        <h1 class="title-clamp font-bold block">
+          {post?.title}
+          <span transition:name=`blog ${post?.id} title`></span>
+        </h1>
         <div class="flex-1 flex items-end">
           <div class="text-sm">
             <div class="mt-1">
@@ -45,7 +38,7 @@ const post = posts.find((post) => post.id === id);
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <!-- <div class="bg-zinc-900/30 mt-6 flex-1 p-6 blur-100">
       <div class="px-6 pt-4">
         <p class="p-6">{post?.content}</p>
