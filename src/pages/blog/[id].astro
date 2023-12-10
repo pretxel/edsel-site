@@ -1,6 +1,7 @@
 ---
 const { id } = Astro.params;
-import PageHeader from "../../components/PageHeader.astro";
+// import PageHeader from "../../components/PageHeader.astro";
+import Icon from "astro-icon";
 import Layout from "../../layouts/BlogLayout.astro";
 import { posts } from "../../lib/data";
 
@@ -14,6 +15,14 @@ const post = posts.find((post) => post.id === id);
     transition:animate="initial"
   >
     <!-- <PageHeader /> -->
+    <div class="relative z-10 py-4 px-6 flex justify-between">
+      <a
+        href="/blog"
+        class="bg-zinc-900 rounded-full inline-flex justify-center items-center h-8 w-8"
+      >
+        <Icon name="bi:chevron-left" class="h-4 w-4 -ml-0.5" />
+      </a>
+    </div>
     <div
       class="flex flex-col items-center md:flex-row md:items-stretch gap-8 px-6"
     >
