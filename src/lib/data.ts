@@ -43,7 +43,7 @@ export const posts: Post[] = [
   },
   {
     id: "3",
-    title: "Dinerqrs",
+    title: "Dineqrs",
     color: colors.gray,
     cover: "/dineqrs.webp",
     content:

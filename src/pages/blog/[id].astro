@@ -2,7 +2,6 @@
 const { id } = Astro.params;
 import Layout from "../../layouts/BlogLayout.astro";
 import { posts } from "../../lib/data";
-import { Icon } from "astro-icon";
 
 const post = posts.find((post) => post.id === id);
 ---
@@ -19,7 +18,7 @@ const post = posts.find((post) => post.id === id);
         href="/blog"
         class="bg-zinc-900 rounded-full inline-flex justify-center items-center h-8 w-8"
       >
-        <Icon name="mdi:arrow-left-thick" />
+        {"<-"}
       </a>
     </div>
     <div
