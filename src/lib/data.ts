@@ -54,6 +54,19 @@ export const posts: Post[] = [
     author: "Edsel Serrano",
     date: "2023-12-20",
   },
+  {
+    id: "4",
+    title: "F1 Stats",
+    color: colors.gray,
+    cover: "/f1logo.png ",
+    content:
+      "F1 Stats es una aplicación que te muestra las estadísticas de la F1 en tiempo real.",
+    content_p2: "",
+    link: "https://f1.edselserrano.com/",
+    description: "F1 Stats",
+    author: "Edsel Serrano",
+    date: "2024-05-06",
+  },
 ];
 
 export const allPosts = [...posts];
