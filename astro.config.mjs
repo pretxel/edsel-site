@@ -22,6 +22,6 @@ export default defineConfig({
     tailwind(),
     svelte(),
     react(),
-    compress(),
+    compress({ SVG: false }),
   ],
 });
