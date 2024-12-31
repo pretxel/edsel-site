@@ -11,21 +11,30 @@ const totalParticles = isMobile ? 1000 : 2000;
 
 enum COLORS {
   blue="blue",
-  orange="orange"
+  orange="orange",
+  green="green",
+  yellow="yellow"
 }
 
 const particleColors = {
   [COLORS.blue]: [0x88ccff, 0x7dabf1, 0x6a8dff],
-  [COLORS.orange]: [0xfda252, 0xfda252, 0xf99352]
+  [COLORS.orange]: [0xfda252, 0xfda252, 0xf99352],
+  [COLORS.green]: [0x33cc33, 0x4db34d, 0x00cc00],
+  [COLORS.yellow]: [0xcccc33, 0xb3b34d, 0xffff00]
 }
 
 const backgroundColors = {
   [COLORS.blue]: "#021027",
-  [COLORS.orange]: "#2c1400"
+  [COLORS.orange]: "#2c1400",
+  [COLORS.green]: "#001605",
+  [COLORS.yellow]: "#191800",
 }
 
+const colorsArray = Object.values(COLORS)
+const randomColor = colorsArray[Math.floor(Math.random() * Object.values(COLORS).length)];
+
 // 2025 next logic xD
-const colorSelected = COLORS.blue;
+const colorSelected = randomColor;
 ---
 
 <html lang="en">
