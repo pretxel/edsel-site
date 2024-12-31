@@ -1,13 +1,31 @@
 ---
 // Component Imports
 import MainHead from "../components/MainHead.astro";
-import Body from "../components/Body";
+import Body from "../components/Body/index.jsx";
 import Nav from "../components/Nav/index.jsx";
-import ParticlesContainer from "../components/Particles/container";
-import "../styles/main.css";
+import SparklingSphere from "../components/Particles/sparklingSphere";
+import Footer from "../components/Footer";
 import { isMobile } from "react-device-detect";
 
-const totalParticles = isMobile ? 20 : 100;
+const totalParticles = isMobile ? 1000 : 2000;
+
+enum COLORS {
+  blue="blue",
+  orange="orange"
+}
+
+const particleColors = {
+  [COLORS.blue]: [0x88ccff, 0x7dabf1, 0x6a8dff],
+  [COLORS.orange]: [0xfda252, 0xfda252, 0xf99352]
+}
+
+const backgroundColors = {
+  [COLORS.blue]: "#021027",
+  [COLORS.orange]: "#2c1400"
+}
+
+// 2025 next logic xD
+const colorSelected = COLORS.blue;
 ---
 
 <html lang="en">
@@ -21,18 +39,12 @@ const totalParticles = isMobile ? 20 : 100;
 
   <body>
     <Nav />
-    <div id="wrapper">
-      <div id="main">
-        <Body />
 
-        <div class="container">
-          <ParticlesContainer
-            totalParticles={totalParticles}
-            client:only="react"
-          />
-        </div>
-      </div>
-    </div>
+    <SparklingSphere totalParticles={totalParticles} backgroundColor={backgroundColors[colorSelected]} particleColors={particleColors[colorSelected]} client:only="react" />
+    <Body /> 
+    <Footer />
+
+  
     <!-- Google Tag Manager (noscript) -->
     <noscript
       ><iframe
