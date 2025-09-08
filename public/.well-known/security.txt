@@ -1,0 +1,5 @@
+Contact: mailto:edselserrano@gmail.com
+Expires: 2025-12-31T23:59:59.000Z
+Encryption: https://keybase.io/edselserrano/pgp_keys.asc
+Preferred-Languages: es, en
+Canonical: https://edselserrano.com/.well-known/security.txt

@@ -1,6 +1,7 @@
 ---
 // Component Imports
 import MainHead from "../components/MainHead.astro";
+import SEOHead from "../components/SEOHead.astro";
 import Body from "../components/Body/index.jsx";
 import Nav from "../components/Nav/index.jsx";
 import SparklingSphere from "../components/Particles/sparklingSphere";
@@ -35,10 +36,41 @@ const randomColor = colorsArray[Math.floor(Math.random() * Object.values(COLORS)
 
 // 2025 next logic xD
 const colorSelected = randomColor;
+
+// SEO Data for homepage
+const seoTitle = "Edsel Serrano | Full Stack Developer & Technology Enthusiast";
+const seoDescription = "Software Engineer specialized in Full Stack Development with expertise in JavaScript, React, Next.js, and modern web technologies. Passionate about machine learning and entrepreneurship.";
+const keywords = [
+  'Edsel Serrano', 
+  'Full Stack Developer', 
+  'Software Engineer', 
+  'JavaScript Developer', 
+  'React Developer', 
+  'Next.js Developer', 
+  'Web Development', 
+  'Machine Learning', 
+  'Technology Entrepreneur',
+  'Frontend Developer',
+  'Backend Developer'
+];
+
+const alternateLanguages = [
+  { lang: 'es' as const, url: '/' },
+  { lang: 'en' as const, url: '/en/' }
+];
 ---
 
 <html lang="en">
   <head>
+    <SEOHead 
+      title={seoTitle}
+      description={seoDescription}
+      canonical="/"
+      language="es"
+      alternateLanguages={alternateLanguages}
+      keywords={keywords}
+      type="website"
+    />
     <MainHead
       title="Edsel Serrano"
       description="Edsel Serrano: Software Engineer, Machine learning lover, and Entrepreneur of Technology..."

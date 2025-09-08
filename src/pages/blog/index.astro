@@ -4,10 +4,39 @@ import { getLocalizedPosts } from "../../lib/data";
 import { getLanguageFromUrl, t, defaultLanguage } from "../../lib/i18n";
 import PostCard from "../../components/PostCard.astro";
 import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
+import SEOHead from "../../components/SEOHead.astro";
 
 const currentLanguage = getLanguageFromUrl(Astro.url.pathname) || defaultLanguage;
 const posts = getLocalizedPosts(currentLanguage);
+
+// SEO Data
+const seoTitle = currentLanguage === 'en' 
+  ? 'Blog - Edsel Serrano | Web Development & Technology Insights'
+  : 'Blog - Edsel Serrano | Desarrollo Web e Insights Tecnológicos';
+
+const seoDescription = currentLanguage === 'en'
+  ? 'Explore web development insights, technology trends, and creative projects by Edsel Serrano. Join me on this journey of continuous learning and innovation in the tech world.'
+  : 'Explora insights sobre desarrollo web, tendencias tecnológicas y proyectos creativos de Edsel Serrano. Únete a mí en este viaje de aprendizaje continuo e innovación en el mundo tech.';
+
+const alternateLanguages = [
+  { lang: 'es' as const, url: '/blog/' },
+  { lang: 'en' as const, url: '/en/blog/' }
+];
+
+const keywords = currentLanguage === 'en'
+  ? ['blog', 'web development', 'technology', 'programming', 'javascript', 'react', 'nextjs', 'full stack developer']
+  : ['blog', 'desarrollo web', 'tecnología', 'programación', 'javascript', 'react', 'nextjs', 'desarrollador full stack'];
 ---
+
+<SEOHead 
+  title={seoTitle}
+  description={seoDescription}
+  canonical="/blog/"
+  language={currentLanguage}
+  alternateLanguages={alternateLanguages}
+  keywords={keywords}
+  type="website"
+/>
 
 <Layout title={t('blog.title', {}, currentLanguage)} image="path/to/image.jpg">
   <div class="min-h-screen">

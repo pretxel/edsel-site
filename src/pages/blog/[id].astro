@@ -4,6 +4,7 @@ import Layout from "../../layouts/BlogLayout.astro";
 import { posts, getPostContent, getLocalizedPost, getLocalizedPosts } from "../../lib/data";
 import { getLanguageFromUrl, t, defaultLanguage, formatDate, formatDateShort } from "../../lib/i18n";
 import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
+import SEOHead from "../../components/SEOHead.astro";
 
 const currentLanguage = getLanguageFromUrl(Astro.url.pathname) || defaultLanguage;
 const post = posts.find((post) => post.id === id);
@@ -19,7 +20,40 @@ const allLocalizedPosts = getLocalizedPosts(currentLanguage);
 
 // Get related posts (simple implementation)
 const relatedPosts = allLocalizedPosts.filter(p => p.id !== post.id).slice(0, 3);
+
+// SEO Data
+const seoTitle = `${localizedPost.title} | Blog - Edsel Serrano`;
+const seoDescription = localizedPost.description || localizedPost.content.substring(0, 160);
+const publishedTime = new Date(post.date).toISOString();
+const modifiedTime = publishedTime; // Could be different if you track updates
+
+const alternateLanguages = [
+  { lang: 'es' as const, url: `/blog/${post.id}` },
+  { lang: 'en' as const, url: `/en/blog/${post.id}` }
+];
+
+// Extract keywords from content (simple implementation)
+const contentKeywords = currentLanguage === 'en' 
+  ? ['project', 'web development', 'programming', 'technology']
+  : ['proyecto', 'desarrollo web', 'programación', 'tecnología'];
+
+const keywords = [localizedPost.title.toLowerCase(), ...contentKeywords];
 ---
+
+<SEOHead 
+  title={seoTitle}
+  description={seoDescription}
+  canonical={`/blog/${post.id}`}
+  image={post.cover}
+  imageAlt={localizedPost.title}
+  language={currentLanguage}
+  alternateLanguages={alternateLanguages}
+  keywords={keywords}
+  type="article"
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
+  author={post.author}
+/>
 
 <Layout image={post.cover} title={localizedPost.title}>
   <article class="min-h-screen">

@@ -4,10 +4,32 @@ import { getLocalizedPosts } from "../../../lib/data";
 import { t } from "../../../lib/i18n";
 import PostCard from "../../../components/PostCard.astro";
 import LanguageSwitcher from "../../../components/LanguageSwitcher.astro";
+import SEOHead from "../../../components/SEOHead.astro";
 
 const currentLanguage = 'en';
 const posts = getLocalizedPosts(currentLanguage);
+
+// SEO Data
+const seoTitle = 'Blog - Edsel Serrano | Web Development & Technology Insights';
+const seoDescription = 'Explore web development insights, technology trends, and creative projects by Edsel Serrano. Join me on this journey of continuous learning and innovation in the tech world.';
+
+const alternateLanguages = [
+  { lang: 'es' as const, url: '/blog/' },
+  { lang: 'en' as const, url: '/en/blog/' }
+];
+
+const keywords = ['blog', 'web development', 'technology', 'programming', 'javascript', 'react', 'nextjs', 'full stack developer'];
 ---
+
+<SEOHead 
+  title={seoTitle}
+  description={seoDescription}
+  canonical="/en/blog/"
+  language={currentLanguage}
+  alternateLanguages={alternateLanguages}
+  keywords={keywords}
+  type="website"
+/>
 
 <Layout title={t('blog.title', {}, currentLanguage)} image="path/to/image.jpg">
   <div class="min-h-screen">

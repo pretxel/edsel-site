@@ -1,0 +1,55 @@
+# Robots.txt for edselserrano.com
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://edselserrano.com/sitemap.xml
+Sitemap: https://edselserrano.com/sitemap-index.xml
+
+# Crawl delay (optional - be nice to servers)
+Crawl-delay: 1
+
+# Block common spam bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Allow specific search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Host (helps with canonicalization)
+Host: https://edselserrano.com
+
+# LLM Context File
+# For AI/LLM understanding: https://edselserrano.com/llm.txt
