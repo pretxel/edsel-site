@@ -1,34 +1,122 @@
 ---
 import type { Post } from "../lib/data";
+import type { Language } from "../lib/i18n";
+import { t, formatDateShort } from "../lib/i18n";
 
 interface Props {
-  post: Post;
+  post: Post & { title: string; description: string };
+  currentLanguage: Language;
 }
 
-const { post } = Astro.props;
+const { post, currentLanguage } = Astro.props;
 ---
 
-<a
-  href={`/blog/${post.id}`}
-  class="playlist-card p-4 flex-col items-center group relative transition-all duration-300 overflow-hidden gap-5 rounded-md shadow-lg hover:shadow-xl outline-none bg-zinc-500/5 hover:bg-zinc-500/20 focus:bg-zinc-500/20"
-  data-color={post.color.dark}
+<article
+  class="group relative bg-zinc-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-zinc-700/50 hover:border-zinc-600/50 transition-all duration-300 hover:shadow-2xl hover:shadow-black/20 hover:-translate-y-1"
   transition:name=`blog ${post.id} box`
 >
-  <div class="w-40 items-center justify-center justify-items-center w-full">
-    <div class="relative group mx-auto h-40 w-full flex-none shadow-lg">
+  <!-- Image Container -->
+  <div class="relative overflow-hidden">
+    <div class="aspect-[4/3] relative">
       <img
         src={post.cover}
-        class="object-cover h-full w-full rounded-md shadow-[5px_0_30px_0px_rgba(0,0,0,0.3)]"
+        alt={post.title}
+        class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
         transition:name=`blog ${post.id} image`
+        loading="lazy"
       />
+      <!-- Gradient Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     </div>
-    <div class="pt-2">
-      <div
-        class="font-bold block truncate"
-        transition:name=`blog ${post.id} title`
+    
+    <!-- Category Badge -->
+    <div class="absolute top-3 left-3">
+      <span 
+        class="px-3 py-1 text-xs font-semibold rounded-full text-white shadow-lg"
+        style={`background: ${post.color.accent}`}
       >
-        {post.title}
+        {t('card.project', {}, currentLanguage)}
+      </span>
+    </div>
+
+    <!-- Read Time Badge -->
+    <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <span class="px-2 py-1 text-xs font-medium bg-black/70 text-white rounded backdrop-blur-sm">
+        5 {t('post.min_read', {}, currentLanguage)}
+      </span>
+    </div>
+  </div>
+
+  <!-- Content Container -->
+  <div class="p-6">
+    <!-- Title -->
+    <h3 
+      class="text-lg font-bold text-white mb-3 line-clamp-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-500 group-hover:bg-clip-text transition-all duration-300"
+      transition:name=`blog ${post.id} title`
+    >
+      {post.title}
+    </h3>
+
+    <!-- Description -->
+    <p class="text-zinc-400 text-sm mb-4 line-clamp-3 leading-relaxed">
+      {post.description || post.content}
+    </p>
+
+    <!-- Metadata -->
+    <div class="flex items-center justify-between text-xs text-zinc-500">
+      <div class="flex items-center space-x-3">
+        <span class="flex items-center">
+          <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+          </svg>
+          {post.author}
+        </span>
+        <span class="flex items-center">
+          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          {formatDateShort(post.date, currentLanguage)}
+        </span>
+      </div>
+      
+      <!-- Read More Arrow -->
+      <div class="flex items-center text-zinc-400 group-hover:text-white transition-colors duration-300">
+        <span class="text-xs mr-1">{t('card.read_more', {}, currentLanguage)}</span>
+        <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
       </div>
     </div>
   </div>
-</a>
+
+  <!-- Click Target -->
+  <a
+    href={currentLanguage === 'en' ? `/en/blog/${post.id}` : `/blog/${post.id}`}
+    class="absolute inset-0 z-10"
+    aria-label={t('post.read_article', { title: post.title }, currentLanguage)}
+  >
+    <span class="sr-only">{t('post.read_article', { title: post.title }, currentLanguage)}</span>
+  </a>
+
+  <!-- Hover Glow Effect -->
+  <div 
+    class="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none rounded-xl"
+    style={`background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${post.color.accent}, transparent 40%);`}
+  ></div>
+</article>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

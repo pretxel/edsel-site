@@ -1,11 +1,11 @@
 ---
-import Layout from "../../layouts/BlogLayout.astro";
-import { getLocalizedPosts } from "../../lib/data";
-import { getLanguageFromUrl, t, defaultLanguage } from "../../lib/i18n";
-import PostCard from "../../components/PostCard.astro";
-import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
+import Layout from "../../../layouts/BlogLayout.astro";
+import { getLocalizedPosts } from "../../../lib/data";
+import { t } from "../../../lib/i18n";
+import PostCard from "../../../components/PostCard.astro";
+import LanguageSwitcher from "../../../components/LanguageSwitcher.astro";
 
-const currentLanguage = getLanguageFromUrl(Astro.url.pathname) || defaultLanguage;
+const currentLanguage = 'en';
 const posts = getLocalizedPosts(currentLanguage);
 ---
 
