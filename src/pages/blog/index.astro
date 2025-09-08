@@ -11,8 +11,20 @@ const posts = getLocalizedPosts(currentLanguage);
 
 <Layout title={t('blog.title', {}, currentLanguage)} image="path/to/image.jpg">
   <div class="min-h-screen">
-    <!-- Language Switcher -->
-    <div class="absolute top-4 right-4 z-50">
+    <!-- Header Navigation -->
+    <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center">
+      <!-- Home Button -->
+      <a
+        href="/"
+        class="inline-flex items-center px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white bg-zinc-800/50 hover:bg-zinc-700/50 rounded-lg border border-zinc-700/50 hover:border-zinc-600/50 transition-all duration-200 group backdrop-blur-sm"
+      >
+        <svg class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        {currentLanguage === 'en' ? 'Home' : 'Inicio'}
+      </a>
+
+      <!-- Language Switcher -->
       <LanguageSwitcher currentLanguage={currentLanguage} currentPath={Astro.url.pathname} />
     </div>
 
