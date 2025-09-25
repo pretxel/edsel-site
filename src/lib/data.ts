@@ -22,22 +22,22 @@ export const posts: Post[] = [
   {
     id: "1",
     color: colors.teal,
-    cover: "/daily-potato.png",
+    cover: "/potato.webp",
     author: "Edsel Serrano",
-    link: "https://potatodaily.com/",
+    link: "https://potato-daily.pretxel.deno.net/",
     date: "2023-01-01",
     content: {
       es: {
         title: "Daily Potato",
         description: "Herramienta innovadora para Daily Scrum remotas con participación aleatoria y métricas de productividad del equipo",
         content: "Daily Potato es una herramienta innovadora diseñada para facilitar las Daily Scrum de manera remota y efectiva. La aplicación genera automáticamente el orden de participación de manera aleatoria, eliminando la monotonía de las reuniones diarias y asegurando que todos los miembros del equipo tengan la oportunidad de participar de forma equitativa. La plataforma incluye funcionalidades como temporizadores personalizables, historial de participación, integración con calendarios, y métricas de productividad del equipo.",
-        content_p2: ""
+        content_p2: "El proyecto experimentó una migración completa de arquitectura, evolucionando desde una aplicación móvil nativa desarrollada en React Native hacia una plataforma web moderna construida con Next.js y TypeScript. Esta migración permitió ampliar significativamente la base de usuarios al eliminar las barreras de descarga de aplicaciones móviles, ofreciendo acceso instantáneo desde cualquier navegador web. La nueva arquitectura incluye un sistema de autenticación robusto con JWT, base de datos PostgreSQL para el manejo de datos de equipos y sesiones, y una API RESTful bien documentada. El frontend implementa un diseño responsive con Tailwind CSS, animaciones fluidas con Framer Motion, y un sistema de notificaciones en tiempo real usando WebSockets para mantener a todos los participantes sincronizados durante las reuniones diarias."
       },
       en: {
         title: "Daily Potato",
         description: "Innovative tool for remote Daily Scrums with random participation and team productivity metrics",
         content: "Daily Potato is an innovative tool designed to facilitate remote and effective Daily Scrums. The application automatically generates the participation order randomly, eliminating the monotony of daily meetings and ensuring that all team members have the opportunity to participate equitably. The platform includes features such as customizable timers, participation history, calendar integration, and team productivity metrics.",
-        content_p2: ""
+        content_p2: "The project underwent a complete architecture migration, evolving from a native mobile application developed in React Native to a modern web platform built with Next.js and TypeScript. This migration significantly expanded the user base by eliminating mobile app download barriers, offering instant access from any web browser. The new architecture includes a robust authentication system with JWT, PostgreSQL database for handling team and session data, and a well-documented RESTful API. The frontend implements a responsive design with Tailwind CSS, smooth animations with Framer Motion, and a real-time notification system using WebSockets to keep all participants synchronized during daily meetings."
       }
     }
   },
