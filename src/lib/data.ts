@@ -107,6 +107,28 @@ export const posts: Post[] = [
       }
     }
   },
+  {
+    id: "5",
+    color: colors.green,
+    cover: "/pong.png",
+    author: "Edsel Serrano",
+    link: "https://github.com/pretxel/pong-svelte",
+    date: "2025-01-15",
+    content: {
+      es: {
+        title: "Pong Svelte",
+        description: "Juego clásico de Pong desarrollado con Svelte 5 y HTML5 Canvas con IA inteligente, controles táctiles y arquitectura modular",
+        content: "Pong Svelte es una implementación completamente funcional del clásico juego Pong desarrollado con Svelte 5 y HTML5 Canvas. El proyecto demuestra el poder del desarrollo asistido por IA, siendo creado enteramente a través de 'vibe coding' usando Cursor y ChatGPT. El juego incluye funcionalidades avanzadas como un oponente de IA inteligente con múltiples niveles de dificultad, controles táctiles para dispositivos móviles, diseño responsive que se adapta a diferentes tamaños de pantalla, y una arquitectura modular bien estructurada.",
+        content_p2: "El proyecto está construido con tecnologías modernas incluyendo Svelte 5 con la nueva API de componentes, Vite para desarrollo rápido, HTML5 Canvas para renderizado 2D suave, y JavaScript moderno con características ES6+. La implementación incluye física realista del juego con detección de colisiones, animaciones fluidas a 60fps usando requestAnimationFrame, gestión de estado limpia con las stores reactivas de Svelte, y soporte para pantallas de alta resolución. El juego funciona perfectamente tanto en desktop como en móvil, con controles intuitivos de teclado y táctiles, sistema de puntuación hasta 11 puntos, y funcionalidades de pausa/reinicio."
+      },
+      en: {
+        title: "Pong Svelte",
+        description: "Classic Pong game built with Svelte 5 and HTML5 Canvas featuring intelligent AI, touch controls, and modular architecture",
+        content: "Pong Svelte is a fully functional implementation of the classic Pong game developed with Svelte 5 and HTML5 Canvas. The project demonstrates the power of AI-assisted development, being created entirely through 'vibe coding' using Cursor and ChatGPT. The game includes advanced features such as an intelligent AI opponent with multiple difficulty levels, touch controls for mobile devices, responsive design that adapts to different screen sizes, and a well-structured modular architecture.",
+        content_p2: "The project is built with modern technologies including Svelte 5 with the new component API, Vite for fast development, HTML5 Canvas for smooth 2D rendering, and modern JavaScript with ES6+ features. The implementation includes realistic game physics with collision detection, smooth 60fps animations using requestAnimationFrame, clean state management with Svelte's reactive stores, and high DPI display support. The game works perfectly on both desktop and mobile, with intuitive keyboard and touch controls, scoring system up to 11 points, and pause/restart functionality."
+      }
+    }
+  },
 ];
 
 export const allPosts = [...posts];
