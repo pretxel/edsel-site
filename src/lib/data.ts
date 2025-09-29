@@ -113,7 +113,7 @@ export const posts: Post[] = [
     cover: "/pong.png",
     author: "Edsel Serrano",
     link: "https://pong-svelte-nine.vercel.app/",
-    date: "2025-01-15",
+    date: "2025-09-29",
     content: {
       es: {
         title: "Pong Svelte",
