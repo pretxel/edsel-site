@@ -112,7 +112,7 @@ export const posts: Post[] = [
     color: colors.green,
     cover: "/pong.png",
     author: "Edsel Serrano",
-    link: "https://github.com/pretxel/pong-svelte",
+    link: "https://pong-svelte-nine.vercel.app/",
     date: "2025-01-15",
     content: {
       es: {
