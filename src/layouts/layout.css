@@ -1,7 +1,7 @@
 :root {
-    --color-primary: theme(colors.green.500);
-    --color-background: theme(colors.zinc.950);
-    --color-foreground: theme(colors.zinc.900);
+    --color-primary: var(--color-green-500);
+    --color-background: var(--color-zinc-950);
+    --color-foreground: var(--color-zinc-900);
   }
   body {
     background: var(--color-background);

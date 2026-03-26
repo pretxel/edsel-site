@@ -5,7 +5,7 @@ interface Props {
 }
 
 const { title = "Home" } = Astro.props;
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import "./layout.css";
 import "../styles/blog.css";
 ---
@@ -45,7 +45,7 @@ import "../styles/blog.css";
       })(window, document, "script", "dataLayer", "GTM-KW47SVK");
     </script>
     <!-- End Google Tag Manager -->
-    <ViewTransitions />
+    <ClientRouter />
   </head>
   <body class="dark">
     <div class="relative h-screen p-2 gap-2 flex items-stretch">
