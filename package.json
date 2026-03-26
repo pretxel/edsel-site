@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.2.2",
     "@types/node": "^25.5.0",
     "@types/three": "^0.183.1",
     "astro": "^6.0.8",
@@ -27,7 +28,6 @@
     "@astrojs/react": "^5.0.1",
     "@astrojs/sitemap": "^3.7.1",
     "@astrojs/svelte": "^8.0.3",
-    "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^10.0.2",
     "@fontsource/roboto": "^5.2.10",
     "@vercel/analytics": "^2.0.1",
