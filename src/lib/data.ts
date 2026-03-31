@@ -129,6 +129,28 @@ export const posts: Post[] = [
       }
     }
   },
+  {
+    id: "6",
+    color: colors.yellow,
+    cover: "/pokemon-poker.png",
+    author: "Edsel Serrano",
+    link: "https://pokemon-poker.vercel.app/",
+    date: "2026-03-31",
+    content: {
+      es: {
+        title: "Pokemon Poker",
+        description: "Herramienta de estimación Scrum Planning Poker con tus Pokémon favoritos para hacer las sesiones de planning más divertidas y dinámicas",
+        content: "Pokemon Poker es una herramienta de estimación para equipos ágiles que reinventa el clásico Planning Poker usando el universo Pokémon. En lugar de cartas numéricas tradicionales, los participantes votan con sus Pokémon favoritos para estimar el esfuerzo de las historias de usuario en las sesiones de Scrum. Esto hace que las reuniones de planificación sean más entretenidas y ayuda a reducir la presión que a veces acompaña las estimaciones de equipo.",
+        content_p2: "El proyecto está desarrollado con Next.js y desplegado en Vercel, ofreciendo una experiencia en tiempo real donde todos los miembros del equipo pueden unirse a una sala, seleccionar su Pokémon y revelar las estimaciones simultáneamente. El código fuente está disponible públicamente en GitHub bajo el usuario pretxel, invitando a la comunidad a explorar la implementación, reportar issues o contribuir con mejoras."
+      },
+      en: {
+        title: "Pokemon Poker",
+        description: "Scrum planning estimation tool with your favorite Pokémon to make planning sessions more fun and dynamic",
+        content: "Pokemon Poker is an estimation tool for agile teams that reimagines classic Planning Poker using the Pokémon universe. Instead of traditional numbered cards, participants vote with their favorite Pokémon to estimate the effort of user stories during Scrum planning sessions. This makes planning meetings more entertaining and helps reduce the pressure that sometimes accompanies team estimations.",
+        content_p2: "The project is built with Next.js and deployed on Vercel, offering a real-time experience where all team members can join a room, pick their Pokémon, and reveal estimations simultaneously. The source code is publicly available on GitHub under the pretxel username, inviting the community to explore the implementation, report issues, or contribute improvements."
+      }
+    }
+  },
 ];
 
 export const allPosts = [...posts];
