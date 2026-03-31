@@ -129,6 +129,28 @@ export const posts: Post[] = [
       }
     }
   },
+  {
+    id: "6",
+    color: colors.yellow,
+    cover: "/pokemon-poker.png",
+    author: "Edsel Serrano",
+    link: "https://pokemon-poker.vercel.app/",
+    date: "2026-03-31",
+    content: {
+      es: {
+        title: "Pokemon Poker",
+        description: "Juego de póker temático de Pokémon donde los jugadores compiten usando cartas de sus Pokémon favoritos en partidas de Texas Hold'em",
+        content: "Pokemon Poker es un juego de póker desarrollado con Next.js que combina la mecánica clásica del Texas Hold'em con el universo Pokémon. Los jugadores pueden disfrutar de partidas de póker donde las cartas están representadas por sus Pokémon favoritos, ofreciendo una experiencia de juego única y entretenida. El proyecto está disponible tanto en su versión web en pokemon-poker.vercel.app como en su repositorio público en GitHub, donde la comunidad puede explorar el código fuente y contribuir al desarrollo.",
+        content_p2: "El proyecto está construido con tecnologías modernas como Next.js y React, aprovechando el ecosistema de Vercel para el despliegue y la distribución global. La integración con la PokéAPI permite mostrar imágenes y datos reales de los Pokémon, haciendo que cada partida sea visualmente atractiva y fiel al universo Pokémon. El código fuente está disponible en GitHub bajo el usuario pretxel, permitiendo a otros desarrolladores aprender de la implementación, reportar issues, o proponer mejoras a través de pull requests."
+      },
+      en: {
+        title: "Pokemon Poker",
+        description: "Pokémon-themed poker game where players compete using cards from their favorite Pokémon in Texas Hold'em matches",
+        content: "Pokemon Poker is a poker game developed with Next.js that combines the classic mechanics of Texas Hold'em with the Pokémon universe. Players can enjoy poker matches where the cards are represented by their favorite Pokémon, offering a unique and entertaining gaming experience. The project is available both as a web app at pokemon-poker.vercel.app and as a public repository on GitHub, where the community can explore the source code and contribute to development.",
+        content_p2: "The project is built with modern technologies like Next.js and React, leveraging the Vercel ecosystem for deployment and global distribution. Integration with the PokéAPI allows displaying real Pokémon images and data, making every match visually appealing and faithful to the Pokémon universe. The source code is available on GitHub under the pretxel username, allowing other developers to learn from the implementation, report issues, or propose improvements through pull requests."
+      }
+    }
+  },
 ];
 
 export const allPosts = [...posts];
