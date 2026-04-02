@@ -1,3 +1,5 @@
+@reference "tailwindcss";
+
 /* Blog-specific styles for enhanced typography and reading experience */
 
 /* Typography improvements */
@@ -21,17 +23,23 @@ body {
 }
 
 .blog-heading-xl {
-  @apply blog-heading;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
   font-size: clamp(2rem, 5vw, 4rem);
 }
 
 .blog-heading-lg {
-  @apply blog-heading;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
   font-size: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .blog-heading-md {
-  @apply blog-heading;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
   font-size: clamp(1.25rem, 2.5vw, 1.875rem);
 }
 
@@ -241,15 +249,15 @@ body {
 }
 
 .blog-button-primary {
-  @apply blog-button bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900;
+  @apply inline-flex items-center px-6 py-3 font-semibold rounded-lg transition-all duration-200 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900;
 }
 
 .blog-button-secondary {
-  @apply blog-button border-2 border-white text-white hover:bg-white hover:text-black focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-zinc-900;
+  @apply inline-flex items-center px-6 py-3 font-semibold rounded-lg transition-all duration-200 border-2 border-white text-white hover:bg-white hover:text-black focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-zinc-900;
 }
 
 .blog-button-ghost {
-  @apply blog-button text-zinc-400 hover:text-white hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-zinc-900;
+  @apply inline-flex items-center px-6 py-3 font-semibold rounded-lg transition-all duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-zinc-900;
 }
 
 /* Tag styles */
@@ -258,11 +266,11 @@ body {
 }
 
 .blog-tag-default {
-  @apply blog-tag bg-zinc-700 text-zinc-300 hover:bg-zinc-600 hover:text-white;
+  @apply inline-block px-3 py-1 text-sm font-medium rounded-full transition-colors duration-200 bg-zinc-700 text-zinc-300 hover:bg-zinc-600 hover:text-white;
 }
 
 .blog-tag-accent {
-  @apply blog-tag text-white shadow-lg;
+  @apply inline-block px-3 py-1 text-sm font-medium rounded-full transition-colors duration-200 text-white shadow-lg;
 }
 
 /* Interactive elements */

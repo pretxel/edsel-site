@@ -1,9 +1,9 @@
 import { defineConfig } from "astro/config";
 import robotsTxt from "astro-robots-txt";
-import tailwind from "@astrojs/tailwind";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
 import svelte from "@astrojs/svelte";
-import vercel from "@astrojs/vercel/serverless";
+import vercel from "@astrojs/vercel";
 import sitemap from "@astrojs/sitemap";
 import compress from "astro-compress";
 
@@ -11,17 +11,17 @@ import compress from "astro-compress";
 export default defineConfig({
   site: "https://edselserrano.com/",
   output: "server",
-  adapter: vercel({
-    analytics: true,
-  }),
+  adapter: vercel(),
   integrations: [
     robotsTxt({
       sitemap: false,
     }),
     sitemap(),
-    tailwind(),
     svelte(),
     react(),
     compress({ SVG: false }),
   ],
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });
