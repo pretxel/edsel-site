@@ -52,7 +52,12 @@ const keywords = [localizedPost.title.toLowerCase(), ...contentKeywords];
   author={post.author}
 />
 
-<Layout image={post.cover} title={localizedPost.title}>
+<Layout
+  image={post.cover}
+  title={localizedPost.title}
+  lang={currentLanguage}
+  rssHref="/en/rss.xml"
+>
   <article class="min-h-screen">
     <!-- Header Navigation -->
     <div class="absolute top-4 left-4 right-4 z-50">
@@ -211,7 +216,7 @@ const keywords = [localizedPost.title.toLowerCase(), ...contentKeywords];
           <div class="mb-12">
             <h3 class="text-lg font-semibold text-white mb-4">{t('post.technologies_used', {}, currentLanguage)}</h3>
             <div class="flex flex-wrap gap-2">
-              {['React', 'TypeScript', 'Tailwind CSS', 'Astro'].map((tag) => (
+              {post.tags.map((tag) => (
                 <span class="px-3 py-1 bg-zinc-700 text-zinc-300 rounded-full text-sm">
                   {tag}
                 </span>

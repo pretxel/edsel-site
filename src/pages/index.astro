@@ -6,6 +6,7 @@ import Body from "../components/Body/index.jsx";
 import Nav from "../components/Nav/index.jsx";
 import SparklingSphere from "../components/Particles/sparklingSphere";
 import Footer from "../components/Footer";
+import Analytics from "@vercel/analytics/astro";
 import { isMobile } from "react-device-detect";
 
 const totalParticles = isMobile ? 1000 : 2000;
@@ -60,9 +61,9 @@ const alternateLanguages = [
 ];
 ---
 
-<html lang="en">
+<html lang="es">
   <head>
-    <SEOHead 
+    <SEOHead
       title={seoTitle}
       description={seoDescription}
       canonical="/"
@@ -71,10 +72,7 @@ const alternateLanguages = [
       keywords={keywords}
       type="website"
     />
-    <MainHead
-      title="Edsel Serrano"
-      description="Edsel Serrano: Software Engineer, Machine learning lover, and Entrepreneur of Technology..."
-    />
+    <MainHead />
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
 
@@ -82,18 +80,9 @@ const alternateLanguages = [
     <Nav />
 
     <SparklingSphere totalParticles={totalParticles} backgroundColor={backgroundColors[colorSelected]} particleColors={particleColors[colorSelected]} client:only="react" />
-    <Body /> 
+    <Body />
     <Footer />
 
-  
-    <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=G-76748FJ47B"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"></iframe>
-    </noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <Analytics />
   </body>
 </html>

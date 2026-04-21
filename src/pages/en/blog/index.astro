@@ -31,7 +31,11 @@ const keywords = ['blog', 'web development', 'technology', 'programming', 'javas
   type="website"
 />
 
-<Layout title={t('blog.title', {}, currentLanguage)} image="path/to/image.jpg">
+<Layout
+  title={t('blog.title', {}, currentLanguage)}
+  lang={currentLanguage}
+  rssHref="/en/rss.xml"
+>
   <div class="min-h-screen">
     <!-- Header Navigation -->
     <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center">
