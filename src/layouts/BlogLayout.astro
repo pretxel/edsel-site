@@ -1,5 +1,6 @@
 ---
 import type { Language } from "../lib/i18n";
+import { defaultLanguage } from "../lib/i18n";
 
 interface Props {
   title: string;
@@ -11,7 +12,7 @@ interface Props {
 
 const {
   title = "Home",
-  lang = "en",
+  lang = defaultLanguage,
   rssHref = "/rss.xml",
   rssTitle = "Edsel Serrano - Blog",
 } = Astro.props;
