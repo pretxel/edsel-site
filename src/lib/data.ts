@@ -15,6 +15,7 @@ export interface Post {
   author: string;
   link: string;
   date: string;
+  tags: string[];
   content: Record<Language, PostContent>;
 }
 
@@ -26,6 +27,7 @@ export const posts: Post[] = [
     author: "Edsel Serrano",
     link: "https://potato-daily.pretxel.deno.net/",
     date: "2023-01-01",
+    tags: ["Next.js", "TypeScript", "PostgreSQL", "JWT", "WebSockets", "Tailwind CSS"],
     content: {
       es: {
         title: "Daily Potato",
@@ -44,10 +46,11 @@ export const posts: Post[] = [
   {
     id: "2",
     color: colors.blue,
-    cover: "/edsel-chat.png",
+    cover: "/edsel-chat.webp",
     author: "Edsel Serrano",
     link: "https://chat.edselserrano.com/",
     date: "2023-10-01",
+    tags: ["OpenAI GPT", "Langchain", "Next.js", "React", "TypeScript"],
     content: {
       es: {
         title: "Chat Edsel",
@@ -70,18 +73,19 @@ export const posts: Post[] = [
     author: "Edsel Serrano",
     link: "https://www.dineqrs.com/",
     date: "2023-12-20",
+    tags: ["Next.js", "React", "TypeScript", "Tailwind CSS", "QR Code"],
     content: {
       es: {
         title: "Dineqrs",
-        description: "Aplicación que permite a los negocios generar catálogos digitales con códigos QR",
-        content: "Dineqrs es una aplicación que permite a los negocios generar sus catálogos con códigos QR.",
-        content_p2: ""
+        description: "Producto SaaS que permite a restaurantes y negocios generar catálogos digitales con códigos QR, actualizables en tiempo real sin reimprimir",
+        content: "Dineqrs es una plataforma SaaS comercial dirigida a restaurantes, cafeterías y negocios que quieren modernizar sus menús físicos. Cada negocio crea un catálogo digital personalizable con precios, fotos y descripciones, y lo comparte con sus clientes mediante un código QR imprimible. Cuando cambia un precio o se agota un producto, el dueño actualiza el catálogo desde el panel de administración y el cambio se ve reflejado al instante, eliminando el costo y la espera de reimprimir menús.",
+        content_p2: "La arquitectura está construida con Next.js y TypeScript en el frontend con Tailwind CSS para el diseño responsive, una API serverless desplegada en Vercel, y almacenamiento en la nube para las imágenes de productos. El sistema incluye gestión de múltiples sucursales por cuenta, categorías anidadas, estados de disponibilidad por producto, y una vista pública optimizada para móvil (donde los clientes escanean el QR). El proyecto está activo en producción en dineqrs.com sirviendo a clientes reales, lo que impuso requisitos de uptime, compatibilidad cross-browser para lectores QR nativos de iOS y Android, y un flujo de onboarding sin fricción para usuarios no técnicos."
       },
       en: {
         title: "Dineqrs",
-        description: "Application that allows businesses to generate digital catalogs with QR codes",
-        content: "Dineqrs is an application that allows businesses to generate their catalogs with QR codes.",
-        content_p2: ""
+        description: "SaaS product that lets restaurants and businesses generate QR-code digital catalogs, updatable in real time without reprinting",
+        content: "Dineqrs is a commercial SaaS platform aimed at restaurants, cafés, and small businesses that want to modernize physical menus. Each business creates a customizable digital catalog with prices, photos, and descriptions, then shares it with customers via a printable QR code. When a price changes or an item runs out, the owner updates the catalog from the admin panel and the change is reflected instantly, eliminating the cost and delay of reprinting menus.",
+        content_p2: "The architecture is built on Next.js and TypeScript on the frontend with Tailwind CSS for responsive design, a serverless API deployed on Vercel, and cloud storage for product images. The system includes multi-branch account management, nested categories, per-item availability states, and a mobile-optimized public view (where customers scan the QR). The project is live in production at dineqrs.com serving real customers, which imposed uptime requirements, cross-browser compatibility for native iOS/Android QR readers, and a frictionless onboarding flow for non-technical users."
       }
     }
   },
@@ -92,6 +96,7 @@ export const posts: Post[] = [
     author: "Edsel Serrano",
     link: "https://f1.edselserrano.com/",
     date: "2024-05-06",
+    tags: ["React", "TypeScript", "Tailwind CSS", "F1 API", "Data Visualization"],
     content: {
       es: {
         title: "F1 Stats",
@@ -110,10 +115,11 @@ export const posts: Post[] = [
   {
     id: "5",
     color: colors.green,
-    cover: "/pong.png",
+    cover: "/pong.webp",
     author: "Edsel Serrano",
     link: "https://pong-svelte-nine.vercel.app/",
     date: "2025-09-29",
+    tags: ["Svelte 5", "HTML5 Canvas", "Vite", "JavaScript", "Game Development"],
     content: {
       es: {
         title: "Pong Svelte",
@@ -132,10 +138,11 @@ export const posts: Post[] = [
   {
     id: "6",
     color: colors.yellow,
-    cover: "/pokemon-poker.png",
+    cover: "/pokemon-poker.webp",
     author: "Edsel Serrano",
     link: "https://pokemon-poker.vercel.app/",
     date: "2026-03-31",
+    tags: ["Next.js", "React", "TypeScript", "Vercel", "Real-time"],
     content: {
       es: {
         title: "Pokemon Poker",

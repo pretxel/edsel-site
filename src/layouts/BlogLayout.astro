@@ -1,32 +1,40 @@
 ---
+import type { Language } from "../lib/i18n";
+import { defaultLanguage } from "../lib/i18n";
+
 interface Props {
   title: string;
-  image: string | undefined;
+  image?: string | undefined;
+  lang?: Language;
+  rssHref?: string;
+  rssTitle?: string;
 }
 
-const { title = "Home" } = Astro.props;
+const {
+  title = "Home",
+  lang = defaultLanguage,
+  rssHref = "/rss.xml",
+  rssTitle = "Edsel Serrano - Blog",
+} = Astro.props;
+import Analytics from "@vercel/analytics/astro";
 import { ClientRouter } from "astro:transitions";
 import "./layout.css";
 import "../styles/blog.css";
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="description"
-      content="A blog about web development, javascript, typescript, react, vue, svelte, astro, nextjs, gatsby, and more"
-    />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
-    <meta property="og:title" content="Blog of Edsel" />
-    <meta
-      property="og:description"
-      content="A blog about web development, javascript, typescript, react, vue, svelte, astro, nextjs, gatsby, and more"
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={rssTitle}
+      href={rssHref}
     />
-    <meta property="og:url" content="https://edselserrano.com" />
     <title>{title}</title>
     <!-- Google Tag Manager -->
     <script defer>
@@ -60,5 +68,6 @@ import "../styles/blog.css";
       It seems your browser does not support view transitions yet :( try it
       using chrome or edge
     </div>
+    <Analytics />
   </body>
 </html>

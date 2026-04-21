@@ -1,5 +1,24 @@
 import React, { useEffect, useRef } from "react";
-import * as THREE from "three";
+import {
+  ACESFilmicToneMapping,
+  AmbientLight,
+  CanvasTexture,
+  Color,
+  Group,
+  MathUtils,
+  Mesh,
+  MeshStandardMaterial,
+  PerspectiveCamera,
+  Plane,
+  PointLight,
+  Quaternion,
+  Raycaster,
+  Scene,
+  SphereGeometry,
+  Vector2,
+  Vector3,
+  WebGLRenderer,
+} from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
@@ -27,7 +46,7 @@ const SparklingSphere = ({
 
     if (!context) {
       // Color by default
-      return new THREE.Color(0x021027);
+      return new Color(0x021027);
     }
 
     const size = 512; // Tamaño del canvas
@@ -47,34 +66,34 @@ const SparklingSphere = ({
     context.fillStyle = gradient;
     context.fillRect(0, 0, size, size);
 
-    const texture = new THREE.CanvasTexture(canvas);
+    const texture = new CanvasTexture(canvas);
     return texture;
   };
   useEffect(() => {
     if (!mountRef.current) return;
 
     // Scene setup
-    const scene = new THREE.Scene();
+    const scene = new Scene();
 
     const texture = createBackground({ color: backgroundColor });
 
     scene.background = texture;
 
-    const camera = new THREE.PerspectiveCamera(
+    const camera = new PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
 
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
       antialias: true,
       alpha: true,
     });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 1);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.5;
     mountRef.current.appendChild(renderer.domElement);
 
@@ -90,7 +109,7 @@ const SparklingSphere = ({
     composer.addPass(renderPass);
 
     const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      new Vector2(window.innerWidth, window.innerHeight),
       1.5,
       0.4,
       0.1
@@ -98,20 +117,20 @@ const SparklingSphere = ({
     composer.addPass(bloomPass);
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0x111111);
+    const ambientLight = new AmbientLight(0x111111);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0x88ccff, 1);
+    const pointLight = new PointLight(0x88ccff, 1);
     pointLight.position.set(5, 5, 5);
     scene.add(pointLight);
 
     // Group for all particles
-    const group = new THREE.Group();
+    const group = new Group();
     scene.add(group);
 
     // Mouse tracking with raycaster
-    const raycaster = new THREE.Raycaster();
-    const mousePos = new THREE.Vector2();
+    const raycaster = new Raycaster();
+    const mousePos = new Vector2();
 
     // Interactive parameters
     const interactionRadius = 1.5;
@@ -128,7 +147,7 @@ const SparklingSphere = ({
       const count = params.total;
       const radius = params.radius;
 
-      const geometry = new THREE.SphereGeometry(0.015, 6, 6);
+      const geometry = new SphereGeometry(0.015, 6, 6);
 
       //   const colors = [0x88ccff, 0x7dabf1, 0x6a8dff];
       //   const colors = [0xfda252, 0xfda252, 0xf99352];
@@ -140,11 +159,11 @@ const SparklingSphere = ({
         const y = radius * Math.sin(phi) * Math.sin(theta);
         const z = radius * Math.cos(phi);
 
-        const position = new THREE.Vector3(x, y, z);
+        const position = new Vector3(x, y, z);
 
         const baseColor =
           particleColors[Math.floor(Math.random() * particleColors.length)];
-        const material = new THREE.MeshStandardMaterial({
+        const material = new MeshStandardMaterial({
           color: baseColor,
           emissive: baseColor,
           emissiveMap: null,
@@ -153,7 +172,7 @@ const SparklingSphere = ({
           toneMapped: false,
         });
 
-        const mesh = new THREE.Mesh(geometry, material);
+        const mesh = new Mesh(geometry, material);
         mesh.position.copy(position);
 
         group.add(mesh);
@@ -162,9 +181,9 @@ const SparklingSphere = ({
           mesh,
           position: position.clone(),
           originalPosition: position.clone(),
-          velocity: new THREE.Vector3(),
-          quaternion: new THREE.Quaternion(),
-          baseColor: new THREE.Color(baseColor),
+          velocity: new Vector3(),
+          quaternion: new Quaternion(),
+          baseColor: new Color(baseColor),
           currentIntensity: baseGlowIntensity,
         });
       }
@@ -177,8 +196,8 @@ const SparklingSphere = ({
     // Update particles function
     const updateParticles = () => {
       raycaster.setFromCamera(mousePos, camera);
-      const intersectPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-      const mousePosition3D = new THREE.Vector3();
+      const intersectPlane = new Plane(new Vector3(0, 0, 1), 0);
+      const mousePosition3D = new Vector3();
       raycaster.ray.intersectPlane(intersectPlane, mousePosition3D);
 
       particles.forEach((particle) => {
@@ -199,7 +218,7 @@ const SparklingSphere = ({
             repulsionDir.multiplyScalar(force * (1 + Math.random() * 0.2))
           );
 
-          const intensity = THREE.MathUtils.lerp(
+          const intensity = MathUtils.lerp(
             maxGlowIntensity,
             baseGlowIntensity,
             distanceToMouse / interactionRadius
@@ -232,7 +251,7 @@ const SparklingSphere = ({
 
         if (particle.velocity.length() > 0.001) {
           particle.quaternion.setFromUnitVectors(
-            new THREE.Vector3(0, 1, 0),
+            new Vector3(0, 1, 0),
             particle.velocity.clone().normalize()
           );
           particle.mesh.quaternion.slerp(particle.quaternion, 0.1);
