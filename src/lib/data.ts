@@ -158,6 +158,29 @@ export const posts: Post[] = [
       }
     }
   },
+  {
+    id: "7",
+    color: colors.red,
+    cover: "/retro-ball.webp",
+    author: "Edsel Serrano",
+    link: "https://retro-ball-orpin.vercel.app/",
+    date: "2026-04-30",
+    tags: ["Real-time", "Agile", "Retrospective", "Vercel", "Team Collaboration"],
+    content: {
+      es: {
+        title: "Retro Ball",
+        description: "Herramienta de retrospectivas ágiles sin fricción: salas efímeras, sin cuentas y con códigos de acceso para retros honestas en equipo",
+        content: "Retro Ball es una herramienta web para facilitar retrospectivas de equipo sin fricción ni sobrecarga administrativa. La propuesta es simple: correr una retro honesta con tu equipo, sin cuentas, sin desorden y de forma efímera. El facilitador crea una sala con un solo click y el resto del equipo se une usando un código de acceso de 6 dígitos, eliminando registros, invitaciones por correo y configuración previa. Las salas expiran automáticamente después de 24 horas de inactividad, garantizando que las conversaciones del equipo no queden almacenadas indefinidamente y respetando la privacidad de las discusiones internas.",
+        content_p2: "El proyecto está pensado para equipos ágiles remotos que quieren un espacio temporal y enfocado para sus ceremonias de retrospectiva sin la complejidad de plataformas más pesadas. La aplicación está desplegada en Vercel y ofrece una experiencia en tiempo real donde todos los participantes ven los aportes del equipo a medida que se agregan. El diseño minimalista prioriza la claridad y reduce la barrera de entrada, especialmente útil cuando se invita a stakeholders ocasionales o nuevos miembros que no quieren crear otra cuenta más. La filosofía de salas efímeras encaja con la idea de que una retrospectiva es un momento del equipo, no un repositorio permanente."
+      },
+      en: {
+        title: "Retro Ball",
+        description: "Frictionless agile retrospective tool with ephemeral rooms, no accounts, and access codes for honest team retros",
+        content: "Retro Ball is a web tool for running team retrospectives without friction or administrative overhead. The pitch is simple: run an honest retro with your team, no accounts, no clutter, ephemeral. The facilitator spins up a room in one click and the rest of the team joins using a 6-digit access code, removing signups, email invites, and any upfront configuration. Rooms automatically expire after 24 hours of inactivity, ensuring that team conversations are not stored indefinitely and respecting the privacy of internal discussions.",
+        content_p2: "The project is aimed at remote agile teams that want a temporary, focused space for retrospective ceremonies without the complexity of heavier platforms. The app is deployed on Vercel and offers a real-time experience where every participant sees team input as it lands. The minimalist design prioritizes clarity and lowers the barrier to entry, which is especially useful when inviting occasional stakeholders or new members who do not want to create yet another account. The ephemeral rooms philosophy matches the idea that a retrospective is a team moment, not a permanent repository."
+      }
+    }
+  },
 ];
 
 export const allPosts = [...posts];
