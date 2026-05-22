@@ -65,17 +65,25 @@ function projectHref(project: LocalizedProject) {
     {
       projects.length > 0 ? (
         <ul class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
+          {projects.map((project, index) => (
             <li>
               <a
                 href={projectHref(project)}
                 class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border-default bg-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <div class="relative aspect-[16/10] overflow-hidden bg-elev">
+                  {/*
+                   * The first card image is the LCP element on mobile (hero
+                   * is text but small; this image is the largest paint).
+                   * Mark it eager + fetchpriority="high" so the browser
+                   * preloads it instead of waiting until after layout.
+                   * Cards 2+ stay lazy — they're below the fold on phones.
+                   */}
                   <img
                     src={project.cover}
                     alt={project.title}
-                    loading="lazy"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchpriority={index === 0 ? "high" : undefined}
                     decoding="async"
                     class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />

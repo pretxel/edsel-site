@@ -21,17 +21,27 @@ const postsHref = lang === "en" ? "/en/blog" : "/blog";
   class="relative isolate overflow-hidden border-b border-border-default"
   aria-labelledby="hero-title"
 >
-  <!-- Decorative sphere. Lives behind the hero copy at low opacity so it
-       feels like depth, not the whole show. Hidden from assistive tech. -->
+  <!--
+    Decorative sphere. Lives behind the hero copy at low opacity so it
+    feels like depth, not the whole show. Hidden from assistive tech.
+
+    Hydration policy:
+      • `client:media="(min-width: 768px)"` → skip the ~525KB Three.js
+        bundle entirely on phones (where it pushes LCP past 6s and tanks
+        the mobile Lighthouse score), keep it on desktop where it's a nice
+        visual flourish.
+      • The gradient at the bottom of the section already gives the hero
+        depth on mobile, so dropping the sphere doesn't break the design.
+  -->
   <div
-    class="pointer-events-none absolute inset-0 -z-10 opacity-40"
+    class="pointer-events-none absolute inset-0 -z-10 hidden opacity-40 md:block"
     aria-hidden="true"
   >
     <SparklingSphere
       particleColors={particleColors}
       totalParticles={600}
       mobileTotalParticles={300}
-      client:only="react"
+      client:media="(min-width: 768px)"
     />
   </div>
 
