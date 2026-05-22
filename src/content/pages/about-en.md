@@ -2,16 +2,19 @@
 slug: about
 lang: en
 title: "About"
-description: "Mexican software engineer, full stack, with a soft spot for ML, IoT, and chatbots."
+description: "Mexican software engineer based in Madrid. Full stack with a soft spot for ML, IoT, and chatbots."
 updated: 2026-05-22
 ---
 
-I am **Edsel Serrano**, a software engineer based in Mexico. For over a decade I have
-been shipping products on the web — content portals, internal tools for agile teams,
-conversational chatbots, and real-time data dashboards.
+I am **Edsel Serrano**, a Mexican software engineer based in **Madrid, Spain**.
+For over a decade I have been shipping products on the web — content portals,
+internal tools for agile teams, conversational chatbots, and real-time data
+dashboards.
 
-I work from Aguascalientes and collaborate with remote teams across the Americas.
-I enjoy taking fuzzy problems, writing a plan for them, and shipping a first version fast.
+I currently work at **Embat**, a fintech automating corporate treasury. Before
+crossing the Atlantic I was already collaborating with remote teams across the
+Americas. I enjoy taking fuzzy problems, writing a plan for them, and shipping a
+first version fast.
 
 ## What I care about
 
@@ -29,15 +32,27 @@ binary.
 
 ## Experience
 
-- **2024 — present.** Senior Full Stack Engineer. Leading the architecture of internal
-  productivity products for remote teams.
-- **2022 — 2024.** Product-focused Full Stack Engineer. Conversational LLM tools and
-  chat experiences.
-- **2020 — 2022.** Software Engineer. Large-scale web platforms with React, Node, and
-  PostgreSQL.
+- **Embat — Madrid, Spain.** Software Engineer at a corporate-treasury fintech.
+  Shipping end-to-end product features on a TypeScript + Node + Postgres stack.
+- **CIC México — Mexico City.** Web platforms and bespoke solutions for enterprise
+  clients. Mostly Java at first, later migrating teams to modern JavaScript.
+- **Secretaría de Relaciones Exteriores — Mexico City.** Maintaining and evolving
+  internal systems for the Mexican government. First serious exposure to
+  institution-scale development.
+
+Along the way, personal side projects — *Daily Potato* (remote retros),
+*Devloop* (tech blog), *Zabvio* (financial platform) — served as a sandbox for
+trying new stacks without client pressure.
+
+## Education and certifications
+
+- **Spain Business School** (2018–2019).
+- Systems Engineering degree (2009–2012).
+- **IBM** — Applied Data Science with Python, Data Science Foundations (2017).
+- **Oracle** — Certified Professional, Java SE 6 Programmer (2013).
 
 ## Get in touch
 
-- [LinkedIn](https://mx.linkedin.com/in/edselserrano)
+- [LinkedIn](https://www.linkedin.com/in/edselserrano)
 - [GitHub](https://github.com/pretxel)
 - [Email](mailto:pretxel100@gmail.com)
