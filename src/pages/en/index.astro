@@ -8,8 +8,14 @@ import NowStrip from "../../components/home/NowStrip.astro";
 import LatestPosts from "../../components/home/LatestPosts.astro";
 import Footer from "../../components/Footer/index.astro";
 import Analytics from "@vercel/analytics/astro";
+import { ClientRouter } from "astro:transitions";
+import { t } from "../../lib/i18n";
 
 const lang = "en" as const;
+
+// Same rationale as `/`: skip the Analytics web component locally so the
+// /_vercel/insights/script.js 404 doesn't trash Lighthouse Best Practices.
+const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
 
 const seoTitle =
   "Edsel Serrano | Software engineer — projects, notes, experiments";
@@ -37,6 +43,7 @@ const alternateLanguages = [
 
 <html lang={lang}>
   <head>
+    <MainHead />
     <SEOHead
       title={seoTitle}
       description={seoDescription}
@@ -45,20 +52,24 @@ const alternateLanguages = [
       alternateLanguages={alternateLanguages}
       keywords={keywords}
       type="website"
+      schemaVariant="home"
     />
-    <MainHead />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <ClientRouter />
   </head>
 
   <body class="bg-bg text-fg font-sans antialiased">
+    <a href="#main" class="skip-to-content">
+      {t("a11y.skip_to_content", {}, lang)}
+    </a>
     <Nav />
-    <main>
+    <main id="main">
       <Hero lang={lang} />
       <FeaturedWork lang={lang} />
       <NowStrip lang={lang} />
       <LatestPosts lang={lang} />
     </main>
     <Footer />
-    <Analytics />
+    {showAnalytics && <Analytics />}
   </body>
 </html>

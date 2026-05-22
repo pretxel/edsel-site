@@ -53,41 +53,89 @@
 }
 
 /* ── Base ─────────────────────────────────────────────── */
-html {
-  background: var(--bg-app);
-  color: var(--fg-default);
-  font-family: var(--font-sans);
-  font-feature-settings:
-    "cv02", "cv03", "cv04", "cv11"; /* sharper Inter glyphs */
-}
+/*
+ * Everything below lives in @layer base so Tailwind 4's utility classes
+ * (which sit in @layer utilities, further down the cascade) can win when
+ * the markup opts in to a specific color/background. Without this, a bare
+ * `a { color: inherit }` would beat `.text-bg`, silently breaking high-
+ * contrast CTAs like the Hero buttons.
+ */
+@layer base {
+  html {
+    background: var(--bg-app);
+    color: var(--fg-default);
+    font-family: var(--font-sans);
+    font-feature-settings:
+      "cv02", "cv03", "cv04", "cv11"; /* sharper Inter glyphs */
+  }
 
-body,
-input,
-select,
-textarea {
-  background: var(--bg-app);
-  color: var(--fg-default);
-  font-family: var(--font-sans);
-  letter-spacing: var(--tracking-tight);
-  line-height: var(--leading-relaxed);
-  font-size: 1rem;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
+  body,
+  input,
+  select,
+  textarea {
+    background: var(--bg-app);
+    color: var(--fg-default);
+    font-family: var(--font-sans);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-relaxed);
+    font-size: 1rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-a {
-  color: inherit;
-  outline: 0;
-  text-decoration: none;
-  transition: border-color var(--dur-base) var(--ease-out);
-}
+  /*
+   * Include `:visited` explicitly so browsers don't fall back to the
+   * user-agent visited color (~#9e9eff in Chromium headless), which fails
+   * WCAG contrast against the dark surfaces. Pair this with utility-set
+   * colors (`text-fg-strong`, `text-fg-muted`, etc.) — they already win
+   * over `color: inherit`, but losing to `:visited` (specificity 1,1,0).
+   */
+  a,
+  a:visited {
+    color: inherit;
+    outline: 0;
+    text-decoration: none;
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
 
-code,
-kbd,
-samp,
-pre {
-  font-family: var(--font-mono);
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+
+  /* Consistent focus ring across the site, driven by the accent token. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Skip-to-content link: hidden until the user tabs to it, then anchors
+     visibly at the top of the viewport. Each page exposes <main id="main">. */
+  .skip-to-content {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 100;
+    padding: 0.5rem 0.875rem;
+    border-radius: var(--radius-md);
+    background: var(--accent);
+    color: var(--c-zinc-950);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    transform: translateY(calc(-100% - 0.5rem));
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .skip-to-content:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid var(--c-zinc-50);
+    outline-offset: 2px;
+  }
 }
 
 /* Honor reduced motion at the global level. */

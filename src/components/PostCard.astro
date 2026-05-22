@@ -117,9 +117,15 @@ if (props.variant === "post") {
 
     <!-- Category Badge -->
     <div class="absolute top-3 left-3">
+      {/*
+       * Per-project accent colors can be very pastel (e.g. cyan #2ee9d7).
+       * White text on those fails WCAG, so the badge text always uses the
+       * darkest token in the system — `--c-zinc-950` — for guaranteed
+       * contrast across the full project palette.
+       */}
       <span
-        class="px-3 py-1 text-xs font-semibold rounded-full text-white shadow-lg"
-        style={`background: ${view.accent}`}
+        class="px-3 py-1 text-xs font-semibold rounded-full shadow-lg"
+        style={`background: ${view.accent}; color: var(--c-zinc-950);`}
       >
         {view.category}
       </span>
@@ -152,11 +158,11 @@ if (props.variant === "post") {
     <!-- Tag chips (clickable, top 4) -->
     {
       view.tags.length > 0 && (
-        <div class="flex flex-wrap gap-1.5 mb-4 relative z-20">
+        <div class="flex flex-wrap gap-2 mb-4 relative z-20">
           {view.tags.slice(0, 4).map((tag) => (
             <a
               href={tagUrl(tag, currentLanguage)}
-              class="px-2 py-0.5 text-xs rounded-full bg-muted text-fg-muted hover:bg-elev hover:text-fg transition-colors"
+              class="inline-flex items-center min-h-[24px] px-2.5 py-1 text-xs rounded-full bg-muted text-fg-muted hover:bg-elev hover:text-fg transition-colors"
             >
               #{tag}
             </a>

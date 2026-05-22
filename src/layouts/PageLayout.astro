@@ -51,6 +51,17 @@ const updatedLabel = updated
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
+    {/*
+     * Preload the Latin Inter variable font. Same rationale as BlogLayout/
+     * MainHead — discovered before CSS parses, saves ~300ms FCP on 4G.
+     */}
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+      href="/_astro/inter-latin-wght-normal.Dx4kXJAl.woff2"
+    />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <slot name="head" />
@@ -89,6 +100,9 @@ const updatedLabel = updated
     </style>
   </head>
   <body class="bg-bg text-fg font-sans min-h-screen">
+    <a href="#main" class="skip-to-content">
+      {t("a11y.skip_to_content", {}, lang)}
+    </a>
     <div class="min-h-screen flex flex-col">
       <header
         class="sticky top-0 z-40 bg-surface/80 backdrop-blur-xl border-b border-border-default"
@@ -104,7 +118,7 @@ const updatedLabel = updated
         </div>
       </header>
 
-      <main class="flex-1 px-6 py-12 sm:py-16">
+      <main id="main" class="flex-1 px-6 py-12 sm:py-16">
         <article class="max-w-prose mx-auto">
           <div class="mb-10">
             {eyebrow && (

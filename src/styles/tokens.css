@@ -42,7 +42,12 @@
     --fg-strong: var(--c-zinc-50);
     --fg-default: var(--c-zinc-200);
     --fg-muted: var(--c-zinc-400);
-    --fg-subtle: var(--c-zinc-500);
+    /*
+     * `--fg-subtle` was zinc-500 (#71717a) which only hits 3.66:1 against
+     * the page bg — fails WCAG AA for normal text. Bumped to zinc-400 so
+     * timestamps and "tertiary" copy still feel quiet but stay readable.
+     */
+    --fg-subtle: var(--c-zinc-400);
 
     --border-default: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.16);

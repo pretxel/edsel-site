@@ -8,8 +8,15 @@ import NowStrip from "../components/home/NowStrip.astro";
 import LatestPosts from "../components/home/LatestPosts.astro";
 import Footer from "../components/Footer/index.astro";
 import Analytics from "@vercel/analytics/astro";
+import { ClientRouter } from "astro:transitions";
+import { t } from "../lib/i18n";
 
 const lang = "es" as const;
+
+// `<Analytics>` injects `/_vercel/insights/script.js`, which only exists when
+// the site is deployed to Vercel. Hide it in non-production builds so local
+// audits (Lighthouse, Playwright) don't report bogus 404s.
+const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
 
 const seoTitle =
   "Edsel Serrano | Software Engineer · Proyectos, notas y experimentos";
@@ -37,6 +44,7 @@ const alternateLanguages = [
 
 <html lang={lang}>
   <head>
+    <MainHead />
     <SEOHead
       title={seoTitle}
       description={seoDescription}
@@ -45,20 +53,29 @@ const alternateLanguages = [
       alternateLanguages={alternateLanguages}
       keywords={keywords}
       type="website"
+      schemaVariant="home"
     />
-    <MainHead />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    {/*
+     * Enable Astro view transitions across the home, blog and project flows.
+     * Without ClientRouter here, jumping `/` → `/blog/<slug>` would force a
+     * full hard navigation and lose the `transition:name` morph effects.
+     */}
+    <ClientRouter />
   </head>
 
   <body class="bg-bg text-fg font-sans antialiased">
+    <a href="#main" class="skip-to-content">
+      {t("a11y.skip_to_content", {}, lang)}
+    </a>
     <Nav />
-    <main>
+    <main id="main">
       <Hero lang={lang} />
       <FeaturedWork lang={lang} />
       <NowStrip lang={lang} />
       <LatestPosts lang={lang} />
     </main>
     <Footer />
-    <Analytics />
+    {showAnalytics && <Analytics />}
   </body>
 </html>

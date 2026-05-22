@@ -40,20 +40,20 @@ const alternateLanguages = [
 ];
 ---
 
-<SEOHead
-  title={seoTitle}
-  description={seoDescription}
-  canonical={currentLanguage === "en" ? "/en/blog/" : "/blog/"}
-  language={currentLanguage}
-  alternateLanguages={alternateLanguages}
-  type="website"
-/>
-
 <Layout
   title={t("blog.title", {}, currentLanguage)}
   lang={currentLanguage}
   rssHref={currentLanguage === "en" ? "/en/rss.xml" : "/rss.xml"}
 >
+  <SEOHead
+    slot="head"
+    title={seoTitle}
+    description={seoDescription}
+    canonical={currentLanguage === "en" ? "/en/blog/" : "/blog/"}
+    language={currentLanguage}
+    alternateLanguages={alternateLanguages}
+    type="website"
+  />
   <div class="min-h-screen">
     <div
       class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center"
