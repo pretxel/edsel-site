@@ -3,9 +3,9 @@ const Body = () => {
     <header className="header">
       <h1>Edsel Serrano</h1>
       <p>
-        Software Engineer &nbsp;&bull;&nbsp; Entrepreneur of Technology
-        &nbsp;&bull;&nbsp; Chatbot developer &nbsp;&bull;&nbsp; Machine learning
-        lover &nbsp;&bull;&nbsp; IoT developer
+        Software Engineer &nbsp;&bull;&nbsp; Emprendedor tech
+        &nbsp;&bull;&nbsp; Desarrollo de chatbots &nbsp;&bull;&nbsp; Machine
+        learning &nbsp;&bull;&nbsp; IoT
       </p>
     </header>
   );
