@@ -4,6 +4,9 @@ import type { Language } from "./i18n";
 
 export type ProjectEntry = CollectionEntry<"projects">;
 export type PostEntry = CollectionEntry<"posts">;
+export type PageEntry = CollectionEntry<"pages">;
+
+export type PageSlug = "about" | "now" | "uses";
 
 /**
  * Bilingual-resolved view of a project. Mirrors the shape the pages used to
@@ -254,14 +257,12 @@ export async function getRelatedProjects(
 
 /**
  * Union of all tags currently in use across posts + projects for a given lang.
- * Returns each canonical tag exactly once (case-sensitive first occurrence
- * wins). Use `slugifyTag` from `lib/tags.ts` to derive URL slugs.
  */
 export async function getAllTags(lang: Language): Promise<string[]> {
   const projects = await getLocalizedProjects(lang);
   const posts = await getAllPosts(lang);
 
-  const set = new Map<string, string>(); // slug -> canonical label
+  const set = new Map<string, string>();
   const { slugifyTag } = await import("./tags");
   const push = (tag: string) => {
     const slug = slugifyTag(tag);
@@ -276,7 +277,6 @@ export async function getAllTags(lang: Language): Promise<string[]> {
 
 /**
  * Items (posts + projects) carrying a given tag slug for a language.
- * Returns two arrays so the page can render them in distinct sections.
  */
 export async function getItemsByTagSlug(
   tagSlug: string,
@@ -297,11 +297,25 @@ export async function getItemsByTagSlug(
     p.tags.some((t) => slugifyTag(t) === tagSlug),
   );
 
-  // Pick a canonical label — first match from any item.
   const firstTag =
     posts.flatMap((p) => p.data.tags).find((t) => slugifyTag(t) === tagSlug) ??
     projects.flatMap((p) => p.tags).find((t) => slugifyTag(t) === tagSlug) ??
     null;
 
   return { posts, projects, canonicalLabel: firstTag };
+}
+
+/**
+ * Look up an evergreen page (`/about`, `/now`, `/uses`) for a given language.
+ */
+export async function getPage(
+  slug: PageSlug,
+  lang: Language,
+): Promise<PageEntry | undefined> {
+  const all = await getCollection("pages", ({ data }) => data.slug === slug);
+  return (
+    all.find((entry) => entry.data.lang === lang) ??
+    all.find((entry) => entry.data.lang === "es") ??
+    all[0]
+  );
 }

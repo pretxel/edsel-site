@@ -1,17 +1,41 @@
 import Styles from './styles.module.scss';
 
-function Nav() {
+/**
+ * Top-of-page navigation used on the homepage and any future legacy pages.
+ *
+ * The link copy is bilingual: a `lang` prop drives whether the Spanish or
+ * English labels render, and (for `en`) the URLs are prefixed with `/en`.
+ *
+ * Owned by agent 06-new-pages. Agent 04 reuses this component as-is on the
+ * homepage, so any tweaks should preserve the existing class hooks.
+ */
+function Nav({ lang = 'es' } = {}) {
+	const isEnglish = lang === 'en';
+	const prefix = isEnglish ? '/en' : '';
+
+	const links = isEnglish
+		? [
+				{ href: `${prefix}/`, label: 'Home' },
+				{ href: `${prefix}/blog`, label: 'Blog' },
+				{ href: `${prefix}/about`, label: 'About' },
+				{ href: `${prefix}/now`, label: 'Now' },
+		  ]
+		: [
+				{ href: `${prefix}/`, label: 'Inicio' },
+				{ href: `${prefix}/blog`, label: 'Blog' },
+				{ href: `${prefix}/about`, label: 'Sobre mí' },
+				{ href: `${prefix}/now`, label: 'Now' },
+		  ];
+
 	return (
-		<nav className={Styles.nav}>
-			{/* <a className={Styles.logolink} href="/">
-				<div className={Styles.monogram}>ED</div>
-			</a> */}
-			<a className={Styles.link} href="/blog">
-				Blog
-			</a>
-		
-			
+		<nav className={Styles.nav} aria-label="Primary">
+			{links.map((link) => (
+				<a key={link.href} className={Styles.link} href={link.href}>
+					{link.label}
+				</a>
+			))}
 		</nav>
 	);
 }
+
 export default Nav;
