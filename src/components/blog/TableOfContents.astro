@@ -1,0 +1,101 @@
+---
+/**
+ * Sticky table of contents for blog post detail pages.
+ *
+ * Consumes Astro's `MarkdownHeading[]` (returned by `render(entry)`), filters
+ * to h2/h3 only so the TOC doesn't drown in subheadings, and renders a
+ * scroll-spy aware list. Hidden on small screens — used as a sticky sidebar
+ * on lg+.
+ */
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+  title: string;
+}
+
+const { headings, title } = Astro.props;
+
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  toc.length > 0 && (
+    <nav class="toc text-sm" aria-label={title}>
+      <p class="text-fg-subtle uppercase tracking-wide text-xs font-semibold mb-3">
+        {title}
+      </p>
+      <ul class="space-y-2 border-l border-border-default">
+        {toc.map((h) => (
+          <li class={h.depth === 3 ? "pl-6" : "pl-3"}>
+            <a
+              href={`#${h.slug}`}
+              data-toc-slug={h.slug}
+              class="block py-1 text-fg-muted hover:text-fg-strong transition-colors border-l-2 border-transparent -ml-px pl-3 leading-snug"
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .toc a[data-toc-active="true"] {
+    color: var(--fg-strong);
+    border-color: var(--accent);
+  }
+</style>
+
+<script>
+  function setupTocScrollSpy() {
+    const links = document.querySelectorAll<HTMLAnchorElement>(
+      ".toc a[data-toc-slug]",
+    );
+    if (links.length === 0) return;
+
+    const map = new Map<string, HTMLAnchorElement>();
+    links.forEach((link) => {
+      const slug = link.dataset.tocSlug;
+      if (slug) map.set(slug, link);
+    });
+
+    const targets: HTMLElement[] = [];
+    map.forEach((_, slug) => {
+      const el = document.getElementById(slug);
+      if (el) targets.push(el);
+    });
+
+    if (targets.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = (entry.target as HTMLElement).id;
+          const link = map.get(id);
+          if (!link) return;
+          if (entry.isIntersecting) {
+            // Clear others, mark this one.
+            map.forEach((l) => l.removeAttribute("data-toc-active"));
+            link.setAttribute("data-toc-active", "true");
+          }
+        });
+      },
+      {
+        rootMargin: "-40% 0px -55% 0px",
+        threshold: 0,
+      },
+    );
+
+    targets.forEach((t) => observer.observe(t));
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupTocScrollSpy);
+  } else {
+    setupTocScrollSpy();
+  }
+  document.addEventListener("astro:page-load", setupTocScrollSpy);
+</script>

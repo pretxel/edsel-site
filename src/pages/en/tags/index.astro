@@ -1,0 +1,71 @@
+---
+// English mirror of /tags — same template, hardcoded language.
+import Layout from "../../../layouts/BlogLayout.astro";
+import { getAllTags, getItemsByTagSlug } from "../../../lib/content";
+import { t } from "../../../lib/i18n";
+import { slugifyTag } from "../../../lib/tags";
+import LanguageSwitcher from "../../../components/LanguageSwitcher.astro";
+import SEOHead from "../../../components/SEOHead.astro";
+
+const currentLanguage = "en" as const;
+const tags = await getAllTags(currentLanguage);
+
+const tagsWithCount = await Promise.all(
+  tags.map(async (tag) => {
+    const slug = slugifyTag(tag);
+    const { posts, projects } = await getItemsByTagSlug(slug, currentLanguage);
+    return { tag, slug, count: posts.length + projects.length };
+  }),
+);
+
+const alternateLanguages = [
+  { lang: "es" as const, url: "/tags/" },
+  { lang: "en" as const, url: "/en/tags/" },
+];
+---
+
+<SEOHead
+  title={`${t("tags.title", {}, currentLanguage)} - Edsel Serrano`}
+  description="Browse content by tag — programming languages, frameworks, and topics covered by Edsel Serrano."
+  canonical="/en/tags/"
+  language={currentLanguage}
+  alternateLanguages={alternateLanguages}
+/>
+
+<Layout title={t("tags.title", {}, currentLanguage)} lang={currentLanguage}>
+  <div class="min-h-screen">
+    <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center">
+      <a
+        href="/en/"
+        class="inline-flex items-center px-4 py-2 text-sm font-medium text-fg-muted hover:text-fg-strong bg-elev/60 hover:bg-elev rounded-lg border border-border-default hover:border-border-strong transition-all duration-200"
+      >
+        Home
+      </a>
+      <LanguageSwitcher
+        currentLanguage={currentLanguage}
+        currentPath={Astro.url.pathname}
+      />
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 py-24">
+      <h1 class="text-4xl sm:text-5xl font-bold text-fg-strong mb-3">
+        {t("tags.title", {}, currentLanguage)}
+      </h1>
+      <p class="text-fg-muted mb-12">{tagsWithCount.length} tags</p>
+
+      <div class="flex flex-wrap gap-3">
+        {
+          tagsWithCount.map(({ tag, slug, count }) => (
+            <a
+              href={`/en/tags/${slug}`}
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-elev hover:bg-muted border border-border-default hover:border-border-strong text-fg transition-colors"
+            >
+              <span class="font-medium">#{tag}</span>
+              <span class="text-xs text-fg-subtle">{count}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</Layout>

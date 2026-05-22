@@ -1,4 +1,5 @@
-import { getLocalizedProjects } from './content';
+import { getLocalizedProjects, getAllPosts, getAllTags } from './content';
+import { slugifyTag } from './tags';
 
 export interface SitemapUrl {
     loc: string;
@@ -60,38 +61,92 @@ export async function generateSitemapUrls(): Promise<SitemapUrl[]> {
         ]
     });
 
-    // Individual blog posts — drive numbering from chronological order so
-    // /blog/1, /blog/2, … stay stable across edits to the projects collection.
-    const projects = await getLocalizedProjects('es');
-    projects.forEach((post) => {
-        const lastmod = post.pubDate.toISOString().split('T')[0];
+    // Projects index pages (new canonical location for portfolio entries)
+    urls.push({
+        loc: `${baseUrl}/projects/`,
+        lastmod: today,
+        changefreq: 'weekly',
+        priority: 0.9,
+        alternates: [
+            { hreflang: 'es-ES', href: `${baseUrl}/projects/` },
+            { hreflang: 'en-US', href: `${baseUrl}/en/projects/` },
+            { hreflang: 'x-default', href: `${baseUrl}/projects/` }
+        ]
+    });
+    urls.push({
+        loc: `${baseUrl}/en/projects/`,
+        lastmod: today,
+        changefreq: 'weekly',
+        priority: 0.9,
+        alternates: [
+            { hreflang: 'es-ES', href: `${baseUrl}/projects/` },
+            { hreflang: 'en-US', href: `${baseUrl}/en/projects/` },
+            { hreflang: 'x-default', href: `${baseUrl}/projects/` }
+        ]
+    });
 
-        // Spanish version
+    // Individual project detail pages — use slug-based URLs.
+    const projects = await getLocalizedProjects('es');
+    projects.forEach((p) => {
+        const lastmod = p.pubDate.toISOString().split('T')[0];
         urls.push({
-            loc: `${baseUrl}/blog/${post.id}`,
+            loc: `${baseUrl}/projects/${p.slug}`,
             lastmod,
             changefreq: 'monthly',
             priority: 0.8,
             alternates: [
-                { hreflang: 'es-ES', href: `${baseUrl}/blog/${post.id}` },
-                { hreflang: 'en-US', href: `${baseUrl}/en/blog/${post.id}` },
-                { hreflang: 'x-default', href: `${baseUrl}/blog/${post.id}` }
+                { hreflang: 'es-ES', href: `${baseUrl}/projects/${p.slug}` },
+                { hreflang: 'en-US', href: `${baseUrl}/en/projects/${p.slug}` },
+                { hreflang: 'x-default', href: `${baseUrl}/projects/${p.slug}` }
             ]
         });
-
-        // English version
         urls.push({
-            loc: `${baseUrl}/en/blog/${post.id}`,
+            loc: `${baseUrl}/en/projects/${p.slug}`,
             lastmod,
             changefreq: 'monthly',
             priority: 0.8,
             alternates: [
-                { hreflang: 'es-ES', href: `${baseUrl}/blog/${post.id}` },
-                { hreflang: 'en-US', href: `${baseUrl}/en/blog/${post.id}` },
-                { hreflang: 'x-default', href: `${baseUrl}/blog/${post.id}` }
+                { hreflang: 'es-ES', href: `${baseUrl}/projects/${p.slug}` },
+                { hreflang: 'en-US', href: `${baseUrl}/en/projects/${p.slug}` },
+                { hreflang: 'x-default', href: `${baseUrl}/projects/${p.slug}` }
             ]
         });
     });
+
+    // Individual blog posts (long-form articles).
+    for (const lang of ['es', 'en'] as const) {
+        const posts = await getAllPosts(lang);
+        posts.forEach((p) => {
+            const lastmod = p.data.date.toISOString().split('T')[0];
+            const path = lang === 'en' ? `/en/blog/${p.id}` : `/blog/${p.id}`;
+            urls.push({
+                loc: `${baseUrl}${path}`,
+                lastmod,
+                changefreq: 'monthly',
+                priority: 0.7,
+            });
+        });
+    }
+
+    // Tag index + tag detail pages
+    for (const lang of ['es', 'en'] as const) {
+        const base = lang === 'en' ? '/en/tags' : '/tags';
+        urls.push({
+            loc: `${baseUrl}${base}/`,
+            lastmod: today,
+            changefreq: 'weekly',
+            priority: 0.6,
+        });
+        const tags = await getAllTags(lang);
+        tags.forEach((tag) => {
+            urls.push({
+                loc: `${baseUrl}${base}/${slugifyTag(tag)}`,
+                lastmod: today,
+                changefreq: 'weekly',
+                priority: 0.5,
+            });
+        });
+    }
 
     return urls;
 }

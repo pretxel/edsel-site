@@ -55,6 +55,39 @@ export const translations = {
 
         // Categories
         'category.project_showcase': 'Showcase de Proyecto',
+        'category.article': 'Artículo',
+
+        // Projects index
+        'projects.title': 'Proyectos',
+        'projects.welcome_title': 'Mis',
+        'projects.welcome_subtitle': 'Proyectos',
+        'projects.welcome_description': 'Una colección de cosas que he construido — apps, herramientas, experimentos. Cada proyecto es bilingüe; cámbialo desde el selector arriba.',
+        'projects.count': 'Proyectos',
+        'projects.latest': 'Últimos proyectos',
+        'projects.empty_title': 'Sin proyectos todavía',
+        'projects.empty_description': 'Pronto habrá cosas que mirar.',
+        'projects.visit_external': 'Visitar proyecto',
+        'projects.related': 'Proyectos relacionados',
+
+        // Posts (articles) — distinct from projects
+        'posts.empty_title': 'Todavía no hay artículos',
+        'posts.empty_description': 'Pronto publicaré ensayos y notas técnicas aquí.',
+        'posts.related': 'Artículos relacionados',
+        'posts.toc_title': 'En esta página',
+        'posts.share_label': 'Compartir',
+        'posts.share_copied': '¡Enlace copiado!',
+        'posts.reading_time': '{minutes} min de lectura',
+
+        // Tags
+        'tags.title': 'Etiquetas',
+        'tags.heading_for': 'Etiquetados con "{tag}"',
+        'tags.posts_section': 'Artículos',
+        'tags.projects_section': 'Proyectos',
+        'tags.empty': 'No hay nada bajo esta etiqueta todavía.',
+        'tags.back_to_all': 'Ver todas las etiquetas',
+
+        // Cards (additions)
+        'card.read_post': 'Leer artículo',
 
         // Language
         'language.spanish': 'Español',
@@ -128,6 +161,39 @@ export const translations = {
 
         // Categories
         'category.project_showcase': 'Project Showcase',
+        'category.article': 'Article',
+
+        // Projects index
+        'projects.title': 'Projects',
+        'projects.welcome_title': 'My',
+        'projects.welcome_subtitle': 'Projects',
+        'projects.welcome_description': 'A collection of things I have built — apps, tools, experiments. Each project is bilingual; switch from the toggle above.',
+        'projects.count': 'Projects',
+        'projects.latest': 'Latest projects',
+        'projects.empty_title': 'No projects yet',
+        'projects.empty_description': 'New work will land here soon.',
+        'projects.visit_external': 'Visit project',
+        'projects.related': 'Related projects',
+
+        // Posts (articles) — distinct from projects
+        'posts.empty_title': 'No articles yet',
+        'posts.empty_description': 'Long-form writing will land here soon.',
+        'posts.related': 'Related articles',
+        'posts.toc_title': 'On this page',
+        'posts.share_label': 'Share',
+        'posts.share_copied': 'Link copied!',
+        'posts.reading_time': '{minutes} min read',
+
+        // Tags
+        'tags.title': 'Tags',
+        'tags.heading_for': 'Tagged with "{tag}"',
+        'tags.posts_section': 'Articles',
+        'tags.projects_section': 'Projects',
+        'tags.empty': 'Nothing tagged like this yet.',
+        'tags.back_to_all': 'See all tags',
+
+        // Cards (additions)
+        'card.read_post': 'Read article',
 
         // Language
         'language.spanish': 'Español',

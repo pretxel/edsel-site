@@ -1,56 +1,42 @@
 ---
-/**
- * Blog index — lists long-form articles (`posts` collection).
- *
- * Projects no longer live here; they moved to `/projects`. If the user lands
- * here from an old link, the redirects in `astro.config.mjs` will catch the
- * numeric IDs. This page renders a friendly empty state when there are no
- * posts yet, plus a CTA pointing to /projects.
- */
 import Layout from "../../layouts/BlogLayout.astro";
-import { getAllPosts } from "../../lib/content";
+import { getLocalizedProjects } from "../../lib/content";
 import { getLanguageFromUrl, t, defaultLanguage } from "../../lib/i18n";
-import PostCard from "../../components/PostCard.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
 import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
 import SEOHead from "../../components/SEOHead.astro";
-import { readingTime } from "../../lib/reading-time";
 
 const currentLanguage =
   getLanguageFromUrl(Astro.url.pathname) || defaultLanguage;
-const posts = await getAllPosts(currentLanguage);
-
-const postsWithRT = posts.map((p) => ({
-  entry: p,
-  minutes: readingTime(p.body ?? ""),
-}));
+const projects = await getLocalizedProjects(currentLanguage);
 
 const seoTitle =
   currentLanguage === "en"
-    ? "Blog - Edsel Serrano | Web Development & Technology Insights"
-    : "Blog - Edsel Serrano | Desarrollo Web e Insights Tecnológicos";
+    ? "Projects - Edsel Serrano | Apps, Tools & Experiments"
+    : "Proyectos - Edsel Serrano | Apps, Herramientas y Experimentos";
 
 const seoDescription =
   currentLanguage === "en"
-    ? "Explore web development insights, technology trends, and creative projects by Edsel Serrano."
-    : "Explora insights sobre desarrollo web, tendencias tecnológicas y proyectos creativos de Edsel Serrano.";
+    ? "Browse Edsel Serrano's portfolio of apps, tools, and experiments — built with React, Next.js, Astro, and more."
+    : "Explora el portafolio de apps, herramientas y experimentos de Edsel Serrano — construidos con React, Next.js, Astro y más.";
 
 const alternateLanguages = [
-  { lang: "es" as const, url: "/blog/" },
-  { lang: "en" as const, url: "/en/blog/" },
+  { lang: "es" as const, url: "/projects/" },
+  { lang: "en" as const, url: "/en/projects/" },
 ];
 ---
 
 <SEOHead
   title={seoTitle}
   description={seoDescription}
-  canonical={currentLanguage === "en" ? "/en/blog/" : "/blog/"}
+  canonical={currentLanguage === "en" ? "/en/projects/" : "/projects/"}
   language={currentLanguage}
   alternateLanguages={alternateLanguages}
   type="website"
 />
 
 <Layout
-  title={t("blog.title", {}, currentLanguage)}
+  title={t("projects.title", {}, currentLanguage)}
   lang={currentLanguage}
   rssHref={currentLanguage === "en" ? "/en/rss.xml" : "/rss.xml"}
 >
@@ -91,21 +77,22 @@ const alternateLanguages = [
           <h1
             class="text-4xl sm:text-5xl lg:text-6xl font-bold text-fg-strong mb-6 leading-tight"
           >
-            {t("blog.welcome_title", {}, currentLanguage)}{" "}
+            {t("projects.welcome_title", {}, currentLanguage)}{" "}
             <span class="bg-clip-text text-transparent" style="background-image: var(--gradient-brand);">
-              {t("blog.welcome_subtitle", {}, currentLanguage)}
+              {t("projects.welcome_subtitle", {}, currentLanguage)}
             </span>
           </h1>
           <p
             class="text-xl text-fg-muted mb-8 max-w-2xl mx-auto leading-relaxed"
           >
-            {t("blog.welcome_description", {}, currentLanguage)}
+            {t("projects.welcome_description", {}, currentLanguage)}
           </p>
           <div
             class="flex justify-center items-center space-x-4 text-sm text-fg-subtle"
           >
             <span class="flex items-center">
-              {posts.length} {t("blog.articles_count", {}, currentLanguage)}
+              {projects.length}{" "}
+              {t("projects.count", {}, currentLanguage)}
             </span>
           </div>
         </div>
@@ -116,53 +103,33 @@ const alternateLanguages = [
       <div class="max-w-7xl mx-auto">
         <div class="mb-12">
           <h2 class="text-3xl font-bold text-fg-strong mb-4">
-            {t("blog.latest_articles", {}, currentLanguage)}
+            {t("projects.latest", {}, currentLanguage)}
           </h2>
           <div class="w-20 h-1 rounded-full" style="background-image: var(--gradient-brand);"></div>
         </div>
 
+        <div
+          class="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
+          {
+            projects.map((project) => (
+              <ProjectCard
+                project={project}
+                currentLanguage={currentLanguage}
+              />
+            ))
+          }
+        </div>
+
         {
-          postsWithRT.length > 0 ? (
-            <div class="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {postsWithRT.map(({ entry, minutes }) => (
-                <PostCard
-                  variant="post"
-                  post={entry}
-                  currentLanguage={currentLanguage}
-                  readingMinutes={minutes}
-                />
-              ))}
-            </div>
-          ) : (
+          projects.length === 0 && (
             <div class="text-center py-16">
-              <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-elev flex items-center justify-center">
-                <svg
-                  class="w-12 h-12 text-fg-subtle"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-              </div>
               <h3 class="text-xl font-semibold text-fg mb-2">
-                {t("posts.empty_title", {}, currentLanguage)}
+                {t("projects.empty_title", {}, currentLanguage)}
               </h3>
-              <p class="text-fg-subtle mb-6">
-                {t("posts.empty_description", {}, currentLanguage)}
+              <p class="text-fg-subtle">
+                {t("projects.empty_description", {}, currentLanguage)}
               </p>
-              <a
-                href={currentLanguage === "en" ? "/en/projects" : "/projects"}
-                class="inline-flex items-center px-5 py-2.5 rounded-lg bg-accent text-bg font-semibold hover:bg-accent-hover transition-colors"
-              >
-                {t("projects.title", {}, currentLanguage)} →
-              </a>
             </div>
           )
         }

@@ -1,0 +1,27 @@
+---
+/**
+ * Thin alias around `PostCard` with `variant="project"`.
+ *
+ * Exists so call-sites read intentionally (`<ProjectCard project={...} />`)
+ * without having to remember the variant prop. The actual visual treatment
+ * lives in PostCard.astro.
+ */
+import PostCard from "./PostCard.astro";
+import type { LocalizedProject } from "../lib/content";
+import type { Language } from "../lib/i18n";
+
+interface Props {
+  project: LocalizedProject;
+  currentLanguage: Language;
+  readingMinutes?: number;
+}
+
+const { project, currentLanguage, readingMinutes } = Astro.props;
+---
+
+<PostCard
+  variant="project"
+  project={project}
+  currentLanguage={currentLanguage}
+  readingMinutes={readingMinutes}
+/>
