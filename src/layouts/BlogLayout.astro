@@ -55,15 +55,15 @@ import "../styles/blog.css";
     <!-- End Google Tag Manager -->
     <ClientRouter />
   </head>
-  <body class="dark">
+  <body class="bg-bg text-fg font-sans">
     <div class="relative h-screen p-2 gap-2 flex items-stretch">
-      <div class="rounded-lg bg-zinc-900 flex-1 mx-auto overflow-y-auto">
+      <div class="rounded-lg bg-surface flex-1 mx-auto overflow-y-auto">
         <slot />
       </div>
     </div>
     <div
       id="not-support"
-      class="fixed hidden bg-red-700 bottom-0 inset-x-0 rounded-t-md text-center py-2 lg:py-4 z-50 font-semibold"
+      class="fixed hidden bg-danger bottom-0 inset-x-0 rounded-t-md text-center py-2 lg:py-4 z-50 font-semibold text-white"
     >
       It seems your browser does not support view transitions yet :( try it
       using chrome or edge

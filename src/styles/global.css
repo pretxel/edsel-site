@@ -1,0 +1,196 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+@import "./tokens.css";
+
+@plugin "@tailwindcss/typography";
+
+/*
+ * Bridge our design tokens into Tailwind 4's theme so utilities like
+ * `bg-bg`, `bg-surface`, `text-fg`, `text-accent`, `font-sans`, `rounded-md`
+ * resolve back to the same custom properties used in plain CSS.
+ *
+ * `@theme inline` keeps the var() reference, so anything that overrides
+ * the underlying token (e.g. via media query or container) keeps cascading.
+ */
+@theme inline {
+  /* Colors */
+  --color-bg: var(--bg-app);
+  --color-surface: var(--bg-surface);
+  --color-elev: var(--bg-elev);
+  --color-muted: var(--bg-muted);
+
+  --color-fg: var(--fg-default);
+  --color-fg-strong: var(--fg-strong);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+
+  --color-success: var(--c-success);
+  --color-warn: var(--c-warn);
+  --color-danger: var(--c-danger);
+
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Radii */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+
+  /* Motion */
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+html {
+  background: var(--bg-app);
+  color: var(--fg-default);
+  font-family: var(--font-sans);
+  font-feature-settings:
+    "cv02", "cv03", "cv04", "cv11"; /* sharper Inter glyphs */
+}
+
+body,
+input,
+select,
+textarea {
+  background: var(--bg-app);
+  color: var(--fg-default);
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-relaxed);
+  font-size: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  outline: 0;
+  text-decoration: none;
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+}
+
+/* Honor reduced motion at the global level. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Home header/footer (legacy markup still used by /index.astro) ──
+ * Agent 04 will redesign the homepage. Until then, keep the existing
+ * layout working with tokens instead of hard-coded colors.
+ */
+.header {
+  cursor: default;
+  display: inline-block;
+  opacity: 1;
+  position: absolute;
+  text-align: center;
+  vertical-align: middle;
+  width: 100%;
+  z-index: 10;
+  top: 30px;
+  left: 0;
+  bottom: 0;
+}
+
+.footer {
+  cursor: default;
+  display: inline-block;
+  opacity: 1;
+  position: absolute;
+  text-align: center;
+  vertical-align: middle;
+  width: 100%;
+  z-index: 10;
+  left: 0;
+  bottom: 30px;
+  right: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .header {
+    height: 100px;
+  }
+}
+
+.header h1 {
+  font-size: 4.35em;
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 1em;
+  color: var(--fg-strong);
+}
+
+.header p {
+  font-size: 1.25em;
+  margin: 0.75em 0 0.25em 0;
+  opacity: 0.75;
+  color: var(--fg-default);
+}
+
+.footer nav {
+  margin: 1.5em 0 0 0;
+}
+
+.footer nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer nav li {
+  display: inline-block;
+  margin: 0 0.5em;
+}
+
+.footer nav a {
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: var(--radius-full);
+  border: solid 1px var(--border-strong);
+  color: var(--fg-strong);
+  transition: background-color var(--dur-base) var(--ease-out);
+}
+
+.footer nav a:hover {
+  background-color: var(--bg-muted);
+}
+
+.footer nav a:active {
+  background-color: var(--border-strong);
+}
+
+.footer nav a span {
+  display: none;
+}
