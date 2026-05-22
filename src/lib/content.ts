@@ -4,6 +4,9 @@ import type { Language } from "./i18n";
 
 export type ProjectEntry = CollectionEntry<"projects">;
 export type PostEntry = CollectionEntry<"posts">;
+export type PageEntry = CollectionEntry<"pages">;
+
+export type PageSlug = "about" | "now" | "uses";
 
 /**
  * Bilingual-resolved view of a project. Mirrors the shape the pages used to
@@ -188,5 +191,31 @@ export async function getAllPosts(lang: Language): Promise<PostEntry[]> {
   );
   return all.sort(
     (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+  );
+}
+
+/**
+ * Look up an evergreen page (`/about`, `/now`, `/uses`) for a given language.
+ *
+ * Resolution order:
+ * 1. exact (`slug`, `lang`) match,
+ * 2. monolingual entry (no `lang` filter — for pages that share a single
+ *    file across locales, e.g. `now.md`),
+ * 3. fallback to the Spanish copy so pages never 404 when only the default
+ *    locale exists.
+ *
+ * Returns `undefined` only when no copy at all is present. Pages can use
+ * that to render a graceful placeholder during partial migrations (e.g.
+ * `now.md` arriving from agent 04 after this branch lands).
+ */
+export async function getPage(
+  slug: PageSlug,
+  lang: Language,
+): Promise<PageEntry | undefined> {
+  const all = await getCollection("pages", ({ data }) => data.slug === slug);
+  return (
+    all.find((entry) => entry.data.lang === lang) ??
+    all.find((entry) => entry.data.lang === "es") ??
+    all[0]
   );
 }
