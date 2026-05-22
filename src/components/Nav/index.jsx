@@ -16,12 +16,12 @@ function Nav({ lang = 'es' } = {}) {
 	const links = isEnglish
 		? [
 				{ href: `${prefix}/`, label: 'Home' },
-				{ href: `${prefix}/blog`, label: 'Blog' },
+				{ href: `${prefix}/projects`, label: 'Projects' },
 				{ href: `${prefix}/about`, label: 'About' },
 		  ]
 		: [
 				{ href: `${prefix}/`, label: 'Inicio' },
-				{ href: `${prefix}/blog`, label: 'Blog' },
+				{ href: `${prefix}/projects`, label: 'Proyectos' },
 				{ href: `${prefix}/about`, label: 'Sobre mí' },
 		  ];
 

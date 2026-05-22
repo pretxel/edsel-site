@@ -22,8 +22,7 @@ const palettes: number[][] = [
 ];
 const particleColors = palettes[Math.floor(Math.random() * palettes.length)];
 
-const projectsHref = lang === "en" ? "/en/blog" : "/blog";
-const postsHref = lang === "en" ? "/en/blog" : "/blog";
+const projectsHref = lang === "en" ? "/en/projects" : "/projects";
 ---
 
 <section
@@ -85,13 +84,6 @@ const postsHref = lang === "en" ? "/en/blog" : "/blog";
       >
         {t("home.hero.cta.projects", {}, lang)}
         <span aria-hidden="true" class="ml-2">&rarr;</span>
-      </a>
-
-      <a
-        href={postsHref}
-        class="inline-flex items-center justify-center rounded-md border border-border-strong px-5 py-3 text-sm font-semibold text-fg-strong transition-colors duration-200 hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        {t("home.hero.cta.posts", {}, lang)}
       </a>
     </div>
   </div>

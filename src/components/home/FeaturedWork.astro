@@ -22,12 +22,12 @@ if (projects.length === 0) {
   projects = (await getLocalizedProjects(lang)).slice(0, 3);
 }
 
-// `/projects` doesn't exist yet (owned by agent 05). Until then, point
-// "view all" at `/blog`, which currently lists the full project catalog.
-const viewAllHref = lang === "en" ? "/en/blog" : "/blog";
+const viewAllHref = lang === "en" ? "/en/projects" : "/projects";
 
 function projectHref(project: LocalizedProject) {
-  return lang === "en" ? `/en/blog/${project.id}` : `/blog/${project.id}`;
+  return lang === "en"
+    ? `/en/projects/${project.slug}`
+    : `/projects/${project.slug}`;
 }
 ---
 
