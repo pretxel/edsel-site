@@ -19,6 +19,7 @@
     "@astrojs/mdx": "^5.0.6",
     "@astrojs/node": "^10.1.1",
     "@iconify-json/bi": "^1.2.7",
+    "@iconify-json/circle-flags": "^1.2.10",
     "@iconify-json/lucide": "^1.2.109",
     "@playwright/test": "^1.60.0",
     "@tailwindcss/typography": "^0.5.19",
