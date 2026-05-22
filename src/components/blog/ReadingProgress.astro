@@ -1,0 +1,78 @@
+---
+/**
+ * Top-of-viewport reading progress bar.
+ *
+ * No props — drops a 2px fixed bar at the top and updates its width via
+ * `requestAnimationFrame` on scroll. Reduced-motion users still get the bar
+ * because progress feedback is informational, not animated decoration.
+ */
+---
+
+<div
+  class="reading-progress"
+  role="progressbar"
+  aria-label="Reading progress"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+>
+  <div class="reading-progress__fill" data-reading-progress-fill></div>
+</div>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: 60;
+    pointer-events: none;
+  }
+  .reading-progress__fill {
+    height: 100%;
+    width: 0%;
+    background: var(--gradient-brand);
+    transition: width 80ms linear;
+    will-change: width;
+  }
+</style>
+
+<script>
+  function setupReadingProgress() {
+    const fill = document.querySelector<HTMLElement>(
+      "[data-reading-progress-fill]",
+    );
+    const bar = fill?.parentElement;
+    if (!fill || !bar) return;
+
+    let ticking = false;
+    const update = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      const pct = max <= 0 ? 0 : Math.min(100, (window.scrollY / max) * 100);
+      fill.style.width = `${pct}%`;
+      bar.setAttribute("aria-valuenow", String(Math.round(pct)));
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupReadingProgress);
+  } else {
+    setupReadingProgress();
+  }
+  document.addEventListener("astro:page-load", setupReadingProgress);
+</script>

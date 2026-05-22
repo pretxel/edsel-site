@@ -190,3 +190,118 @@ export async function getAllPosts(lang: Language): Promise<PostEntry[]> {
     (a, b) => b.data.date.getTime() - a.data.date.getTime(),
   );
 }
+
+/**
+ * Find a single post by its content-collection id (file basename).
+ */
+export async function getPostBySlug(
+  slug: string,
+): Promise<PostEntry | undefined> {
+  const all = await getCollection("posts", ({ data }) => !data.draft);
+  return all.find((entry) => entry.id === slug);
+}
+
+/**
+ * Related posts: same lang, intersect tags, sorted by shared-tag count
+ * desc then date desc. Falls back to most recent posts when there is no
+ * overlap so the section never renders empty for a post with content.
+ */
+export async function getRelatedPosts(
+  current: PostEntry,
+  limit = 3,
+): Promise<PostEntry[]> {
+  const all = await getAllPosts(current.data.lang);
+  const others = all.filter((p) => p.id !== current.id);
+  const tags = new Set(current.data.tags);
+
+  const scored = others
+    .map((p) => ({
+      entry: p,
+      shared: p.data.tags.filter((t) => tags.has(t)).length,
+    }))
+    .sort((a, b) => {
+      if (b.shared !== a.shared) return b.shared - a.shared;
+      return b.entry.data.date.getTime() - a.entry.data.date.getTime();
+    });
+
+  return scored.slice(0, limit).map((s) => s.entry);
+}
+
+/**
+ * Related projects to a given project: intersect tags, drop self, top N.
+ */
+export async function getRelatedProjects(
+  current: ProjectEntry,
+  lang: Language,
+  limit = 3,
+): Promise<LocalizedProject[]> {
+  const all = await getLocalizedProjects(lang);
+  const others = all.filter((p) => p.slug !== current.id);
+  const tags = new Set(current.data.tags);
+
+  const scored = others
+    .map((p) => ({
+      project: p,
+      shared: p.tags.filter((t) => tags.has(t)).length,
+    }))
+    .sort((a, b) => {
+      if (b.shared !== a.shared) return b.shared - a.shared;
+      return b.project.pubDate.getTime() - a.project.pubDate.getTime();
+    });
+
+  return scored.slice(0, limit).map((s) => s.project);
+}
+
+/**
+ * Union of all tags currently in use across posts + projects for a given lang.
+ * Returns each canonical tag exactly once (case-sensitive first occurrence
+ * wins). Use `slugifyTag` from `lib/tags.ts` to derive URL slugs.
+ */
+export async function getAllTags(lang: Language): Promise<string[]> {
+  const projects = await getLocalizedProjects(lang);
+  const posts = await getAllPosts(lang);
+
+  const set = new Map<string, string>(); // slug -> canonical label
+  const { slugifyTag } = await import("./tags");
+  const push = (tag: string) => {
+    const slug = slugifyTag(tag);
+    if (!set.has(slug)) set.set(slug, tag);
+  };
+  projects.forEach((p) => p.tags.forEach(push));
+  posts.forEach((p) => p.data.tags.forEach(push));
+  return Array.from(set.values()).sort((a, b) =>
+    a.toLowerCase().localeCompare(b.toLowerCase()),
+  );
+}
+
+/**
+ * Items (posts + projects) carrying a given tag slug for a language.
+ * Returns two arrays so the page can render them in distinct sections.
+ */
+export async function getItemsByTagSlug(
+  tagSlug: string,
+  lang: Language,
+): Promise<{
+  posts: PostEntry[];
+  projects: LocalizedProject[];
+  canonicalLabel: string | null;
+}> {
+  const { slugifyTag } = await import("./tags");
+  const allPosts = await getAllPosts(lang);
+  const allProjects = await getLocalizedProjects(lang);
+
+  const posts = allPosts.filter((p) =>
+    p.data.tags.some((t) => slugifyTag(t) === tagSlug),
+  );
+  const projects = allProjects.filter((p) =>
+    p.tags.some((t) => slugifyTag(t) === tagSlug),
+  );
+
+  // Pick a canonical label — first match from any item.
+  const firstTag =
+    posts.flatMap((p) => p.data.tags).find((t) => slugifyTag(t) === tagSlug) ??
+    projects.flatMap((p) => p.tags).find((t) => slugifyTag(t) === tagSlug) ??
+    null;
+
+  return { posts, projects, canonicalLabel: firstTag };
+}

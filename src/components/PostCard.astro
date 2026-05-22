@@ -1,108 +1,233 @@
 ---
+/**
+ * Unified card component for the blog list (posts) and projects list.
+ *
+ * The component intentionally accepts two distinct shapes:
+ *   - `variant="project"` → `project: LocalizedProject` (cover, color, link)
+ *   - `variant="post"`    → `post: PostEntry` plus pre-computed metadata
+ *
+ * Look & feel matches the legacy ProjectCard so the redesign feels continuous
+ * to existing visitors. All colors now consume design tokens (agent 02).
+ */
 import type { LocalizedProject } from "../lib/content";
+import type { PostEntry } from "../lib/content";
 import type { Language } from "../lib/i18n";
 import { t, formatDateShort } from "../lib/i18n";
+import { tagUrl } from "../lib/tags";
 
-interface Props {
-  post: LocalizedProject;
+interface ProjectVariantProps {
+  variant?: "project";
+  project: LocalizedProject;
   currentLanguage: Language;
+  readingMinutes?: number;
+  // Legacy alias kept so existing call-sites (`<PostCard post={...}/>`)
+  // continue to compile while we migrate.
+  post?: never;
 }
 
-const { post, currentLanguage } = Astro.props;
+interface PostVariantProps {
+  variant: "post";
+  post: PostEntry;
+  currentLanguage: Language;
+  readingMinutes: number;
+  project?: never;
+}
+
+type Props = ProjectVariantProps | PostVariantProps;
+
+const props = Astro.props as Props;
+const currentLanguage = props.currentLanguage;
+const variant = props.variant ?? "project";
+
+// Normalize to a card-friendly view-model regardless of variant.
+const view = variant === "post"
+  ? (() => {
+      const p = props.post;
+      return {
+        id: p.id,
+        title: p.data.title,
+        description: p.data.description,
+        cover: p.data.cover ?? "/og-default.jpg",
+        accent: "var(--accent)" as string,
+        date: p.data.date.toISOString(),
+        tags: p.data.tags,
+        author: undefined as string | undefined,
+        href:
+          currentLanguage === "en" ? `/en/blog/${p.id}` : `/blog/${p.id}`,
+        category: t("category.article", {}, currentLanguage),
+        showRead: t("card.read_post", {}, currentLanguage),
+        readingMinutes: props.readingMinutes,
+        transitionKey: p.id,
+      };
+    })()
+  : (() => {
+      const p = props.project;
+      return {
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        cover: p.cover,
+        accent: p.color.accent,
+        date: p.date,
+        tags: p.tags,
+        author: p.author,
+        href:
+          currentLanguage === "en"
+            ? `/en/projects/${p.slug}`
+            : `/projects/${p.slug}`,
+        category: t("card.project", {}, currentLanguage),
+        showRead: t("card.read_more", {}, currentLanguage),
+        readingMinutes: props.readingMinutes,
+        transitionKey: p.slug,
+      };
+    })();
 ---
 
 <article
-  class="group relative bg-zinc-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-zinc-700/50 hover:border-zinc-600/50 transition-all duration-300 hover:shadow-2xl hover:shadow-black/20 hover:-translate-y-1"
-  transition:name=`blog ${post.id} box`
+  class="group relative bg-elev/60 backdrop-blur-sm rounded-xl overflow-hidden border border-border-default hover:border-border-strong transition-all duration-300 hover:shadow-2xl hover:shadow-black/20 hover:-translate-y-1"
+  transition:name={`card ${view.transitionKey} box`}
 >
-  <!-- Image Container -->
+  <!-- Image -->
   <div class="relative overflow-hidden">
     <div class="aspect-[4/3] relative">
       <img
-        src={post.cover}
-        alt={post.title}
+        src={view.cover}
+        alt={view.title}
         class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-        transition:name=`blog ${post.id} image`
+        transition:name={`card ${view.transitionKey} image`}
         loading="lazy"
       />
-      <!-- Gradient Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      ></div>
     </div>
-    
+
     <!-- Category Badge -->
     <div class="absolute top-3 left-3">
-      <span 
+      <span
         class="px-3 py-1 text-xs font-semibold rounded-full text-white shadow-lg"
-        style={`background: ${post.color.accent}`}
+        style={`background: ${view.accent}`}
       >
-        {t('card.project', {}, currentLanguage)}
+        {view.category}
       </span>
     </div>
 
-    <!-- Read Time Badge -->
-    <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-      <span class="px-2 py-1 text-xs font-medium bg-black/70 text-white rounded backdrop-blur-sm">
-        5 {t('post.min_read', {}, currentLanguage)}
-      </span>
-    </div>
+    {
+      view.readingMinutes && (
+        <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span class="px-2 py-1 text-xs font-medium bg-black/70 text-white rounded backdrop-blur-sm">
+            {view.readingMinutes} {t("post.min_read", {}, currentLanguage)}
+          </span>
+        </div>
+      )
+    }
   </div>
 
-  <!-- Content Container -->
+  <!-- Body -->
   <div class="p-6">
-    <!-- Title -->
-    <h3 
-      class="text-lg font-bold text-white mb-3 line-clamp-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-500 group-hover:bg-clip-text transition-all duration-300"
-      transition:name=`blog ${post.id} title`
+    <h3
+      class="text-lg font-bold text-fg-strong mb-3 line-clamp-2 group-hover:text-accent transition-colors duration-300"
+      transition:name={`card ${view.transitionKey} title`}
     >
-      {post.title}
+      {view.title}
     </h3>
 
-    <!-- Description -->
-    <p class="text-zinc-400 text-sm mb-4 line-clamp-3 leading-relaxed">
-      {post.description}
+    <p class="text-fg-muted text-sm mb-4 line-clamp-3 leading-relaxed">
+      {view.description}
     </p>
 
-    <!-- Metadata -->
-    <div class="flex items-center justify-between text-xs text-zinc-500">
+    <!-- Tag chips (clickable, top 4) -->
+    {
+      view.tags.length > 0 && (
+        <div class="flex flex-wrap gap-1.5 mb-4 relative z-20">
+          {view.tags.slice(0, 4).map((tag) => (
+            <a
+              href={tagUrl(tag, currentLanguage)}
+              class="px-2 py-0.5 text-xs rounded-full bg-muted text-fg-muted hover:bg-elev hover:text-fg transition-colors"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="flex items-center justify-between text-xs text-fg-subtle">
       <div class="flex items-center space-x-3">
+        {
+          view.author && (
+            <span class="flex items-center">
+              <svg
+                class="w-3 h-3 mr-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {view.author}
+            </span>
+          )
+        }
         <span class="flex items-center">
-          <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+          <svg
+            class="w-3 h-3 mr-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
           </svg>
-          {post.author}
-        </span>
-        <span class="flex items-center">
-          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-          </svg>
-          {formatDateShort(post.date, currentLanguage)}
+          {formatDateShort(view.date, currentLanguage)}
         </span>
       </div>
-      
-      <!-- Read More Arrow -->
-      <div class="flex items-center text-zinc-400 group-hover:text-white transition-colors duration-300">
-        <span class="text-xs mr-1">{t('card.read_more', {}, currentLanguage)}</span>
-        <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+
+      <div
+        class="flex items-center text-fg-muted group-hover:text-fg-strong transition-colors duration-300"
+      >
+        <span class="text-xs mr-1">{view.showRead}</span>
+        <svg
+          class="w-3 h-3 transform group-hover:translate-x-1 transition-transform duration-300"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"
+          />
         </svg>
       </div>
     </div>
   </div>
 
-  <!-- Click Target -->
+  <!-- Click target (kept below tag chips via z-index) -->
   <a
-    href={currentLanguage === 'en' ? `/en/blog/${post.id}` : `/blog/${post.id}`}
+    href={view.href}
     class="absolute inset-0 z-10"
-    aria-label={t('post.read_article', { title: post.title }, currentLanguage)}
+    aria-label={t("post.read_article", { title: view.title }, currentLanguage)}
   >
-    <span class="sr-only">{t('post.read_article', { title: post.title }, currentLanguage)}</span>
+    <span class="sr-only">
+      {t("post.read_article", { title: view.title }, currentLanguage)}
+    </span>
   </a>
 
-  <!-- Hover Glow Effect -->
-  <div 
+  <!-- Hover glow -->
+  <div
     class="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none rounded-xl"
-    style={`background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${post.color.accent}, transparent 40%);`}
-  ></div>
+    style={`background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${view.accent}, transparent 40%);`}
+  >
+  </div>
 </article>
 
 <style>
@@ -112,7 +237,6 @@ const { post, currentLanguage } = Astro.props;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
