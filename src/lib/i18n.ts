@@ -106,7 +106,7 @@ export const translations = {
         // Homepage — Hero
         'home.hero.eyebrow': 'Software engineer · México',
         'home.hero.title': 'Edsel Serrano',
-        'home.hero.subtitle': 'Construyo herramientas para equipos ágiles. Escribo sobre lo que aprendo en el camino.',
+        'home.hero.subtitle': 'Software Engineer  •  Entrepreneur of Technology  •  Machine learning lover  •  Agentic Engineer',
         'home.hero.cta.projects': 'Ver proyectos',
         'home.hero.cta.posts': 'Leer notas',
 
@@ -216,7 +216,7 @@ export const translations = {
         // Homepage — Hero
         'home.hero.eyebrow': 'Software engineer · Mexico',
         'home.hero.title': 'Edsel Serrano',
-        'home.hero.subtitle': 'I build tools for agile teams. I write about what I learn along the way.',
+        'home.hero.subtitle': 'Software Engineer  •  Entrepreneur of Technology  •  Machine learning lover  •  Agentic Engineer',
         'home.hero.cta.projects': 'See projects',
         'home.hero.cta.posts': 'Read notes',
 

@@ -4,7 +4,6 @@ import SEOHead from "../../components/SEOHead.astro";
 import Nav from "../../components/Nav/index.jsx";
 import Hero from "../../components/home/Hero.astro";
 import FeaturedWork from "../../components/home/FeaturedWork.astro";
-import LatestPosts from "../../components/home/LatestPosts.astro";
 import Footer from "../../components/Footer/index.astro";
 import Analytics from "@vercel/analytics/astro";
 import { ClientRouter } from "astro:transitions";
@@ -62,7 +61,6 @@ const alternateLanguages = [
     <main id="main">
       <Hero lang={lang} />
       <FeaturedWork lang={lang} />
-      <LatestPosts lang={lang} />
     </main>
     <Footer />
     {showAnalytics && <Analytics />}
