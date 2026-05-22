@@ -12,6 +12,9 @@ export interface I18nConfig {
 // Translation keys and values
 export const translations = {
     es: {
+        // Accessibility
+        'a11y.skip_to_content': 'Saltar al contenido',
+
         // Navigation
         'nav.home': 'Inicio',
         'nav.projects': 'Proyectos',
@@ -133,6 +136,9 @@ export const translations = {
         'home.posts.empty': 'Próximamente notas — sigue el RSS.',
     },
     en: {
+        // Accessibility
+        'a11y.skip_to_content': 'Skip to content',
+
         // Navigation
         'nav.home': 'Home',
         'nav.projects': 'Projects',
@@ -259,11 +265,13 @@ export type TranslationKey = keyof typeof translations.es;
 
 // Get translation function
 export function t(key: TranslationKey, params?: Record<string, string>, lang: Language = defaultLanguage): string {
-    const translation = translations[lang]?.[key] || translations[defaultLanguage][key] || key;
+    // Casting to `string` widens the literal union from the const translations
+    // map so the subsequent `.reduce(...)` accumulator types check cleanly.
+    const translation: string = translations[lang]?.[key] || translations[defaultLanguage][key] || key;
 
     if (!params) return translation;
 
-    return Object.entries(params).reduce((text, [param, value]) => {
+    return Object.entries(params).reduce<string>((text, [param, value]) => {
         return text.replace(new RegExp(`{${param}}`, 'g'), value);
     }, translation);
 }

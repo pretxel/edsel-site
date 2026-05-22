@@ -1,6 +1,6 @@
 ---
 import type { Language } from "../lib/i18n";
-import { defaultLanguage } from "../lib/i18n";
+import { defaultLanguage, t } from "../lib/i18n";
 
 interface Props {
   title: string;
@@ -20,15 +20,38 @@ import Analytics from "@vercel/analytics/astro";
 import { ClientRouter } from "astro:transitions";
 import "./layout.css";
 import "../styles/blog.css";
+
+// Only inject Vercel Analytics in real production deploys. Locally the
+// `_vercel/insights/script.js` endpoint 404s and contaminates Lighthouse.
+const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
+    <!--
+      Charset is the very first thing in <head> to satisfy Lighthouse's
+      `charset` audit. Anything that emits bytes (analytics, JSON-LD, etc.)
+      must come after this point.
+    -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
+    {/*
+     * Preload the Latin Inter variable font as soon as the browser sees
+     * <head>. Without this it would only be discovered after blog.css
+     * parses (~80KB), pushing FCP past 1.8s on slow 4G. The font file is
+     * fingerprinted by @fontsource-variable; this href matches the bundled
+     * asset path emitted by Astro's build.
+     */}
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+      href="/_astro/inter-latin-wght-normal.Dx4kXJAl.woff2"
+    />
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -36,30 +59,23 @@ import "../styles/blog.css";
       href={rssHref}
     />
     <title>{title}</title>
-    <!-- Google Tag Manager -->
-    <script defer>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({
-          "gtm.start": new Date().getTime(),
-          event: "gtm.js",
-        });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-        j.async = true;
-        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", "GTM-KW47SVK");
-    </script>
-    <!-- End Google Tag Manager -->
+    {/*
+     * Pages can inject extra <head> content (SEO meta tags, JSON-LD, etc.)
+     * via this named slot. Keeping <SEOHead> inside <head> avoids the
+     * "Charset declaration is missing or occurs too late" Lighthouse audit
+     * that fires when SEOHead is rendered as top-level page markup.
+     */}
+    <slot name="head" />
     <ClientRouter />
   </head>
   <body class="bg-bg text-fg font-sans">
-    <div class="relative h-screen p-2 gap-2 flex items-stretch">
-      <div class="rounded-lg bg-surface flex-1 mx-auto overflow-y-auto">
+    <a href="#main" class="skip-to-content">
+      {t("a11y.skip_to_content", {}, lang)}
+    </a>
+    <div class="relative min-h-screen p-2 gap-2 flex items-stretch">
+      <main id="main" class="rounded-lg bg-surface flex-1 mx-auto overflow-y-auto w-full">
         <slot />
-      </div>
+      </main>
     </div>
     <div
       id="not-support"
@@ -68,6 +84,6 @@ import "../styles/blog.css";
       It seems your browser does not support view transitions yet :( try it
       using chrome or edge
     </div>
-    <Analytics />
+    {showAnalytics && <Analytics />}
   </body>
 </html>
