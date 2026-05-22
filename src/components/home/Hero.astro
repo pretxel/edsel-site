@@ -9,9 +9,18 @@ interface Props {
 
 const { lang } = Astro.props;
 
-// Brand-locked palette — no more random color picks per page load.
-// Matches the `--accent-*` tokens from agent 02-design-system.
-const particleColors = [0x46b4ff, 0x6cc4ff, 0x88ccff];
+// Per-visit random palette. SSR runs this on every request (Vercel adapter
+// = server output), so each page load — including ClientRouter navigations
+// — picks a fresh palette. All six stay bright/saturated against zinc-950.
+const palettes: number[][] = [
+  [0x46b4ff, 0x6cc4ff, 0x88ccff], // brand blue
+  [0x9b6cff, 0xb088ff, 0xc4a8ff], // violet
+  [0xff6cc4, 0xff88d4, 0xffaae0], // pink
+  [0xff8a6c, 0xffa888, 0xffc0a8], // coral
+  [0x46ffc4, 0x6cffd4, 0x88ffe0], // mint
+  [0xa8ff6c, 0xbcff88, 0xccffa8], // lime
+];
+const particleColors = palettes[Math.floor(Math.random() * palettes.length)];
 
 const projectsHref = lang === "en" ? "/en/blog" : "/blog";
 const postsHref = lang === "en" ? "/en/blog" : "/blog";
