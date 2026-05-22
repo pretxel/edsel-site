@@ -1,0 +1,14 @@
+---
+import Social from "../Social/index.astro";
+import { defaultLanguage, type Language } from "../../lib/i18n";
+
+interface Props {
+  lang?: Language;
+}
+
+const { lang = defaultLanguage } = Astro.props;
+---
+
+<div class="footer">
+  <Social />
+</div>

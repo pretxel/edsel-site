@@ -1,88 +1,74 @@
 ---
-// Component Imports
 import MainHead from "../components/MainHead.astro";
 import SEOHead from "../components/SEOHead.astro";
-import Body from "../components/Body/index.jsx";
 import Nav from "../components/Nav/index.jsx";
-import SparklingSphere from "../components/Particles/sparklingSphere";
-import Footer from "../components/Footer";
+import Hero from "../components/home/Hero.astro";
+import FeaturedWork from "../components/home/FeaturedWork.astro";
+import Footer from "../components/Footer/index.astro";
 import Analytics from "@vercel/analytics/astro";
-import { isMobile } from "react-device-detect";
+import { ClientRouter } from "astro:transitions";
+import { t } from "../lib/i18n";
 
-const totalParticles = isMobile ? 1000 : 2000;
+const lang = "es" as const;
 
-enum COLORS {
-  blue="blue",
-  orange="orange",
-  green="green",
-  yellow="yellow"
-}
+// `<Analytics>` injects `/_vercel/insights/script.js`, which only exists when
+// the site is deployed to Vercel. Hide it in non-production builds so local
+// audits (Lighthouse, Playwright) don't report bogus 404s.
+const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
 
-const particleColors = {
-  [COLORS.blue]: [0x88ccff, 0x7dabf1, 0x6a8dff],
-  [COLORS.orange]: [0xfda252, 0xfda252, 0xf99352],
-  [COLORS.green]: [0x33cc33, 0x4db34d, 0x00cc00],
-  [COLORS.yellow]: [0xcccc33, 0xb3b34d, 0xffff00]
-}
+const seoTitle =
+  "Edsel Serrano | Software Engineer · Proyectos, notas y experimentos";
+const seoDescription =
+  "Edsel Serrano construye herramientas para equipos ágiles y escribe sobre desarrollo web, productos y experimentos. Portafolio y blog.";
 
-const backgroundColors = {
-  [COLORS.blue]: "#021027",
-  [COLORS.orange]: "#2c1400",
-  [COLORS.green]: "#001605",
-  [COLORS.yellow]: "#191800",
-}
-
-const colorsArray = Object.values(COLORS)
-const randomColor = colorsArray[Math.floor(Math.random() * Object.values(COLORS).length)];
-
-// 2025 next logic xD
-const colorSelected = randomColor;
-
-// SEO Data for homepage
-const seoTitle = "Edsel Serrano | Full Stack Developer & Technology Enthusiast";
-const seoDescription = "Software Engineer specialized in Full Stack Development with expertise in JavaScript, React, Next.js, and modern web technologies. Passionate about machine learning and entrepreneurship.";
 const keywords = [
-  'Edsel Serrano', 
-  'Full Stack Developer', 
-  'Software Engineer', 
-  'JavaScript Developer', 
-  'React Developer', 
-  'Next.js Developer', 
-  'Web Development', 
-  'Machine Learning', 
-  'Technology Entrepreneur',
-  'Frontend Developer',
-  'Backend Developer'
+  "Edsel Serrano",
+  "Software Engineer",
+  "Full Stack Developer",
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Astro",
+  "Web Development",
+  "Portfolio",
+  "Blog",
 ];
 
 const alternateLanguages = [
-  { lang: 'es' as const, url: '/' },
-  { lang: 'en' as const, url: '/en/' }
+  { lang: "es" as const, url: "/" },
+  { lang: "en" as const, url: "/en/" },
 ];
 ---
 
-<html lang="es">
+<html lang={lang}>
   <head>
+    <MainHead />
     <SEOHead
       title={seoTitle}
       description={seoDescription}
       canonical="/"
-      language="es"
+      language={lang}
       alternateLanguages={alternateLanguages}
       keywords={keywords}
       type="website"
+      schemaVariant="home"
     />
-    <MainHead />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    {/*
+     * Enable Astro view transitions across the home, blog and project flows.
+     * Without ClientRouter here, jumping `/` → `/blog/<slug>` would force a
+     * full hard navigation and lose the `transition:name` morph effects.
+     */}
+    <ClientRouter />
   </head>
 
-  <body>
-    <Nav />
-
-    <SparklingSphere totalParticles={totalParticles} backgroundColor={backgroundColors[colorSelected]} particleColors={particleColors[colorSelected]} client:only="react" />
-    <Body />
+  <body class="bg-bg text-fg font-sans antialiased">
+    <Nav lang={lang} />
+    <main id="main">
+      <Hero lang={lang} />
+      <FeaturedWork lang={lang} />
+    </main>
     <Footer />
-
-    <Analytics />
+    {showAnalytics && <Analytics />}
   </body>
 </html>

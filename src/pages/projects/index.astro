@@ -1,0 +1,139 @@
+---
+import Layout from "../../layouts/BlogLayout.astro";
+import { getLocalizedProjects } from "../../lib/content";
+import { getLanguageFromUrl, t, defaultLanguage } from "../../lib/i18n";
+import ProjectCard from "../../components/ProjectCard.astro";
+import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
+import SEOHead from "../../components/SEOHead.astro";
+
+const currentLanguage =
+  getLanguageFromUrl(Astro.url.pathname) || defaultLanguage;
+const projects = await getLocalizedProjects(currentLanguage);
+
+const seoTitle =
+  currentLanguage === "en"
+    ? "Projects - Edsel Serrano | Apps, Tools & Experiments"
+    : "Proyectos - Edsel Serrano | Apps, Herramientas y Experimentos";
+
+const seoDescription =
+  currentLanguage === "en"
+    ? "Browse Edsel Serrano's portfolio of apps, tools, and experiments — built with React, Next.js, Astro, and more."
+    : "Explora el portafolio de apps, herramientas y experimentos de Edsel Serrano — construidos con React, Next.js, Astro y más.";
+
+const alternateLanguages = [
+  { lang: "es" as const, url: "/projects/" },
+  { lang: "en" as const, url: "/en/projects/" },
+];
+---
+
+<Layout
+  title={seoTitle}
+  lang={currentLanguage}
+  rssHref={currentLanguage === "en" ? "/en/rss.xml" : "/rss.xml"}
+>
+  <SEOHead
+    slot="head"
+    title={seoTitle}
+    description={seoDescription}
+    canonical={currentLanguage === "en" ? "/en/projects/" : "/projects/"}
+    language={currentLanguage}
+    alternateLanguages={alternateLanguages}
+    type="website"
+  />
+  <div class="min-h-screen">
+    <div
+      class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center"
+    >
+      <a
+        href={currentLanguage === "en" ? "/en/" : "/"}
+        class="inline-flex items-center px-4 py-2 text-sm font-medium text-fg-muted hover:text-fg-strong bg-elev/60 hover:bg-elev rounded-lg border border-border-default hover:border-border-strong transition-all duration-200 group backdrop-blur-sm"
+      >
+        <svg
+          class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+          ></path>
+        </svg>
+        {currentLanguage === "en" ? "Home" : "Inicio"}
+      </a>
+      <LanguageSwitcher
+        currentLanguage={currentLanguage}
+        currentPath={Astro.url.pathname}
+      />
+    </div>
+
+    <div
+      class="relative overflow-hidden bg-gradient-to-br from-bg via-surface to-bg"
+    >
+      <div class="relative z-10 px-6 py-16 sm:py-24">
+        <div class="max-w-4xl mx-auto text-center">
+          <h1
+            class="text-4xl sm:text-5xl lg:text-6xl font-bold text-fg-strong mb-6 leading-tight"
+          >
+            {t("projects.welcome_title", {}, currentLanguage)}{" "}
+            <span class="bg-clip-text text-transparent" style="background-image: var(--gradient-brand);">
+              {t("projects.welcome_subtitle", {}, currentLanguage)}
+            </span>
+          </h1>
+          <p
+            class="text-xl text-fg-muted mb-8 max-w-2xl mx-auto leading-relaxed"
+          >
+            {t("projects.welcome_description", {}, currentLanguage)}
+          </p>
+          <div
+            class="flex justify-center items-center space-x-4 text-sm text-fg-subtle"
+          >
+            <span class="flex items-center">
+              {projects.length}{" "}
+              {t("projects.count", {}, currentLanguage)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative px-6 py-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-12">
+          <h2 class="text-3xl font-bold text-fg-strong mb-4">
+            {t("projects.latest", {}, currentLanguage)}
+          </h2>
+          <div class="w-20 h-1 rounded-full" style="background-image: var(--gradient-brand);"></div>
+        </div>
+
+        <div
+          class="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
+          {
+            projects.map((project) => (
+              <ProjectCard
+                project={project}
+                currentLanguage={currentLanguage}
+              />
+            ))
+          }
+        </div>
+
+        {
+          projects.length === 0 && (
+            <div class="text-center py-16">
+              <h3 class="text-xl font-semibold text-fg mb-2">
+                {t("projects.empty_title", {}, currentLanguage)}
+              </h3>
+              <p class="text-fg-subtle">
+                {t("projects.empty_description", {}, currentLanguage)}
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</Layout>

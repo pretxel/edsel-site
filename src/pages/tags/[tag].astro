@@ -1,0 +1,120 @@
+---
+/**
+ * Tag detail page — shows posts + projects sharing a given tag slug.
+ *
+ * The tag slug is matched against `slugifyTag(label)` of every tag in the
+ * union, so URLs use the canonical kebab form (`next-js`) regardless of how
+ * the underlying tag is cased (`Next.js`).
+ */
+import Layout from "../../layouts/BlogLayout.astro";
+import { getItemsByTagSlug } from "../../lib/content";
+import { getLanguageFromUrl, t, defaultLanguage } from "../../lib/i18n";
+import { readingTime } from "../../lib/reading-time";
+import PostCard from "../../components/PostCard.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
+import SEOHead from "../../components/SEOHead.astro";
+
+const { tag } = Astro.params;
+const currentLanguage =
+  getLanguageFromUrl(Astro.url.pathname) || defaultLanguage;
+
+if (!tag) return Astro.redirect("/tags");
+
+const { posts, projects, canonicalLabel } = await getItemsByTagSlug(
+  tag,
+  currentLanguage,
+);
+
+if (!canonicalLabel) {
+  return Astro.redirect(currentLanguage === "en" ? "/en/tags" : "/tags");
+}
+
+const seoTitle = `${t("tags.heading_for", { tag: canonicalLabel }, currentLanguage)} - Edsel Serrano`;
+
+const alternateLanguages = [
+  { lang: "es" as const, url: `/tags/${tag}` },
+  { lang: "en" as const, url: `/en/tags/${tag}` },
+];
+---
+
+<SEOHead
+  title={seoTitle}
+  description={t("tags.heading_for", { tag: canonicalLabel }, currentLanguage)}
+  canonical={currentLanguage === "en" ? `/en/tags/${tag}` : `/tags/${tag}`}
+  language={currentLanguage}
+  alternateLanguages={alternateLanguages}
+/>
+
+<Layout title={canonicalLabel} lang={currentLanguage}>
+  <div class="min-h-screen">
+    <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center">
+      <a
+        href={currentLanguage === "en" ? "/en/tags" : "/tags"}
+        class="inline-flex items-center px-4 py-2 text-sm font-medium text-fg-muted hover:text-fg-strong bg-elev/60 hover:bg-elev rounded-lg border border-border-default hover:border-border-strong transition-all duration-200"
+      >
+        ← {t("tags.back_to_all", {}, currentLanguage)}
+      </a>
+      <LanguageSwitcher
+        currentLanguage={currentLanguage}
+        currentPath={Astro.url.pathname}
+      />
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 py-24">
+      <h1 class="text-4xl sm:text-5xl font-bold text-fg-strong mb-3">
+        {t("tags.heading_for", { tag: canonicalLabel }, currentLanguage)}
+      </h1>
+      <p class="text-fg-muted mb-12">
+        {posts.length + projects.length}{" "}
+        {currentLanguage === "en" ? "items" : "elementos"}
+      </p>
+
+      {
+        posts.length === 0 && projects.length === 0 && (
+          <p class="text-fg-subtle">
+            {t("tags.empty", {}, currentLanguage)}
+          </p>
+        )
+      }
+
+      {
+        posts.length > 0 && (
+          <section class="mb-16">
+            <h2 class="text-2xl font-semibold text-fg-strong mb-6">
+              {t("tags.posts_section", {}, currentLanguage)}
+            </h2>
+            <div class="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {posts.map((p) => (
+                <PostCard
+                  variant="post"
+                  post={p}
+                  currentLanguage={currentLanguage}
+                  readingMinutes={readingTime(p.body ?? "")}
+                />
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {
+        projects.length > 0 && (
+          <section>
+            <h2 class="text-2xl font-semibold text-fg-strong mb-6">
+              {t("tags.projects_section", {}, currentLanguage)}
+            </h2>
+            <div class="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {projects.map((p) => (
+                <ProjectCard
+                  project={p}
+                  currentLanguage={currentLanguage}
+                />
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </div>
+  </div>
+</Layout>

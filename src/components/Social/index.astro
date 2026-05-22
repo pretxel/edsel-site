@@ -1,0 +1,72 @@
+---
+import { Icon } from "astro-icon/components";
+
+const links = [
+  {
+    href: "https://twitter.com/pretxelcom",
+    label: "X",
+    icon: "lucide:x",
+  },
+  {
+    href: "https://www.facebook.com/serranomontiel",
+    label: "Facebook",
+    icon: "lucide:facebook",
+  },
+  {
+    href: "https://github.com/pretxel",
+    label: "Github",
+    icon: "lucide:github",
+  },
+  {
+    href: "https://mx.linkedin.com/in/edselserrano",
+    label: "Linkedin",
+    icon: "lucide:linkedin",
+  },
+  {
+    href: "mailto:pretxel100@gmail.com?Subject=Hello",
+    label: "Email",
+    icon: "lucide:mail",
+    external: false,
+  },
+];
+---
+
+<nav>
+  <ul>
+    {
+      links.map(({ href, label, icon, external = true }) => (
+        <li>
+          <a
+            href={href}
+            aria-label={label}
+            {...(external
+              ? { target: "_blank", rel: "noopener noreferrer" }
+              : {})}
+          >
+            <Icon name={icon} />
+            <span>{label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  nav a [data-icon] {
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  nav a span {
+    display: none;
+  }
+</style>

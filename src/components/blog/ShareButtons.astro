@@ -1,0 +1,121 @@
+---
+/**
+ * Share button with graceful fallback chain:
+ *   1. `navigator.share` if available (mobile, Safari, Edge).
+ *   2. Otherwise copy URL to clipboard + show a toast.
+ *
+ * Replaces the inline `onclick="navigator.share(...)"` from the legacy
+ * `blog/[id].astro`, which had no desktop fallback and no aria-label.
+ */
+import type { Language } from "../../lib/i18n";
+import { t } from "../../lib/i18n";
+
+interface Props {
+  title: string;
+  language: Language;
+}
+
+const { title, language } = Astro.props;
+---
+
+<div class="share-button-wrap relative inline-flex items-center">
+  <button
+    type="button"
+    class="p-3 text-fg-muted hover:text-fg-strong hover:bg-elev rounded-full transition-all duration-200 inline-flex items-center"
+    aria-label={t("posts.share_label", {}, language)}
+    data-share-button
+    data-share-title={title}
+  >
+    <svg
+      class="w-5 h-5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+      />
+    </svg>
+  </button>
+
+  <div
+    class="share-toast pointer-events-none absolute right-0 top-full mt-2 px-3 py-1.5 rounded-md bg-elev text-fg-strong text-xs shadow-lg opacity-0 transition-opacity duration-300 whitespace-nowrap"
+    role="status"
+    aria-live="polite"
+    data-share-toast
+  >
+    {t("posts.share_copied", {}, language)}
+  </div>
+</div>
+
+<style>
+  .share-toast[data-show="true"] {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  function setupShareButtons() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(
+      "[data-share-button]",
+    );
+    buttons.forEach((button) => {
+      // Avoid double-binding on view transitions.
+      if (button.dataset.shareBound === "true") return;
+      button.dataset.shareBound = "true";
+
+      const wrap = button.closest(".share-button-wrap");
+      const toast = wrap?.querySelector<HTMLElement>("[data-share-toast]");
+
+      button.addEventListener("click", async () => {
+        const url = window.location.href;
+        const title = button.dataset.shareTitle || document.title;
+
+        if (
+          typeof navigator !== "undefined" &&
+          typeof navigator.share === "function"
+        ) {
+          try {
+            await navigator.share({ title, url });
+            return;
+          } catch (err) {
+            // User cancelled — fall through to clipboard fallback so they
+            // still have *some* affordance.
+            const aborted =
+              err instanceof DOMException && err.name === "AbortError";
+            if (aborted) return;
+          }
+        }
+
+        // Clipboard fallback
+        try {
+          await navigator.clipboard.writeText(url);
+        } catch {
+          // Last-resort fallback: select & copy via temp input.
+          const input = document.createElement("input");
+          input.value = url;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand("copy");
+          input.remove();
+        }
+
+        if (toast) {
+          toast.setAttribute("data-show", "true");
+          setTimeout(() => toast.removeAttribute("data-show"), 1800);
+        }
+      });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupShareButtons);
+  } else {
+    setupShareButtons();
+  }
+  document.addEventListener("astro:page-load", setupShareButtons);
+</script>

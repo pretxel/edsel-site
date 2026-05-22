@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   ACESFilmicToneMapping,
   AmbientLight,
@@ -30,17 +30,29 @@ interface ICreateParticles {
 }
 
 const SparklingSphere = ({
-  totalParticles,
-  backgroundColor,
+  backgroundColor = "transparent",
   particleColors,
+  totalParticles,
+  mobileTotalParticles,
 }: {
-  totalParticles: number;
-  backgroundColor: string;
+  backgroundColor?: string;
   particleColors: number[];
+  /** Particle count on desktop. Defaults to 2000 for the legacy hero. */
+  totalParticles?: number;
+  /** Particle count on small viewports (<= 768px). Defaults to half of `totalParticles`. */
+  mobileTotalParticles?: number;
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
   const createBackground = ({ color }: { color: string }) => {
+    // When the caller asks for a transparent background, render nothing —
+    // the canvas alpha will let whatever is behind the sphere (Tailwind
+    // `bg-bg` etc.) show through. This keeps the homepage hero feeling
+    // integrated instead of trapped inside a colored bubble.
+    if (color === "transparent") {
+      return null;
+    }
+
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
 
@@ -69,19 +81,64 @@ const SparklingSphere = ({
     const texture = new CanvasTexture(canvas);
     return texture;
   };
+
   useEffect(() => {
     if (!mountRef.current) return;
+
+    // Respect prefers-reduced-motion: skip the animated sphere entirely and
+    // paint a static gradient background so the page still has visual depth.
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) {
+      // For transparent backgrounds we don't want to paint anything — the
+      // caller controls the surrounding visuals. Otherwise fall back to a
+      // soft radial gradient so the page still has depth.
+      if (backgroundColor !== "transparent") {
+        const mount = mountRef.current;
+        mount.style.background = `radial-gradient(circle at center, ${backgroundColor} 0%, #000000 100%)`;
+        mount.style.position = "absolute";
+        mount.style.inset = "0";
+        mount.style.width = "100%";
+        mount.style.height = "100%";
+        return () => {
+          mount.style.background = "";
+        };
+      }
+      return;
+    }
+
+    // Decide particle count based on viewport, replacing react-device-detect.
+    const isSmallViewport = window.matchMedia("(max-width: 768px)").matches;
+    const desktopCount = totalParticles ?? 2000;
+    const mobileCount =
+      mobileTotalParticles ?? Math.max(200, Math.round(desktopCount / 2));
+    const resolvedParticleCount = isSmallViewport ? mobileCount : desktopCount;
 
     // Scene setup
     const scene = new Scene();
 
     const texture = createBackground({ color: backgroundColor });
 
-    scene.background = texture;
+    // `null` (transparent mode) means: don't paint a scene background; the
+    // renderer's alpha channel will composite with whatever sits behind the
+    // canvas in the DOM.
+    if (texture) {
+      scene.background = texture;
+    }
+
+    // The host element decides the canvas size, not the window. Capture the
+    // mount's bounding rect so the renderer fits inside the hero column
+    // instead of overflowing the whole viewport.
+    const mountEl = mountRef.current;
+    const initialRect = mountEl.getBoundingClientRect();
+    const initialWidth = Math.max(1, initialRect.width || window.innerWidth);
+    const initialHeight = Math.max(1, initialRect.height || window.innerHeight);
 
     const camera = new PerspectiveCamera(
       75,
-      window.innerWidth / window.innerHeight,
+      initialWidth / initialHeight,
       0.1,
       1000
     );
@@ -91,17 +148,29 @@ const SparklingSphere = ({
       alpha: true,
     });
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 1);
+    renderer.setSize(initialWidth, initialHeight);
+    // Transparent canvas when caller opted-in, opaque black otherwise.
+    if (backgroundColor === "transparent") {
+      renderer.setClearColor(0x000000, 0);
+    } else {
+      renderer.setClearColor(0x000000, 1);
+    }
     renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.5;
-    mountRef.current.appendChild(renderer.domElement);
+    mountEl.appendChild(renderer.domElement);
+    // The sphere is purely decorative; never steal pointer events from CTAs.
+    renderer.domElement.style.pointerEvents = "none";
 
     // Camera position and controls
     camera.position.z = 5;
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+    // Decorative sphere: don't compete with the rest of the page for the
+    // user's input (scroll, drag) just to spin a background.
+    controls.enabled = false;
+    controls.enableZoom = false;
+    controls.enablePan = false;
 
     // Post-processing setup
     const composer = new EffectComposer(renderer);
@@ -109,12 +178,13 @@ const SparklingSphere = ({
     composer.addPass(renderPass);
 
     const bloomPass = new UnrealBloomPass(
-      new Vector2(window.innerWidth, window.innerHeight),
+      new Vector2(initialWidth, initialHeight),
       1.5,
       0.4,
       0.1
     );
     composer.addPass(bloomPass);
+    composer.setSize(initialWidth, initialHeight);
 
     // Lighting
     const ambientLight = new AmbientLight(0x111111);
@@ -141,16 +211,14 @@ const SparklingSphere = ({
     const dampingFactor = 0.95;
     const rotationSpeed = 0.0025;
 
+    // Shared geometry — disposed in cleanup to avoid GPU leaks.
+    const particleGeometry = new SphereGeometry(0.015, 6, 6);
+
     // Create particles
     const createParticles = (params: ICreateParticles) => {
       const particles = [];
       const count = params.total;
       const radius = params.radius;
-
-      const geometry = new SphereGeometry(0.015, 6, 6);
-
-      //   const colors = [0x88ccff, 0x7dabf1, 0x6a8dff];
-      //   const colors = [0xfda252, 0xfda252, 0xf99352];
 
       for (let i = 0; i < count; i++) {
         const theta = Math.random() * Math.PI * 2;
@@ -172,13 +240,14 @@ const SparklingSphere = ({
           toneMapped: false,
         });
 
-        const mesh = new Mesh(geometry, material);
+        const mesh = new Mesh(particleGeometry, material);
         mesh.position.copy(position);
 
         group.add(mesh);
 
         particles.push({
           mesh,
+          material,
           position: position.clone(),
           originalPosition: position.clone(),
           velocity: new Vector3(),
@@ -191,7 +260,10 @@ const SparklingSphere = ({
       return particles;
     };
 
-    const particles = createParticles({ total: totalParticles, radius: 2 });
+    const particles = createParticles({
+      total: resolvedParticleCount,
+      radius: 2,
+    });
 
     // Update particles function
     const updateParticles = () => {
@@ -261,23 +333,30 @@ const SparklingSphere = ({
       group.rotation.y += rotationSpeed;
     };
 
-    // Window resize handler
+    // Window resize handler. Use the mount's own size so the canvas keeps
+    // tracking the hero column even when it's not the full viewport.
     const handleWindowResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      const rect = mountEl.getBoundingClientRect();
+      const w = Math.max(1, rect.width);
+      const h = Math.max(1, rect.height);
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      composer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(w, h);
+      composer.setSize(w, h);
     };
 
-    // Mouse move handler
+    // Mouse move handler — track relative to the canvas, not the window, so
+    // the cursor-following glow stays consistent when the sphere is inset.
     const handleMouseMove = (event: MouseEvent) => {
-      mousePos.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mousePos.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      const rect = renderer.domElement.getBoundingClientRect();
+      mousePos.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mousePos.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     };
 
-    // Animation loop
+    // Animation loop — track the rAF id so we can cancel it on unmount.
+    let rafId = 0;
     const animate = () => {
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
       updateParticles();
       controls.update();
       composer.render();
@@ -287,16 +366,42 @@ const SparklingSphere = ({
     window.addEventListener("resize", handleWindowResize);
     window.addEventListener("mousemove", handleMouseMove);
 
+    // Capture the mount node now so cleanup doesn't dereference a ref that
+    // React may have already nulled out.
+    const mount = mountEl;
+    const canvas = renderer.domElement;
+
     // Start animation
     animate();
 
     // Cleanup
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener("resize", handleWindowResize);
       window.removeEventListener("mousemove", handleMouseMove);
-      mountRef.current?.removeChild(renderer.domElement);
+
+      controls.dispose();
+
+      // Dispose every particle material; geometry is shared so dispose once.
+      particles.forEach((p) => p.material.dispose());
+      particleGeometry.dispose();
+
+      // Drop background texture if one was created.
+      if (scene.background && (scene.background as CanvasTexture).dispose) {
+        (scene.background as CanvasTexture).dispose();
+      }
+
+      // Clear scene graph and free composer + renderer GPU resources.
+      scene.clear();
+      composer.dispose();
+      renderer.dispose();
+      renderer.forceContextLoss();
+
+      if (canvas.parentNode === mount) {
+        mount.removeChild(canvas);
+      }
     };
-  }, []);
+  }, [backgroundColor, particleColors, totalParticles, mobileTotalParticles]);
 
   return <div className="wrapper" ref={mountRef} />;
 };

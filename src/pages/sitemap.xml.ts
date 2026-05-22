@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
 import { generateSitemapUrls, generateSitemapXml } from '../lib/sitemap';
 
-export const GET: APIRoute = () => {
-    const urls = generateSitemapUrls();
+export const GET: APIRoute = async () => {
+    const urls = await generateSitemapUrls();
     const xmlContent = generateSitemapXml(urls);
 
     return new Response(xmlContent, {

@@ -1,0 +1,64 @@
+# Edsel Serrano
+
+> Personal site of Edsel Serrano — a Mexican software engineer based in Madrid, Spain, currently building at Embat (corporate-treasury fintech). The site is a portfolio of side projects with bilingual (Spanish / English) content.
+
+Edsel has 10+ years of experience shipping web products: internal tools for agile teams, conversational chatbots, real-time data dashboards, and bespoke web platforms. Stack focus: TypeScript, React, Next.js, Astro, Node, Postgres, Tailwind, Vercel, Supabase. Side interests: applied ML, IoT, agentic engineering.
+
+The site has two language variants — Spanish (default, `/`) and English (`/en/`). Every URL listed below has an English mirror under `/en/<same-path>` unless noted otherwise.
+
+## Core pages
+
+- [Home (Spanish)](https://edselserrano.com/): Hero introduction + featured projects.
+- [Home (English)](https://edselserrano.com/en/): English mirror of the homepage.
+- [About (Spanish)](https://edselserrano.com/about): Bio, current role at Embat, prior experience (CIC México, Secretaría de Relaciones Exteriores), education, certifications.
+- [About (English)](https://edselserrano.com/en/about): English mirror.
+
+## Projects
+
+Each project page contains a bilingual write-up (two `<section data-lang>` blocks inside the MDX). Project metadata: cover image, external link, tech stack tags, color accent.
+
+- [Daily Potato](https://edselserrano.com/projects/daily-potato): Innovative tool for remote Daily Scrum meetings with random participation and team productivity metrics. Stack: Next.js, TypeScript, PostgreSQL, JWT, WebSockets, Tailwind CSS.
+- [Chat Edsel](https://edselserrano.com/projects/chat-edsel): Personal AI assistant integration project.
+- [Dineqrs](https://edselserrano.com/projects/dineqrs): QR-based payment/dining tooling experiment.
+- [F1 Stats](https://edselserrano.com/projects/f1-stats): Formula 1 statistics dashboard with race analytics.
+- [Pong (Svelte)](https://edselserrano.com/projects/pong-svelte): Classic Pong remade in Svelte as a framework learning exercise.
+- [Pokémon Poker](https://edselserrano.com/projects/pokemon-poker): Pokémon-themed poker variant.
+- [Retro Ball](https://edselserrano.com/projects/retro-ball): Ephemeral agile retrospective tool currently being built.
+
+## Blog
+
+The blog is currently unlinked from the navigation while content is being prepared, but routes remain crawlable.
+
+- [Blog index (Spanish)](https://edselserrano.com/blog): List of long-form articles (currently empty).
+- [Blog index (English)](https://edselserrano.com/en/blog): English mirror.
+- [RSS (Spanish)](https://edselserrano.com/rss.xml): Combined feed of posts + projects.
+- [RSS (English)](https://edselserrano.com/en/rss.xml): English combined feed.
+
+## Topical tags
+
+Project pages expose tag-filtered indexes at `/tags/<slug>`. Useful slugs include:
+
+- [Next.js projects](https://edselserrano.com/tags/next-js)
+- [TypeScript projects](https://edselserrano.com/tags/typescript)
+- [Tailwind CSS projects](https://edselserrano.com/tags/tailwind-css)
+- [PostgreSQL projects](https://edselserrano.com/tags/postgresql)
+- [WebSockets projects](https://edselserrano.com/tags/websockets)
+
+## Machine-readable feeds
+
+- [Sitemap index](https://edselserrano.com/sitemap-index.xml): XML sitemap covering every public route in both languages.
+- [llms-full.txt](https://edselserrano.com/llms-full.txt): Concatenated Markdown dump of every page's content for LLM ingestion.
+- [JSON-LD schema](https://edselserrano.com/): Each page embeds JSON-LD (`Person` on home, `SoftwareApplication` on projects, `Article` on posts). Inspect via `<script type="application/ld+json">` in the page source.
+
+## Contact
+
+- LinkedIn: https://www.linkedin.com/in/edselserrano
+- GitHub: https://github.com/pretxel
+- Email: pretxel100@gmail.com
+
+## Notes for LLM consumers
+
+- Spanish (`es`) is the canonical default; English copies use the same content adapted, not auto-translated.
+- Project bodies embed two `<section data-lang="es">` and `<section data-lang="en">` blocks; the inactive one is hidden via CSS, but both are present in the served HTML. When extracting, pick the section matching the URL prefix (`/` → `es`, `/en/` → `en`).
+- Dates in project frontmatter are ISO 8601. `updated` on `/about` reflects the last manual edit.
+- The site permits all major AI / LLM crawlers — see `robots.txt`.

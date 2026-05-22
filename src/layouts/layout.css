@@ -1,51 +1,92 @@
 @import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+@import "../styles/tokens.css";
 @plugin "@tailwindcss/typography";
-@variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --color-context: var(--context-color);
+/*
+ * BlogLayout glue. We re-declare @theme inline here because Tailwind 4
+ * resolves utilities against the CSS file that imports `tailwindcss`,
+ * and BlogLayout imports `layout.css` directly (independently from
+ * global.css used by the homepage).
+ */
+@theme inline {
+  /* Colors */
+  --color-bg: var(--bg-app);
+  --color-surface: var(--bg-surface);
+  --color-elev: var(--bg-elev);
+  --color-muted: var(--bg-muted);
+
+  --color-fg: var(--fg-default);
+  --color-fg-strong: var(--fg-strong);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+
+  --color-success: var(--c-success);
+  --color-warn: var(--c-warn);
+  --color-danger: var(--c-danger);
+
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Radii */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+
+  /* Motion */
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
 }
 
-:root {
-    --color-primary: var(--color-green-500);
-    --color-background: var(--color-zinc-950);
-    --color-foreground: var(--color-zinc-900);
-  }
-  body {
-    background: var(--color-background);
-    color: white;
-  }
-  
-  * {
-    scrollbar-width: 10px;
-    scrollbar-color: rgb(50, 50, 50) rgb(30, 30, 30);
-  }
-  *::-webkit-scrollbar {
-    height: 10px;
-    width: 10px;
-  }
-  *::-webkit-scrollbar-track {
-    border-radius: 5px;
-    background-color: transparent;
-  }
-  
-  *::-webkit-scrollbar-track:hover {
-    background-color: rgb(30, 30, 30);
-  }
-  
-  *::-webkit-scrollbar-track:active {
-    background-color: rgb(30, 30, 30);
-  }
-  
-  *::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    background-color: rgb(50, 50, 50);
-  }
-  
-  *::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(70, 70, 70);
-  }
-  
-  *::-webkit-scrollbar-thumb:active {
-    background-color: rgb(70, 70, 70);
-  }
+body {
+  background: var(--bg-app);
+  color: var(--fg-default);
+  font-family: var(--font-sans);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-zinc-700) var(--bg-app);
+}
+
+*::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-track:hover {
+  background-color: var(--bg-app);
+}
+
+*::-webkit-scrollbar-track:active {
+  background-color: var(--bg-app);
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-sm);
+  background-color: var(--c-zinc-700);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--c-zinc-600);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: var(--c-zinc-600);
+}

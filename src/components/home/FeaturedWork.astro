@@ -1,0 +1,133 @@
+---
+import type { Language } from "../../lib/i18n";
+import { t, formatDateShort } from "../../lib/i18n";
+import {
+  getFeaturedProjects,
+  getLocalizedProjects,
+  type LocalizedProject,
+} from "../../lib/content";
+
+interface Props {
+  lang: Language;
+}
+
+const { lang } = Astro.props;
+
+// Prefer explicitly-featured projects; fall back to the three most recent
+// so the homepage never renders an empty section while content owners
+// curate their picks. The PR notes flag this so Edsel can flip `featured`
+// later without touching this component.
+let projects: LocalizedProject[] = await getFeaturedProjects(lang, 3);
+if (projects.length === 0) {
+  projects = (await getLocalizedProjects(lang)).slice(0, 3);
+}
+
+const viewAllHref = lang === "en" ? "/en/projects" : "/projects";
+
+function projectHref(project: LocalizedProject) {
+  return lang === "en"
+    ? `/en/projects/${project.slug}`
+    : `/projects/${project.slug}`;
+}
+---
+
+<section
+  class="border-b border-border-default bg-bg"
+  aria-labelledby="featured-title"
+>
+  <div class="mx-auto max-w-6xl px-6 py-20 sm:px-8 md:py-28">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-[0.18em] text-accent">
+          {t("home.featured.eyebrow", {}, lang)}
+        </p>
+        <h2
+          id="featured-title"
+          class="mt-2 text-3xl font-bold tracking-tight text-fg-strong sm:text-4xl"
+        >
+          {t("home.featured.title", {}, lang)}
+        </h2>
+      </div>
+
+      <a
+        href={viewAllHref}
+        class="group inline-flex items-center gap-2 self-start text-sm font-medium text-fg-muted transition-colors hover:text-fg-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:self-auto"
+      >
+        {t("home.featured.view_all", {}, lang)}
+        <span
+          aria-hidden="true"
+          class="transition-transform duration-200 group-hover:translate-x-0.5"
+          >&rarr;</span
+        >
+      </a>
+    </div>
+
+    {
+      projects.length > 0 ? (
+        <ul class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project, index) => (
+            <li>
+              <a
+                href={projectHref(project)}
+                class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border-default bg-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                <div class="relative aspect-[16/10] overflow-hidden bg-elev">
+                  {/*
+                   * The first card image is the LCP element on mobile (hero
+                   * is text but small; this image is the largest paint).
+                   * Mark it eager + fetchpriority="high" so the browser
+                   * preloads it instead of waiting until after layout.
+                   * Cards 2+ stay lazy — they're below the fold on phones.
+                   */}
+                  <img
+                    src={project.cover}
+                    alt={project.title}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchpriority={index === 0 ? "high" : undefined}
+                    decoding="async"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div
+                    class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-surface to-transparent"
+                    aria-hidden="true"
+                  />
+                </div>
+                <div class="flex flex-1 flex-col gap-3 p-5">
+                  <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-wide text-fg-subtle">
+                    <span
+                      class="inline-block h-1.5 w-1.5 rounded-full"
+                      style={`background:${project.color.accent}`}
+                      aria-hidden="true"
+                    />
+                    <time datetime={project.date}>
+                      {formatDateShort(project.date, lang)}
+                    </time>
+                  </div>
+                  <h3 class="text-lg font-semibold leading-snug text-fg-strong">
+                    {project.title}
+                  </h3>
+                  <p class="line-clamp-3 text-sm leading-relaxed text-fg-muted">
+                    {project.description}
+                  </p>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="mt-10 text-sm text-fg-muted">
+          {t("home.posts.empty", {}, lang)}
+        </p>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

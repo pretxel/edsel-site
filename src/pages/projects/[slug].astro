@@ -1,0 +1,385 @@
+---
+import Layout from "../../layouts/BlogLayout.astro";
+import {
+  getProjectBySlug,
+  getLocalizedProject,
+  getRelatedProjects,
+} from "../../lib/content";
+import {
+  getLanguageFromUrl,
+  t,
+  defaultLanguage,
+  formatDate,
+} from "../../lib/i18n";
+import { tagUrl } from "../../lib/tags";
+import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
+import SEOHead from "../../components/SEOHead.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import ShareButtons from "../../components/blog/ShareButtons.astro";
+import ReadingProgress from "../../components/blog/ReadingProgress.astro";
+import { render } from "astro:content";
+
+const { slug } = Astro.params;
+const currentLanguage =
+  getLanguageFromUrl(Astro.url.pathname) || defaultLanguage;
+const entry = slug ? await getProjectBySlug(slug) : undefined;
+
+if (!entry) {
+  return Astro.redirect("/404");
+}
+
+const localizedPost = await getLocalizedProject(entry, currentLanguage);
+const relatedProjects = await getRelatedProjects(entry, currentLanguage, 3);
+const { Content } = await render(entry);
+
+const post = localizedPost;
+const seoTitle = `${localizedPost.title} | ${t("projects.title", {}, currentLanguage)} - Edsel Serrano`;
+const seoDescription = localizedPost.description;
+const publishedTime = new Date(post.date).toISOString();
+
+const alternateLanguages = [
+  { lang: "es" as const, url: `/projects/${post.slug}` },
+  { lang: "en" as const, url: `/en/projects/${post.slug}` },
+];
+
+const ogImage = `/og/${post.slug}.png`;
+---
+
+<Layout
+  image={post.cover}
+  title={localizedPost.title}
+  lang={currentLanguage}
+  rssHref={currentLanguage === "en" ? "/en/rss.xml" : "/rss.xml"}
+>
+  <SEOHead
+    slot="head"
+    title={seoTitle}
+    description={seoDescription}
+    canonical={
+      currentLanguage === "en"
+        ? `/en/projects/${post.slug}`
+        : `/projects/${post.slug}`
+    }
+    image={ogImage}
+    imageAlt={localizedPost.title}
+    language={currentLanguage}
+    alternateLanguages={alternateLanguages}
+    keywords={post.tags}
+    type="article"
+    publishedTime={publishedTime}
+    modifiedTime={publishedTime}
+    author={post.author}
+    schemaVariant="software-app"
+    appName={localizedPost.title}
+    appUrl={post.link}
+  />
+  <ReadingProgress />
+  <article class="min-h-screen">
+    <div class="absolute top-4 left-4 right-4 z-50">
+      <div class="flex justify-between items-center">
+        <a
+          href={currentLanguage === "en" ? "/en/" : "/"}
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-fg-muted hover:text-fg-strong bg-elev/60 hover:bg-elev rounded-lg border border-border-default hover:border-border-strong transition-all duration-200 group backdrop-blur-sm"
+        >
+          <svg
+            class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            ></path>
+          </svg>
+          {currentLanguage === "en" ? "Home" : "Inicio"}
+        </a>
+        <LanguageSwitcher
+          currentLanguage={currentLanguage}
+          currentPath={Astro.url.pathname}
+        />
+      </div>
+    </div>
+
+    <header
+      class="sticky top-0 z-50 bg-bg/80 backdrop-blur-xl border-b border-border-default"
+    >
+      <div class="max-w-4xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <a
+            href={currentLanguage === "en" ? "/en/projects" : "/projects"}
+            class="inline-flex items-center px-4 py-2 text-fg-muted hover:text-fg-strong hover:bg-elev rounded-lg transition-all duration-200 group relative z-10"
+          >
+            <svg
+              class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"></path>
+            </svg>
+            {currentLanguage === "en" ? "Back to Projects" : "Volver a Proyectos"}
+          </a>
+
+          <ShareButtons title={localizedPost.title} language={currentLanguage} />
+        </div>
+      </div>
+    </header>
+
+    <div class="relative overflow-hidden">
+      <div class="absolute inset-0 z-0">
+        <img
+          src={post.cover}
+          alt={localizedPost.title}
+          class="w-full h-full object-cover"
+          transition:name={`card ${post.slug} image`}
+        />
+        <div
+          class="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-bg/20"
+        ></div>
+      </div>
+
+      <div class="relative z-10 px-6 py-24 sm:py-32">
+        <div class="max-w-4xl mx-auto">
+          <div class="mb-6">
+            {/*
+             * Badge: each project ships its own accent color, which can be a
+             * very light cyan/teal. White text on those breaks WCAG. Use the
+             * zinc-950 token instead — it stays contrasty against the entire
+             * project palette and reads as a deliberate "label" chip.
+             */}
+            <span
+              class="inline-block px-4 py-2 text-sm font-semibold rounded-full shadow-lg"
+              style={`background: ${post.color.accent}; color: var(--c-zinc-950);`}
+            >
+              {t("category.project_showcase", {}, currentLanguage)}
+            </span>
+          </div>
+
+          <h1
+            class="text-4xl sm:text-5xl lg:text-6xl font-bold text-fg-strong mb-6 leading-tight"
+            transition:name={`card ${post.slug} title`}
+          >
+            {localizedPost.title}
+          </h1>
+
+          <div
+            class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 sm:gap-6 text-fg-muted mb-8"
+          >
+            <div class="flex items-center">
+              <svg
+                class="w-5 h-5 mr-2 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>
+                {t("post.by_author", { author: post.author }, currentLanguage)}
+              </span>
+            </div>
+            <div class="flex items-center">
+              <svg
+                class="w-5 h-5 mr-2 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+              <time datetime={post.date}>
+                {formatDate(post.date, currentLanguage)}
+              </time>
+            </div>
+          </div>
+
+          <p class="text-xl text-fg leading-relaxed max-w-3xl">
+            {localizedPost.description}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative bg-surface">
+      <div class="max-w-4xl mx-auto px-6 py-16">
+        <div class="prose prose-lg prose-invert max-w-none">
+          <div
+            class="bg-elev/50 rounded-2xl p-8 mb-8 backdrop-blur-sm border border-border-default"
+          >
+            <div class="space-y-6 mdx-body" data-active-lang={currentLanguage}>
+              <Content />
+
+              {
+                post.link && (
+                  <div class="mt-8 p-6 rounded-xl border border-border-default bg-gradient-to-r from-elev to-surface">
+                    {/*
+                     * Use h2 here: this is the next top-level section under
+                     * the page h1, and the previous h3 broke heading-order
+                     * (axe complained because no h2 preceded it).
+                     */}
+                    <h2 class="text-xl font-bold text-fg-strong mb-3">
+                      {t("post.check_it_out", {}, currentLanguage)}
+                    </h2>
+                    <p class="text-fg mb-4">
+                      {t("post.visit_project", {}, currentLanguage)}
+                    </p>
+                    <a
+                      href={post.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center px-6 py-3 bg-accent text-bg font-semibold rounded-lg hover:bg-accent-hover transition-all duration-200 group"
+                    >
+                      {t(
+                        "post.visit_button",
+                        { title: localizedPost.title },
+                        currentLanguage,
+                      )}
+                      <svg
+                        class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-200"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </a>
+                  </div>
+                )
+              }
+            </div>
+          </div>
+
+          {
+            post.tags.length > 0 && (
+              <div class="mb-12">
+                <h2 class="text-lg font-semibold text-fg-strong mb-4">
+                  {t("post.technologies_used", {}, currentLanguage)}
+                </h2>
+                <div class="flex flex-wrap gap-2">
+                  {post.tags.map((tag) => (
+                    <a
+                      href={tagUrl(tag, currentLanguage)}
+                      class="px-3 py-1 bg-elev text-fg rounded-full text-sm hover:bg-muted transition-colors"
+                    >
+                      #{tag}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+
+    {
+      relatedProjects.length > 0 && (
+        <section class="bg-elev/30 py-16">
+          <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12">
+              <h2 class="text-3xl font-bold text-fg-strong mb-4">
+                {t("projects.related", {}, currentLanguage)}
+              </h2>
+            </div>
+
+            <div class="grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {relatedProjects.map((rp) => (
+                <ProjectCard project={rp} currentLanguage={currentLanguage} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <button
+      type="button"
+      class="fixed bottom-8 right-8 p-3 bg-elev hover:bg-surface text-fg-strong rounded-full shadow-lg transition-all duration-200 opacity-0 z-50"
+      id="back-to-top"
+      aria-label={t("post.back_to_top", {}, currentLanguage)}
+    >
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+      </svg>
+    </button>
+  </article>
+</Layout>
+
+<style>
+  .mdx-body[data-active-lang="es"] :global(section[data-lang="en"]) {
+    display: none;
+  }
+  .mdx-body[data-active-lang="en"] :global(section[data-lang="es"]) {
+    display: none;
+  }
+  .mdx-body :global(section) {
+    display: block;
+  }
+  .mdx-body :global(section p) {
+    font-size: 1.125rem;
+    color: var(--fg-default);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+  }
+  .mdx-body :global(section p:last-child) {
+    margin-bottom: 0;
+  }
+</style>
+
+<script>
+  function setupBackToTop() {
+    const button = document.getElementById("back-to-top");
+    if (!button) return;
+    const onScroll = () => {
+      if (window.scrollY > 400) {
+        button.classList.remove("opacity-0");
+        button.classList.add("opacity-100");
+      } else {
+        button.classList.add("opacity-0");
+        button.classList.remove("opacity-100");
+      }
+    };
+    button.addEventListener("click", () =>
+      window.scrollTo({ top: 0, behavior: "smooth" }),
+    );
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupBackToTop);
+  } else {
+    setupBackToTop();
+  }
+  document.addEventListener("astro:page-load", setupBackToTop);
+</script>

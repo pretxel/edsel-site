@@ -1,0 +1,90 @@
+---
+import type { Language } from "../../lib/i18n";
+import { t } from "../../lib/i18n";
+import SparklingSphere from "../Particles/sparklingSphere";
+
+interface Props {
+  lang: Language;
+}
+
+const { lang } = Astro.props;
+
+// Per-visit random palette. SSR runs this on every request (Vercel adapter
+// = server output), so each page load — including ClientRouter navigations
+// — picks a fresh palette. All six stay bright/saturated against zinc-950.
+const palettes: number[][] = [
+  [0x46b4ff, 0x6cc4ff, 0x88ccff], // brand blue
+  [0x9b6cff, 0xb088ff, 0xc4a8ff], // violet
+  [0xff6cc4, 0xff88d4, 0xffaae0], // pink
+  [0xff8a6c, 0xffa888, 0xffc0a8], // coral
+  [0x46ffc4, 0x6cffd4, 0x88ffe0], // mint
+  [0xa8ff6c, 0xbcff88, 0xccffa8], // lime
+];
+const particleColors = palettes[Math.floor(Math.random() * palettes.length)];
+
+const projectsHref = lang === "en" ? "/en/projects" : "/projects";
+---
+
+<section
+  class="relative isolate overflow-hidden border-b border-border-default"
+  aria-labelledby="hero-title"
+>
+  <!--
+    Decorative sphere. Lives behind the hero copy at low opacity so it
+    feels like depth, not the whole show. Hidden from assistive tech.
+
+    Hydration policy:
+      • `client:media="(min-width: 768px)"` → skip the ~525KB Three.js
+        bundle entirely on phones (where it pushes LCP past 6s and tanks
+        the mobile Lighthouse score), keep it on desktop where it's a nice
+        visual flourish.
+      • The gradient at the bottom of the section already gives the hero
+        depth on mobile, so dropping the sphere doesn't break the design.
+  -->
+  <div
+    class="pointer-events-none absolute inset-0 -z-10 hidden opacity-40 md:block"
+    aria-hidden="true"
+  >
+    <SparklingSphere
+      particleColors={particleColors}
+      totalParticles={600}
+      mobileTotalParticles={300}
+      client:media="(min-width: 768px)"
+    />
+  </div>
+
+  <!-- Subtle gradient fade-to-bg at the bottom so the next section meets a
+       calm surface instead of fighting the sphere's brightness. -->
+  <div
+    class="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-b from-transparent to-bg"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div
+    class="mx-auto flex min-h-[80vh] max-w-6xl flex-col items-start justify-center px-6 py-24 sm:px-8 md:min-h-[88vh] md:py-32"
+  >
+    <h1
+      id="hero-title"
+      class="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-fg-strong sm:text-5xl md:text-6xl"
+    >
+      {t("home.hero.title", {}, lang)}
+    </h1>
+
+    <p
+      class="mt-6 max-w-2xl text-lg leading-relaxed text-fg-muted sm:text-xl"
+    >
+      {t("home.hero.subtitle", {}, lang)}
+    </p>
+
+    <div class="mt-10 flex flex-wrap items-center gap-3">
+      <a
+        href={projectsHref}
+        class="inline-flex items-center justify-center rounded-md bg-accent px-5 py-3 text-sm font-semibold text-bg shadow-sm transition-colors duration-200 hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
+        {t("home.hero.cta.projects", {}, lang)}
+        <span aria-hidden="true" class="ml-2">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>

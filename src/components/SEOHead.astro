@@ -1,6 +1,15 @@
 ---
 import type { Language } from '../lib/i18n';
 
+/**
+ * Structured-data variant. Drives which JSON-LD blocks are emitted in
+ * addition to the always-present WebSite/BlogPosting graph:
+ *   - `home`            → adds Person (single source of truth for /).
+ *   - `software-app`    → adds SoftwareApplication for /projects/[slug].
+ *   - default           → no additional graph (used by /about, /now, /uses).
+ */
+type SchemaVariant = 'home' | 'software-app';
+
 interface Props {
   title: string;
   description: string;
@@ -15,13 +24,18 @@ interface Props {
   alternateLanguages?: { lang: Language; url: string }[];
   keywords?: string[];
   noindex?: boolean;
+  /** Opt-in to additional Schema.org payloads. */
+  schemaVariant?: SchemaVariant;
+  /** When set, emits a SoftwareApplication block (project detail pages). */
+  appName?: string;
+  appUrl?: string;
 }
 
 const {
   title,
   description,
   canonical,
-  image = '/og-default.jpg',
+  image = '/og/default.png',
   imageAlt = 'Edsel Serrano - Full Stack Developer',
   type = 'website',
   publishedTime,
@@ -30,7 +44,10 @@ const {
   language = 'es',
   alternateLanguages = [],
   keywords = [],
-  noindex = false
+  noindex = false,
+  schemaVariant,
+  appName,
+  appUrl,
 } = Astro.props;
 
 // Construct full URLs
@@ -116,13 +133,13 @@ const langShort = language;
 <meta name="msapplication-TileColor" content="#18181b" />
 <meta name="format-detection" content="telephone=no" />
 
-<!-- LLM Context -->
-<link rel="llm-context" href="/llm.txt" type="text/plain" />
+<!-- LLM Context — see also /llms-full.txt for the bulk dump. -->
+<link rel="llm-context" href="/llms.txt" type="text/plain" />
 
-<!-- Schema.org JSON-LD -->
+<!-- Schema.org JSON-LD — primary entity for the current URL. -->
 <script type="application/ld+json" set:html={JSON.stringify({
   "@context": "https://schema.org",
-  "@type": type === 'article' ? 'BlogPosting' : 'WebSite',
+  "@type": type === 'article' ? 'Article' : 'WebSite',
   "@id": fullCanonical,
   "url": fullCanonical,
   "name": title,
@@ -140,8 +157,8 @@ const langShort = language;
     "name": author,
     "url": siteUrl,
     "sameAs": [
-      "https://github.com/edselserrano",
-      "https://linkedin.com/in/edselserrano",
+      "https://github.com/pretxel",
+      "https://www.linkedin.com/in/edselserrano",
       "https://twitter.com/edselserrano"
     ]
   },
@@ -169,6 +186,54 @@ const langShort = language;
     "inLanguage": langCode
   } : {})
 })} />
+
+<!--
+  Person schema for the home page. Single source of truth that lets Google
+  knit together the social profiles (sameAs) under one knowledge graph entity.
+-->
+{schemaVariant === 'home' && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${siteUrl}/#edsel`,
+    "name": author,
+    "url": siteUrl,
+    "image": fullImage,
+    "jobTitle": language === 'en' ? 'Software Engineer' : 'Software Engineer',
+    "worksFor": { "@type": "Organization", "name": "Embat", "url": "https://www.embat.com" },
+    "homeLocation": { "@type": "Place", "name": "Madrid, Spain" },
+    "sameAs": [
+      "https://github.com/pretxel",
+      "https://www.linkedin.com/in/edselserrano",
+      "https://twitter.com/edselserrano",
+    ],
+    "knowsAbout": [
+      "JavaScript", "TypeScript", "React", "Astro", "Next.js",
+      "Node.js", "PostgreSQL", "Machine Learning", "LLMs", "IoT",
+      "Web Development", "Agile",
+    ],
+  })} />
+)}
+
+<!--
+  SoftwareApplication schema for project detail pages. Helps Google surface
+  the project as a discrete app rather than a blog post.
+-->
+{schemaVariant === 'software-app' && appName && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": fullCanonical + "#app",
+    "name": appName,
+    "description": description,
+    "url": appUrl || fullCanonical,
+    "applicationCategory": "WebApplication",
+    "operatingSystem": "Web",
+    "image": fullImage,
+    "author": { "@type": "Person", "name": author, "url": siteUrl },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  })} />
+)}
 
 <!-- Breadcrumb Schema for Articles -->
 {type === 'article' && (
@@ -205,14 +270,15 @@ const langShort = language;
     "@type": "Person",
     "name": author,
     "url": siteUrl,
-    "jobTitle": language === 'en' ? 'Full Stack Developer' : 'Desarrollador Full Stack',
+    "jobTitle": "Software Engineer",
     "worksFor": {
       "@type": "Organization",
-      "name": "Freelance"
+      "name": "Embat",
+      "url": "https://www.embat.com"
     },
     "sameAs": [
-      "https://github.com/edselserrano",
-      "https://linkedin.com/in/edselserrano"
+      "https://github.com/pretxel",
+      "https://www.linkedin.com/in/edselserrano"
     ],
     "knowsAbout": [
       "JavaScript",
@@ -226,13 +292,10 @@ const langShort = language;
   })} />
 )}
 
-<!-- Favicon and App Icons -->
+<!--
+  Favicon + manifest only. Apple touch icon and PNG favicons would 404
+  (the assets aren't in /public), so we omit them to avoid console errors
+  in Lighthouse Best Practices. MainHead.astro mirrors this decision.
+-->
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 <link rel="manifest" href="/site.webmanifest" />
-
-<!-- Preconnect to external domains -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

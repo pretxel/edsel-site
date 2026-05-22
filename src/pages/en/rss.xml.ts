@@ -1,26 +1,46 @@
+/**
+ * RSS feed (English).
+ *
+ * Mirrors the Spanish feed structure, sourcing posts where `lang === 'en'`
+ * and projects' English localization.
+ */
 import rss from "@astrojs/rss";
 import type { APIRoute } from "astro";
-import { getLocalizedPosts } from "../../lib/data";
+import { getAllPosts, getLocalizedProjects } from "../../lib/content";
 
 const SITE_URL = "https://edselserrano.com";
 
 export const GET: APIRoute = async () => {
-  const items = getLocalizedPosts("en")
-    .slice()
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .map((post) => ({
-      title: post.title,
-      description: post.description,
-      pubDate: new Date(post.date),
-      link: `/en/blog/${post.id}`,
-      categories: post.tags,
-      author: post.author,
-    }));
+  const projects = await getLocalizedProjects("en");
+  const posts = await getAllPosts("en");
+
+  const projectItems = projects.map((p) => ({
+    title: p.title,
+    description: p.link
+      ? `${p.description} — ${p.link}`
+      : p.description,
+    pubDate: p.pubDate,
+    link: `/en/projects/${p.slug}`,
+    categories: p.tags,
+    author: p.author,
+  }));
+
+  const postItems = posts.map((p) => ({
+    title: p.data.title,
+    description: p.data.description,
+    pubDate: p.data.date,
+    link: `/en/blog/${p.id}`,
+    categories: p.data.tags,
+  }));
+
+  const items = [...projectItems, ...postItems].sort(
+    (a, b) => b.pubDate.getTime() - a.pubDate.getTime(),
+  );
 
   return rss({
-    title: "Edsel Serrano - Blog",
+    title: "Edsel Serrano - Blog & Projects",
     description:
-      "Projects, technical notes, and web development experiences by Edsel Serrano.",
+      "Articles, projects, and web development experiences by Edsel Serrano.",
     site: SITE_URL,
     items,
     customData: "<language>en-US</language>",

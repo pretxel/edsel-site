@@ -13,9 +13,18 @@ export interface I18nConfig {
 export const translations = {
     es: {
         // Navigation
+        'nav.home': 'Inicio',
+        'nav.projects': 'Proyectos',
         'nav.blog': 'Blog',
+        'nav.about': 'Sobre mí',
         'nav.back_to_blog': 'Volver al Blog',
         'nav.share': 'Compartir',
+
+        // Pages
+        'page.last_updated': 'Actualizado el {date}',
+        'page.back_home': '← Inicio',
+        'page.about.title': 'Sobre mí',
+        'page.about.description': 'Bio extendida, intereses y experiencia profesional de Edsel Serrano.',
 
         // Blog Index
         'blog.title': 'Blog',
@@ -55,17 +64,76 @@ export const translations = {
 
         // Categories
         'category.project_showcase': 'Showcase de Proyecto',
+        'category.article': 'Artículo',
+
+        // Projects index
+        'projects.title': 'Proyectos',
+        'projects.welcome_title': 'Mis',
+        'projects.welcome_subtitle': 'Proyectos',
+        'projects.welcome_description': 'Una colección de cosas que he construido — apps, herramientas, experimentos. Cada proyecto es bilingüe; cámbialo desde el selector arriba.',
+        'projects.count': 'Proyectos',
+        'projects.latest': 'Últimos proyectos',
+        'projects.empty_title': 'Sin proyectos todavía',
+        'projects.empty_description': 'Pronto habrá cosas que mirar.',
+        'projects.visit_external': 'Visitar proyecto',
+        'projects.related': 'Proyectos relacionados',
+
+        // Posts (articles) — distinct from projects
+        'posts.empty_title': 'Todavía no hay artículos',
+        'posts.empty_description': 'Pronto publicaré ensayos y notas técnicas aquí.',
+        'posts.related': 'Artículos relacionados',
+        'posts.toc_title': 'En esta página',
+        'posts.share_label': 'Compartir',
+        'posts.share_copied': '¡Enlace copiado!',
+        'posts.reading_time': '{minutes} min de lectura',
+
+        // Tags
+        'tags.title': 'Etiquetas',
+        'tags.heading_for': 'Etiquetados con "{tag}"',
+        'tags.posts_section': 'Artículos',
+        'tags.projects_section': 'Proyectos',
+        'tags.empty': 'No hay nada bajo esta etiqueta todavía.',
+        'tags.back_to_all': 'Ver todas las etiquetas',
+
+        // Cards (additions)
+        'card.read_post': 'Leer artículo',
 
         // Language
         'language.spanish': 'Español',
         'language.english': 'English',
         'language.switch_to': 'Cambiar a {language}',
+
+        // Homepage — Hero
+        'home.hero.title': 'Edsel Serrano',
+        'home.hero.subtitle': 'Software Engineer  •  Entrepreneur of Technology  •  Machine learning lover  •  Agentic Engineer',
+        'home.hero.cta.projects': 'Ver proyectos',
+        'home.hero.cta.posts': 'Leer notas',
+
+        // Homepage — Featured work
+        'home.featured.eyebrow': 'Trabajo reciente',
+        'home.featured.title': 'Cosas que he construido',
+        'home.featured.view_all': 'Ver todos',
+
+        // Homepage — Latest posts
+        'home.posts.eyebrow': 'Notas',
+        'home.posts.title': 'Últimas notas',
+        'home.posts.view_all': 'Ver blog',
+        'home.posts.empty': 'Próximamente notas — sigue el RSS.',
     },
     en: {
         // Navigation
+        'nav.home': 'Home',
+        'nav.projects': 'Projects',
         'nav.blog': 'Blog',
+        'nav.about': 'About',
         'nav.back_to_blog': 'Back to Blog',
         'nav.share': 'Share',
+
+        // Pages
+        'page.last_updated': 'Updated {date}',
+        'page.back_home': '← Home',
+        'page.about.title': 'About',
+        'page.about.description': 'Long-form bio, interests, and professional experience of Edsel Serrano.',
 
         // Blog Index
         'blog.title': 'Blog',
@@ -105,11 +173,61 @@ export const translations = {
 
         // Categories
         'category.project_showcase': 'Project Showcase',
+        'category.article': 'Article',
+
+        // Projects index
+        'projects.title': 'Projects',
+        'projects.welcome_title': 'My',
+        'projects.welcome_subtitle': 'Projects',
+        'projects.welcome_description': 'A collection of things I have built — apps, tools, experiments. Each project is bilingual; switch from the toggle above.',
+        'projects.count': 'Projects',
+        'projects.latest': 'Latest projects',
+        'projects.empty_title': 'No projects yet',
+        'projects.empty_description': 'New work will land here soon.',
+        'projects.visit_external': 'Visit project',
+        'projects.related': 'Related projects',
+
+        // Posts (articles) — distinct from projects
+        'posts.empty_title': 'No articles yet',
+        'posts.empty_description': 'Long-form writing will land here soon.',
+        'posts.related': 'Related articles',
+        'posts.toc_title': 'On this page',
+        'posts.share_label': 'Share',
+        'posts.share_copied': 'Link copied!',
+        'posts.reading_time': '{minutes} min read',
+
+        // Tags
+        'tags.title': 'Tags',
+        'tags.heading_for': 'Tagged with "{tag}"',
+        'tags.posts_section': 'Articles',
+        'tags.projects_section': 'Projects',
+        'tags.empty': 'Nothing tagged like this yet.',
+        'tags.back_to_all': 'See all tags',
+
+        // Cards (additions)
+        'card.read_post': 'Read article',
 
         // Language
         'language.spanish': 'Español',
         'language.english': 'English',
         'language.switch_to': 'Switch to {language}',
+
+        // Homepage — Hero
+        'home.hero.title': 'Edsel Serrano',
+        'home.hero.subtitle': 'Software Engineer  •  Entrepreneur of Technology  •  Machine learning lover  •  Agentic Engineer',
+        'home.hero.cta.projects': 'See projects',
+        'home.hero.cta.posts': 'Read notes',
+
+        // Homepage — Featured work
+        'home.featured.eyebrow': 'Recent work',
+        'home.featured.title': 'Things I have built',
+        'home.featured.view_all': 'See all',
+
+        // Homepage — Latest posts
+        'home.posts.eyebrow': 'Notes',
+        'home.posts.title': 'Latest notes',
+        'home.posts.view_all': 'Go to blog',
+        'home.posts.empty': 'Notes coming soon — follow the RSS.',
     }
 } as const;
 
@@ -117,11 +235,13 @@ export type TranslationKey = keyof typeof translations.es;
 
 // Get translation function
 export function t(key: TranslationKey, params?: Record<string, string>, lang: Language = defaultLanguage): string {
-    const translation = translations[lang]?.[key] || translations[defaultLanguage][key] || key;
+    // Casting to `string` widens the literal union from the const translations
+    // map so the subsequent `.reduce(...)` accumulator types check cleanly.
+    const translation: string = translations[lang]?.[key] || translations[defaultLanguage][key] || key;
 
     if (!params) return translation;
 
-    return Object.entries(params).reduce((text, [param, value]) => {
+    return Object.entries(params).reduce<string>((text, [param, value]) => {
         return text.replace(new RegExp(`{${param}}`, 'g'), value);
     }, translation);
 }

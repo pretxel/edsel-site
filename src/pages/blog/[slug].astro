@@ -1,0 +1,305 @@
+---
+/**
+ * Detail page for a blog post (long-form article).
+ *
+ * Features added vs. legacy `/blog/[id].astro`:
+ *   • Reading time computed from real body length.
+ *   • Sticky `<TableOfContents />` sidebar on desktop, fed by Astro headings.
+ *   • Top `<ReadingProgress />` bar.
+ *   • `<ShareButtons />` component with clipboard fallback.
+ *   • Related posts ranked by shared-tag count.
+ *   • Tags are clickable chips pointing to `/tags/<slug>`.
+ *   • OG image references `/og/<slug>.png` (dynamic).
+ */
+import Layout from "../../layouts/BlogLayout.astro";
+import { getPostBySlug, getRelatedPosts } from "../../lib/content";
+import {
+  getLanguageFromUrl,
+  t,
+  defaultLanguage,
+  formatDate,
+} from "../../lib/i18n";
+import { readingTime } from "../../lib/reading-time";
+import { tagUrl } from "../../lib/tags";
+import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
+import SEOHead from "../../components/SEOHead.astro";
+import ShareButtons from "../../components/blog/ShareButtons.astro";
+import ReadingProgress from "../../components/blog/ReadingProgress.astro";
+import TableOfContents from "../../components/blog/TableOfContents.astro";
+import PostCard from "../../components/PostCard.astro";
+import { render } from "astro:content";
+
+const { slug } = Astro.params;
+const currentLanguage =
+  getLanguageFromUrl(Astro.url.pathname) || defaultLanguage;
+const entry = slug ? await getPostBySlug(slug) : undefined;
+
+if (!entry) {
+  return Astro.redirect("/404");
+}
+
+const { Content, headings } = await render(entry);
+const minutes = readingTime(entry.body ?? "");
+const related = await getRelatedPosts(entry, 3);
+
+const seoTitle = `${entry.data.title} | Blog - Edsel Serrano`;
+const seoDescription = entry.data.description;
+const publishedTime = entry.data.date.toISOString();
+
+const alternateLanguages = [
+  { lang: "es" as const, url: `/blog/${entry.id}` },
+  { lang: "en" as const, url: `/en/blog/${entry.id}` },
+];
+
+const ogImage = `/og/${entry.id}.png`;
+---
+
+<Layout
+  title={entry.data.title}
+  lang={currentLanguage}
+  rssHref={currentLanguage === "en" ? "/en/rss.xml" : "/rss.xml"}
+>
+  <SEOHead
+    slot="head"
+    title={seoTitle}
+    description={seoDescription}
+    canonical={currentLanguage === "en" ? `/en/blog/${entry.id}` : `/blog/${entry.id}`}
+    image={ogImage}
+    imageAlt={entry.data.title}
+    language={currentLanguage}
+    alternateLanguages={alternateLanguages}
+    keywords={entry.data.tags}
+    type="article"
+    publishedTime={publishedTime}
+    modifiedTime={publishedTime}
+  />
+  <ReadingProgress />
+
+  <article class="min-h-screen">
+    <div class="absolute top-4 left-4 right-4 z-50">
+      <div class="flex justify-between items-center">
+        <a
+          href={currentLanguage === "en" ? "/en/" : "/"}
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-fg-muted hover:text-fg-strong bg-elev/60 hover:bg-elev rounded-lg border border-border-default hover:border-border-strong transition-all duration-200 group backdrop-blur-sm"
+        >
+          <svg
+            class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            ></path>
+          </svg>
+          {currentLanguage === "en" ? "Home" : "Inicio"}
+        </a>
+        <LanguageSwitcher
+          currentLanguage={currentLanguage}
+          currentPath={Astro.url.pathname}
+        />
+      </div>
+    </div>
+
+    <header
+      class="sticky top-0 z-50 bg-bg/80 backdrop-blur-xl border-b border-border-default"
+    >
+      <div class="max-w-5xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <a
+            href={currentLanguage === "en" ? "/en/blog" : "/blog"}
+            class="inline-flex items-center px-4 py-2 text-fg-muted hover:text-fg-strong hover:bg-elev rounded-lg transition-all duration-200 group relative z-10"
+          >
+            <svg
+              class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"></path>
+            </svg>
+            {currentLanguage === "en" ? "Back to Blog" : "Volver al Blog"}
+          </a>
+          <ShareButtons title={entry.data.title} language={currentLanguage} />
+        </div>
+      </div>
+    </header>
+
+    <div class="relative overflow-hidden">
+      {entry.data.cover && (
+        <div class="absolute inset-0 z-0">
+          <img
+            src={entry.data.cover}
+            alt={entry.data.title}
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/70 to-bg/30"></div>
+        </div>
+      )}
+
+      <div class="relative z-10 px-6 py-24 sm:py-32">
+        <div class="max-w-4xl mx-auto">
+          <h1
+            class="text-4xl sm:text-5xl lg:text-6xl font-bold text-fg-strong mb-6 leading-tight"
+          >
+            {entry.data.title}
+          </h1>
+          <div
+            class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 sm:gap-6 text-fg-muted mb-8"
+          >
+            <div class="flex items-center">
+              <svg
+                class="w-5 h-5 mr-2 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <time datetime={publishedTime}>
+                {formatDate(publishedTime, currentLanguage)}
+              </time>
+            </div>
+            <div class="flex items-center">
+              <svg
+                class="w-5 h-5 mr-2 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>
+                {t("posts.reading_time", { minutes: String(minutes) }, currentLanguage)}
+              </span>
+            </div>
+            {entry.data.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2">
+                {entry.data.tags.map((tag) => (
+                  <a
+                    href={tagUrl(tag, currentLanguage)}
+                    class="inline-flex items-center min-h-[24px] px-2.5 py-1 text-xs rounded-full bg-elev text-fg-muted hover:text-fg-strong hover:bg-muted transition-colors"
+                  >
+                    #{tag}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+          <p class="text-xl text-fg leading-relaxed max-w-3xl">
+            {entry.data.description}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative bg-surface">
+      <div class="max-w-6xl mx-auto px-6 py-16 grid lg:grid-cols-[1fr_220px] gap-12">
+        <div class="prose prose-lg prose-invert max-w-none">
+          <Content />
+        </div>
+        <aside class="hidden lg:block">
+          <div class="sticky top-24">
+            <TableOfContents
+              headings={headings}
+              title={t("posts.toc_title", {}, currentLanguage)}
+            />
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    {related.length > 0 && (
+      <section class="bg-elev/30 py-16">
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-fg-strong mb-4">
+              {t("posts.related", {}, currentLanguage)}
+            </h2>
+          </div>
+          <div class="grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {related.map((rel) => (
+              <PostCard
+                variant="post"
+                post={rel}
+                currentLanguage={currentLanguage}
+                readingMinutes={readingTime(rel.body ?? "")}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <button
+      type="button"
+      class="fixed bottom-8 right-8 p-3 bg-elev hover:bg-surface text-fg-strong rounded-full shadow-lg transition-all duration-200 opacity-0 z-50"
+      id="back-to-top"
+      aria-label={t("post.back_to_top", {}, currentLanguage)}
+    >
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+      </svg>
+    </button>
+  </article>
+</Layout>
+
+<script>
+  function setupBackToTop() {
+    const button = document.getElementById("back-to-top");
+    if (!button) return;
+    const onScroll = () => {
+      if (window.scrollY > 400) {
+        button.classList.remove("opacity-0");
+        button.classList.add("opacity-100");
+      } else {
+        button.classList.add("opacity-0");
+        button.classList.remove("opacity-100");
+      }
+    };
+    button.addEventListener("click", () =>
+      window.scrollTo({ top: 0, behavior: "smooth" }),
+    );
+    button.addEventListener("touchend", () =>
+      window.scrollTo({ top: 0, behavior: "smooth" }),
+    );
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupBackToTop);
+  } else {
+    setupBackToTop();
+  }
+  document.addEventListener("astro:page-load", setupBackToTop);
+</script>

@@ -1,0 +1,182 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+@import "./tokens.css";
+
+@plugin "@tailwindcss/typography";
+
+/*
+ * Bridge our design tokens into Tailwind 4's theme so utilities like
+ * `bg-bg`, `bg-surface`, `text-fg`, `text-accent`, `font-sans`, `rounded-md`
+ * resolve back to the same custom properties used in plain CSS.
+ *
+ * `@theme inline` keeps the var() reference, so anything that overrides
+ * the underlying token (e.g. via media query or container) keeps cascading.
+ */
+@theme inline {
+  /* Colors */
+  --color-bg: var(--bg-app);
+  --color-surface: var(--bg-surface);
+  --color-elev: var(--bg-elev);
+  --color-muted: var(--bg-muted);
+
+  --color-fg: var(--fg-default);
+  --color-fg-strong: var(--fg-strong);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+
+  --color-success: var(--c-success);
+  --color-warn: var(--c-warn);
+  --color-danger: var(--c-danger);
+
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Radii */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+
+  /* Motion */
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+/*
+ * Everything below lives in @layer base so Tailwind 4's utility classes
+ * (which sit in @layer utilities, further down the cascade) can win when
+ * the markup opts in to a specific color/background. Without this, a bare
+ * `a { color: inherit }` would beat `.text-bg`, silently breaking high-
+ * contrast CTAs like the Hero buttons.
+ */
+@layer base {
+  html {
+    background: var(--bg-app);
+    color: var(--fg-default);
+    font-family: var(--font-sans);
+    font-feature-settings:
+      "cv02", "cv03", "cv04", "cv11"; /* sharper Inter glyphs */
+  }
+
+  body,
+  input,
+  select,
+  textarea {
+    background: var(--bg-app);
+    color: var(--fg-default);
+    font-family: var(--font-sans);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-relaxed);
+    font-size: 1rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /*
+   * Include `:visited` explicitly so browsers don't fall back to the
+   * user-agent visited color (~#9e9eff in Chromium headless), which fails
+   * WCAG contrast against the dark surfaces. Pair this with utility-set
+   * colors (`text-fg-strong`, `text-fg-muted`, etc.) — they already win
+   * over `color: inherit`, but losing to `:visited` (specificity 1,1,0).
+   */
+  a,
+  a:visited {
+    color: inherit;
+    outline: 0;
+    text-decoration: none;
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+
+  /* Consistent focus ring across the site, driven by the accent token. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+}
+
+/* Honor reduced motion at the global level. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Homepage footer ─────────────────────────────────────
+ * The old absolute-positioned `.footer` lived under the legacy
+ * "single-screen with sphere" home. The redesigned homepage scrolls,
+ * so the footer is now an in-flow block at the bottom of the page
+ * with the social icons centered inside it.
+ */
+.footer {
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 1.5rem 3rem;
+  border-top: 1px solid var(--border-default);
+  background: var(--bg-app);
+}
+
+.footer nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.footer nav li {
+  display: inline-block;
+}
+
+.footer nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  border: solid 1px var(--border-strong);
+  color: var(--fg-strong);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.footer nav a:hover {
+  background-color: var(--bg-muted);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.footer nav a:active {
+  background-color: var(--border-strong);
+}
+
+.footer nav a span {
+  display: none;
+}

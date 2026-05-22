@@ -1,0 +1,68 @@
+---
+import MainHead from "../../components/MainHead.astro";
+import SEOHead from "../../components/SEOHead.astro";
+import Nav from "../../components/Nav/index.jsx";
+import Hero from "../../components/home/Hero.astro";
+import FeaturedWork from "../../components/home/FeaturedWork.astro";
+import Footer from "../../components/Footer/index.astro";
+import Analytics from "@vercel/analytics/astro";
+import { ClientRouter } from "astro:transitions";
+import { t } from "../../lib/i18n";
+
+const lang = "en" as const;
+
+// Same rationale as `/`: skip the Analytics web component locally so the
+// /_vercel/insights/script.js 404 doesn't trash Lighthouse Best Practices.
+const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
+
+const seoTitle =
+  "Edsel Serrano | Software engineer — projects, notes, experiments";
+const seoDescription =
+  "Edsel Serrano builds tools for agile teams and writes about web development, products, and experiments. Portfolio and blog.";
+
+const keywords = [
+  "Edsel Serrano",
+  "Software Engineer",
+  "Full Stack Developer",
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Astro",
+  "Web Development",
+  "Portfolio",
+  "Blog",
+];
+
+const alternateLanguages = [
+  { lang: "es" as const, url: "/" },
+  { lang: "en" as const, url: "/en/" },
+];
+---
+
+<html lang={lang}>
+  <head>
+    <MainHead />
+    <SEOHead
+      title={seoTitle}
+      description={seoDescription}
+      canonical="/en/"
+      language={lang}
+      alternateLanguages={alternateLanguages}
+      keywords={keywords}
+      type="website"
+      schemaVariant="home"
+    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <ClientRouter />
+  </head>
+
+  <body class="bg-bg text-fg font-sans antialiased">
+    <Nav lang={lang} />
+    <main id="main">
+      <Hero lang={lang} />
+      <FeaturedWork lang={lang} />
+    </main>
+    <Footer />
+    {showAnalytics && <Analytics />}
+  </body>
+</html>

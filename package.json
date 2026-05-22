@@ -7,10 +7,21 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "build:node": "ASTRO_ADAPTER=node astro build",
+    "preview:node": "ASTRO_ADAPTER=node astro build && node dist/server/entry.mjs",
+    "preview": "astro preview",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "new:post": "node scripts/new-post.mjs"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@astrojs/mdx": "^5.0.6",
+    "@astrojs/node": "^10.1.1",
     "@iconify-json/bi": "^1.2.7",
+    "@iconify-json/circle-flags": "^1.2.10",
+    "@iconify-json/lucide": "^1.2.109",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.2.2",
     "@types/node": "^25.5.0",
@@ -23,20 +34,19 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "sass": "^1.98.0",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.3"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.2",
     "@astrojs/rss": "^4.0.18",
-    "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/svelte": "^8.0.4",
     "@astrojs/vercel": "^10.0.4",
-    "@fontsource/roboto": "^5.2.10",
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/og": "^0.11.1",
     "astro-compress": "^2.4.0",
     "astro-icon": "^1.1.5",
-    "react-device-detect": "^2.2.3",
-    "svelte": "^5.55.1",
     "three": "^0.183.2"
   },
   "overrides": {
