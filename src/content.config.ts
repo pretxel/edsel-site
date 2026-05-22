@@ -61,16 +61,15 @@ const posts = defineCollection({
 });
 
 /**
- * `pages` — standalone evergreen pages such as `/about`, `/now`, `/uses`.
+ * `pages` — standalone evergreen pages such as `/about`.
  * One Markdown file per (slug, lang) combination, e.g. `about-es.md`,
- * `about-en.md`, `now.md`. The `lang` field defines whether the file is
- * rendered for the Spanish or English route. The optional `updated` date
- * powers the "última actualización" badge in the rendered page header.
+ * `about-en.md`. The optional `updated` date powers the
+ * "última actualización" badge in the rendered page header.
  */
 const pages = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/pages" }),
   schema: z.object({
-    slug: z.enum(["about", "now", "uses"]),
+    slug: z.enum(["about"]),
     lang: z.enum(["es", "en"]),
     title: z.string(),
     description: z.string().optional(),

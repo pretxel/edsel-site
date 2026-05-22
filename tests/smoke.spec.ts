@@ -21,8 +21,6 @@ const ROUTES = [
   { path: "/projects", description: "projects index" },
   { path: "/projects/daily-potato", description: "project detail" },
   { path: "/about", description: "about" },
-  { path: "/now", description: "now" },
-  { path: "/uses", description: "uses" },
 ];
 
 for (const { path, description } of ROUTES) {
@@ -57,15 +55,3 @@ for (const { path, description } of ROUTES) {
   });
 }
 
-test("skip-to-content link is present and focusable", async ({ page }) => {
-  await page.goto("/");
-  const skip = page.locator(".skip-to-content");
-  await expect(skip).toBeAttached();
-  // Tabbing once should move focus to the skip link (it's the first focusable
-  // element in the body).
-  await page.keyboard.press("Tab");
-  const focusedClass = await page.evaluate(
-    () => document.activeElement?.className,
-  );
-  expect(focusedClass).toContain("skip-to-content");
-});

@@ -69,9 +69,6 @@ const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
     <ClientRouter />
   </head>
   <body class="bg-bg text-fg font-sans">
-    <a href="#main" class="skip-to-content">
-      {t("a11y.skip_to_content", {}, lang)}
-    </a>
     <div class="relative min-h-screen p-2 gap-2 flex items-stretch">
       <main id="main" class="rounded-lg bg-surface flex-1 mx-auto overflow-y-auto w-full">
         <slot />

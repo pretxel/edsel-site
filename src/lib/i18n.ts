@@ -12,16 +12,11 @@ export interface I18nConfig {
 // Translation keys and values
 export const translations = {
     es: {
-        // Accessibility
-        'a11y.skip_to_content': 'Saltar al contenido',
-
         // Navigation
         'nav.home': 'Inicio',
         'nav.projects': 'Proyectos',
         'nav.blog': 'Blog',
         'nav.about': 'Sobre mí',
-        'nav.now': 'Now',
-        'nav.uses': 'Uses',
         'nav.back_to_blog': 'Volver al Blog',
         'nav.share': 'Compartir',
 
@@ -30,10 +25,6 @@ export const translations = {
         'page.back_home': '← Inicio',
         'page.about.title': 'Sobre mí',
         'page.about.description': 'Bio extendida, intereses y experiencia profesional de Edsel Serrano.',
-        'page.now.title': 'Lo que estoy haciendo ahora',
-        'page.now.description': 'Un vistazo en tiempo real a en qué está trabajando y aprendiendo Edsel.',
-        'page.uses.title': 'Uses',
-        'page.uses.description': 'Hardware, software y herramientas que Edsel usa día a día.',
 
         // Blog Index
         'blog.title': 'Blog',
@@ -124,11 +115,6 @@ export const translations = {
         'home.featured.title': 'Cosas que he construido',
         'home.featured.view_all': 'Ver todos',
 
-        // Homepage — Now strip
-        'home.now.label': 'Now',
-        'home.now.more': 'Más',
-        'home.now.coming_soon': 'Próximamente',
-
         // Homepage — Latest posts
         'home.posts.eyebrow': 'Notas',
         'home.posts.title': 'Últimas notas',
@@ -136,16 +122,11 @@ export const translations = {
         'home.posts.empty': 'Próximamente notas — sigue el RSS.',
     },
     en: {
-        // Accessibility
-        'a11y.skip_to_content': 'Skip to content',
-
         // Navigation
         'nav.home': 'Home',
         'nav.projects': 'Projects',
         'nav.blog': 'Blog',
         'nav.about': 'About',
-        'nav.now': 'Now',
-        'nav.uses': 'Uses',
         'nav.back_to_blog': 'Back to Blog',
         'nav.share': 'Share',
 
@@ -154,10 +135,6 @@ export const translations = {
         'page.back_home': '← Home',
         'page.about.title': 'About',
         'page.about.description': 'Long-form bio, interests, and professional experience of Edsel Serrano.',
-        'page.now.title': 'What I am up to now',
-        'page.now.description': 'A real-time look at what Edsel is working on and learning.',
-        'page.uses.title': 'Uses',
-        'page.uses.description': 'Hardware, software, and tools Edsel uses day-to-day.',
 
         // Blog Index
         'blog.title': 'Blog',
@@ -247,11 +224,6 @@ export const translations = {
         'home.featured.eyebrow': 'Recent work',
         'home.featured.title': 'Things I have built',
         'home.featured.view_all': 'See all',
-
-        // Homepage — Now strip
-        'home.now.label': 'Now',
-        'home.now.more': 'More',
-        'home.now.coming_soon': 'Coming soon',
 
         // Homepage — Latest posts
         'home.posts.eyebrow': 'Notes',

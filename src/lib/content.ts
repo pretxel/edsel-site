@@ -6,7 +6,7 @@ export type ProjectEntry = CollectionEntry<"projects">;
 export type PostEntry = CollectionEntry<"posts">;
 export type PageEntry = CollectionEntry<"pages">;
 
-export type PageSlug = "about" | "now" | "uses";
+export type PageSlug = "about";
 
 /**
  * Bilingual-resolved view of a project. Mirrors the shape the pages used to
@@ -306,7 +306,7 @@ export async function getItemsByTagSlug(
 }
 
 /**
- * Look up an evergreen page (`/about`, `/now`, `/uses`) for a given language.
+ * Look up an evergreen page (`/about`) for a given language.
  */
 export async function getPage(
   slug: PageSlug,

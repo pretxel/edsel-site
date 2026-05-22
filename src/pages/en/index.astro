@@ -4,7 +4,6 @@ import SEOHead from "../../components/SEOHead.astro";
 import Nav from "../../components/Nav/index.jsx";
 import Hero from "../../components/home/Hero.astro";
 import FeaturedWork from "../../components/home/FeaturedWork.astro";
-import NowStrip from "../../components/home/NowStrip.astro";
 import LatestPosts from "../../components/home/LatestPosts.astro";
 import Footer from "../../components/Footer/index.astro";
 import Analytics from "@vercel/analytics/astro";
@@ -20,7 +19,7 @@ const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
 const seoTitle =
   "Edsel Serrano | Software engineer — projects, notes, experiments";
 const seoDescription =
-  "Edsel Serrano builds tools for agile teams and writes about web development, products, and experiments. Portfolio, blog, and a /now page.";
+  "Edsel Serrano builds tools for agile teams and writes about web development, products, and experiments. Portfolio and blog.";
 
 const keywords = [
   "Edsel Serrano",
@@ -59,14 +58,10 @@ const alternateLanguages = [
   </head>
 
   <body class="bg-bg text-fg font-sans antialiased">
-    <a href="#main" class="skip-to-content">
-      {t("a11y.skip_to_content", {}, lang)}
-    </a>
     <Nav />
     <main id="main">
       <Hero lang={lang} />
       <FeaturedWork lang={lang} />
-      <NowStrip lang={lang} />
       <LatestPosts lang={lang} />
     </main>
     <Footer />

@@ -6,14 +6,14 @@ import {
   t,
 } from "../lib/i18n";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
-import Social from "../components/Social/index.astro";
+import Footer from "../components/Footer/index.astro";
 import "./layout.css";
 import "../styles/blog.css";
 
 interface Props {
   /** Resolved page title shown in <title> and as the H1. */
   title: string;
-  /** Eyebrow shown above the H1 (e.g. "About", "Now", "Uses"). */
+  /** Eyebrow shown above the H1 (e.g. "About"). */
   eyebrow?: string;
   /** Short summary used in the head; also passed through to SEOHead by the page. */
   description?: string;
@@ -65,44 +65,8 @@ const updatedLabel = updated
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <slot name="head" />
-    <style>
-      .page-social ul {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      .page-social a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 2.25rem;
-        height: 2.25rem;
-        border-radius: 9999px;
-        border: 1px solid var(--border-strong);
-        color: var(--fg-default);
-        transition: background-color var(--dur-base) var(--ease-out),
-          color var(--dur-base) var(--ease-out);
-      }
-      .page-social a:hover {
-        background: var(--bg-muted);
-        color: var(--fg-strong);
-      }
-      .page-social a [data-icon] {
-        width: 1rem;
-        height: 1rem;
-      }
-      .page-social a span {
-        display: none;
-      }
-    </style>
   </head>
   <body class="bg-bg text-fg font-sans min-h-screen">
-    <a href="#main" class="skip-to-content">
-      {t("a11y.skip_to_content", {}, lang)}
-    </a>
     <div class="min-h-screen flex flex-col">
       <header
         class="sticky top-0 z-40 bg-surface/80 backdrop-blur-xl border-b border-border-default"
@@ -146,40 +110,7 @@ const updatedLabel = updated
         </article>
       </main>
 
-      <footer
-        class="border-t border-border-default px-6 py-10 mt-12 bg-surface/40"
-      >
-        <div class="max-w-3xl mx-auto flex flex-col items-center gap-4">
-          <nav aria-label="More" class="text-sm">
-            <ul class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-fg-muted">
-              <li>
-                <a
-                  href={lang === "en" ? "/en/uses" : "/uses"}
-                  class="hover:text-accent transition-colors"
-                  >{t("nav.uses", {}, lang)}</a
-                >
-              </li>
-              <li>
-                <a
-                  href={lang === "en" ? "/en/now" : "/now"}
-                  class="hover:text-accent transition-colors"
-                  >{t("nav.now", {}, lang)}</a
-                >
-              </li>
-              <li>
-                <a
-                  href={lang === "en" ? "/en/blog" : "/blog"}
-                  class="hover:text-accent transition-colors"
-                  >{t("nav.blog", {}, lang)}</a
-                >
-              </li>
-            </ul>
-          </nav>
-          <div class="page-social text-fg-muted">
-            <Social />
-          </div>
-        </div>
-      </footer>
+      <Footer lang={lang} />
     </div>
   </body>
 </html>

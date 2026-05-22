@@ -18,13 +18,11 @@ function Nav({ lang = 'es' } = {}) {
 				{ href: `${prefix}/`, label: 'Home' },
 				{ href: `${prefix}/blog`, label: 'Blog' },
 				{ href: `${prefix}/about`, label: 'About' },
-				{ href: `${prefix}/now`, label: 'Now' },
 		  ]
 		: [
 				{ href: `${prefix}/`, label: 'Inicio' },
 				{ href: `${prefix}/blog`, label: 'Blog' },
 				{ href: `${prefix}/about`, label: 'Sobre mí' },
-				{ href: `${prefix}/now`, label: 'Now' },
 		  ];
 
 	return (

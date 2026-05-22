@@ -113,29 +113,6 @@
     border-radius: 2px;
   }
 
-  /* Skip-to-content link: hidden until the user tabs to it, then anchors
-     visibly at the top of the viewport. Each page exposes <main id="main">. */
-  .skip-to-content {
-    position: fixed;
-    top: 0.5rem;
-    left: 0.5rem;
-    z-index: 100;
-    padding: 0.5rem 0.875rem;
-    border-radius: var(--radius-md);
-    background: var(--accent);
-    color: var(--c-zinc-950);
-    font-family: var(--font-sans);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    transform: translateY(calc(-100% - 0.5rem));
-    transition: transform var(--dur-fast) var(--ease-out);
-  }
-
-  .skip-to-content:focus-visible {
-    transform: translateY(0);
-    outline: 2px solid var(--c-zinc-50);
-    outline-offset: 2px;
-  }
 }
 
 /* Honor reduced motion at the global level. */
