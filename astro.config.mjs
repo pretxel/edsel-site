@@ -3,10 +3,16 @@ import robotsTxt from "astro-robots-txt";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
 import vercel from "@astrojs/vercel";
+import node from "@astrojs/node";
 import sitemap from "@astrojs/sitemap";
 import compress from "astro-compress";
 import icon from "astro-icon";
 import mdx from "@astrojs/mdx";
+
+// The Vercel adapter doesn't support `astro preview`, so when we want to run
+// Lighthouse / smoke tests against a real production build locally we swap to
+// the @astrojs/node adapter. Set ASTRO_ADAPTER=node to opt in.
+const USE_NODE_ADAPTER = process.env.ASTRO_ADAPTER === "node";
 
 // Legacy `/blog/<numeric-id>` URLs map to the new `/projects/<slug>` paths.
 // Order is chronological (oldest first) — matches what `getProjectByLegacyId`
@@ -32,7 +38,7 @@ const LEGACY_PROJECT_REDIRECTS = {
 export default defineConfig({
   site: "https://edselserrano.com/",
   output: "server",
-  adapter: vercel(),
+  adapter: USE_NODE_ADAPTER ? node({ mode: "standalone" }) : vercel(),
   redirects: LEGACY_PROJECT_REDIRECTS,
   integrations: [
     robotsTxt({
