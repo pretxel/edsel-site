@@ -4,7 +4,6 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
 import vercel from "@astrojs/vercel";
 import node from "@astrojs/node";
-import sitemap from "@astrojs/sitemap";
 import compress from "astro-compress";
 import icon from "astro-icon";
 import mdx from "@astrojs/mdx";
@@ -44,7 +43,10 @@ export default defineConfig({
     robotsTxt({
       sitemap: false,
     }),
-    sitemap(),
+    // `@astrojs/sitemap` removed: it generates a static `sitemap-index.xml`
+    // that shadows the richer SSR endpoint at `src/pages/sitemap-index.xml.ts`
+    // (which references `/sitemap.xml` with hreflang alternates for every
+    // project slug). Keep the custom pair as the single source of truth.
     icon(),
     react(),
     mdx(),

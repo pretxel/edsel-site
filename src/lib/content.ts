@@ -6,7 +6,7 @@ export type ProjectEntry = CollectionEntry<"projects">;
 export type PostEntry = CollectionEntry<"posts">;
 export type PageEntry = CollectionEntry<"pages">;
 
-export type PageSlug = "about";
+export type PageKind = "about";
 
 /**
  * Bilingual-resolved view of a project. Mirrors the shape the pages used to
@@ -309,10 +309,10 @@ export async function getItemsByTagSlug(
  * Look up an evergreen page (`/about`) for a given language.
  */
 export async function getPage(
-  slug: PageSlug,
+  kind: PageKind,
   lang: Language,
 ): Promise<PageEntry | undefined> {
-  const all = await getCollection("pages", ({ data }) => data.slug === slug);
+  const all = await getCollection("pages", ({ data }) => data.kind === kind);
   return (
     all.find((entry) => entry.data.lang === lang) ??
     all.find((entry) => entry.data.lang === "es") ??

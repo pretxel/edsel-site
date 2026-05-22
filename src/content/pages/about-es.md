@@ -1,5 +1,5 @@
 ---
-slug: about
+kind: about
 lang: es
 title: "Sobre mí"
 description: "Software engineer mexicano radicado en Madrid. Full stack, ML, IoT y chatbots."

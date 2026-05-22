@@ -69,7 +69,10 @@ const posts = defineCollection({
 const pages = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/pages" }),
   schema: z.object({
-    slug: z.enum(["about"]),
+    // `kind` (not `slug`) — `slug` is reserved by Astro's Content Layer and
+    // collides across entries that share its value, dropping all-but-one
+    // from `getCollection`. `kind` is a plain field with no special handling.
+    kind: z.enum(["about"]),
     lang: z.enum(["es", "en"]),
     title: z.string(),
     description: z.string().optional(),

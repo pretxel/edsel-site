@@ -35,7 +35,7 @@ const {
   title,
   description,
   canonical,
-  image = '/og-default.jpg',
+  image = '/og/default.png',
   imageAlt = 'Edsel Serrano - Full Stack Developer',
   type = 'website',
   publishedTime,
@@ -133,8 +133,8 @@ const langShort = language;
 <meta name="msapplication-TileColor" content="#18181b" />
 <meta name="format-detection" content="telephone=no" />
 
-<!-- LLM Context -->
-<link rel="llm-context" href="/llm.txt" type="text/plain" />
+<!-- LLM Context — see also /llms-full.txt for the bulk dump. -->
+<link rel="llm-context" href="/llms.txt" type="text/plain" />
 
 <!-- Schema.org JSON-LD — primary entity for the current URL. -->
 <script type="application/ld+json" set:html={JSON.stringify({
@@ -157,8 +157,8 @@ const langShort = language;
     "name": author,
     "url": siteUrl,
     "sameAs": [
-      "https://github.com/edselserrano",
-      "https://linkedin.com/in/edselserrano",
+      "https://github.com/pretxel",
+      "https://www.linkedin.com/in/edselserrano",
       "https://twitter.com/edselserrano"
     ]
   },
@@ -199,16 +199,18 @@ const langShort = language;
     "name": author,
     "url": siteUrl,
     "image": fullImage,
-    "jobTitle": language === 'en' ? 'Full Stack Developer' : 'Desarrollador Full Stack',
-    "worksFor": { "@type": "Organization", "name": "Freelance" },
+    "jobTitle": language === 'en' ? 'Software Engineer' : 'Software Engineer',
+    "worksFor": { "@type": "Organization", "name": "Embat", "url": "https://www.embat.com" },
+    "homeLocation": { "@type": "Place", "name": "Madrid, Spain" },
     "sameAs": [
-      "https://github.com/edselserrano",
-      "https://linkedin.com/in/edselserrano",
+      "https://github.com/pretxel",
+      "https://www.linkedin.com/in/edselserrano",
       "https://twitter.com/edselserrano",
     ],
     "knowsAbout": [
       "JavaScript", "TypeScript", "React", "Astro", "Next.js",
-      "Node.js", "Web Development", "Agile",
+      "Node.js", "PostgreSQL", "Machine Learning", "LLMs", "IoT",
+      "Web Development", "Agile",
     ],
   })} />
 )}
@@ -268,14 +270,15 @@ const langShort = language;
     "@type": "Person",
     "name": author,
     "url": siteUrl,
-    "jobTitle": language === 'en' ? 'Full Stack Developer' : 'Desarrollador Full Stack',
+    "jobTitle": "Software Engineer",
     "worksFor": {
       "@type": "Organization",
-      "name": "Freelance"
+      "name": "Embat",
+      "url": "https://www.embat.com"
     },
     "sameAs": [
-      "https://github.com/edselserrano",
-      "https://linkedin.com/in/edselserrano"
+      "https://github.com/pretxel",
+      "https://www.linkedin.com/in/edselserrano"
     ],
     "knowsAbout": [
       "JavaScript",

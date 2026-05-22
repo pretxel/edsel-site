@@ -30,7 +30,7 @@ export async function generateSitemapUrls(): Promise<SitemapUrl[]> {
 
     // LLM Context File
     urls.push({
-        loc: `${baseUrl}/llm.txt`,
+        loc: `${baseUrl}/llms.txt`,
         lastmod: today,
         changefreq: 'monthly',
         priority: 0.5

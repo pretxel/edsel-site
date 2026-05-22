@@ -1,5 +1,5 @@
 ---
-slug: about
+kind: about
 lang: en
 title: "About"
 description: "Mexican software engineer based in Madrid. Full stack with a soft spot for ML, IoT, and chatbots."
