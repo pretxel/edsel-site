@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   ACESFilmicToneMapping,
   AmbientLight,
@@ -30,11 +30,9 @@ interface ICreateParticles {
 }
 
 const SparklingSphere = ({
-  totalParticles,
   backgroundColor,
   particleColors,
 }: {
-  totalParticles: number;
   backgroundColor: string;
   particleColors: number[];
 }) => {
@@ -69,8 +67,31 @@ const SparklingSphere = ({
     const texture = new CanvasTexture(canvas);
     return texture;
   };
+
   useEffect(() => {
     if (!mountRef.current) return;
+
+    // Respect prefers-reduced-motion: skip the animated sphere entirely and
+    // paint a static gradient background so the page still has visual depth.
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) {
+      const mount = mountRef.current;
+      mount.style.background = `radial-gradient(circle at center, ${backgroundColor} 0%, #000000 100%)`;
+      mount.style.position = "fixed";
+      mount.style.inset = "0";
+      mount.style.width = "100%";
+      mount.style.height = "100%";
+      return () => {
+        mount.style.background = "";
+      };
+    }
+
+    // Decide particle count based on viewport, replacing react-device-detect.
+    const isSmallViewport = window.matchMedia("(max-width: 768px)").matches;
+    const totalParticles = isSmallViewport ? 1000 : 2000;
 
     // Scene setup
     const scene = new Scene();
@@ -141,16 +162,14 @@ const SparklingSphere = ({
     const dampingFactor = 0.95;
     const rotationSpeed = 0.0025;
 
+    // Shared geometry — disposed in cleanup to avoid GPU leaks.
+    const particleGeometry = new SphereGeometry(0.015, 6, 6);
+
     // Create particles
     const createParticles = (params: ICreateParticles) => {
       const particles = [];
       const count = params.total;
       const radius = params.radius;
-
-      const geometry = new SphereGeometry(0.015, 6, 6);
-
-      //   const colors = [0x88ccff, 0x7dabf1, 0x6a8dff];
-      //   const colors = [0xfda252, 0xfda252, 0xf99352];
 
       for (let i = 0; i < count; i++) {
         const theta = Math.random() * Math.PI * 2;
@@ -172,13 +191,14 @@ const SparklingSphere = ({
           toneMapped: false,
         });
 
-        const mesh = new Mesh(geometry, material);
+        const mesh = new Mesh(particleGeometry, material);
         mesh.position.copy(position);
 
         group.add(mesh);
 
         particles.push({
           mesh,
+          material,
           position: position.clone(),
           originalPosition: position.clone(),
           velocity: new Vector3(),
@@ -275,9 +295,10 @@ const SparklingSphere = ({
       mousePos.y = -(event.clientY / window.innerHeight) * 2 + 1;
     };
 
-    // Animation loop
+    // Animation loop — track the rAF id so we can cancel it on unmount.
+    let rafId = 0;
     const animate = () => {
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
       updateParticles();
       controls.update();
       composer.render();
@@ -287,16 +308,42 @@ const SparklingSphere = ({
     window.addEventListener("resize", handleWindowResize);
     window.addEventListener("mousemove", handleMouseMove);
 
+    // Capture the mount node now so cleanup doesn't dereference a ref that
+    // React may have already nulled out.
+    const mount = mountRef.current;
+    const canvas = renderer.domElement;
+
     // Start animation
     animate();
 
     // Cleanup
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener("resize", handleWindowResize);
       window.removeEventListener("mousemove", handleMouseMove);
-      mountRef.current?.removeChild(renderer.domElement);
+
+      controls.dispose();
+
+      // Dispose every particle material; geometry is shared so dispose once.
+      particles.forEach((p) => p.material.dispose());
+      particleGeometry.dispose();
+
+      // Drop background texture if one was created.
+      if (scene.background && (scene.background as CanvasTexture).dispose) {
+        (scene.background as CanvasTexture).dispose();
+      }
+
+      // Clear scene graph and free composer + renderer GPU resources.
+      scene.clear();
+      composer.dispose();
+      renderer.dispose();
+      renderer.forceContextLoss();
+
+      if (canvas.parentNode === mount) {
+        mount.removeChild(canvas);
+      }
     };
-  }, []);
+  }, [backgroundColor, particleColors]);
 
   return <div className="wrapper" ref={mountRef} />;
 };

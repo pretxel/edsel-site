@@ -7,9 +7,6 @@ import Nav from "../components/Nav/index.jsx";
 import SparklingSphere from "../components/Particles/sparklingSphere";
 import Footer from "../components/Footer";
 import Analytics from "@vercel/analytics/astro";
-import { isMobile } from "react-device-detect";
-
-const totalParticles = isMobile ? 1000 : 2000;
 
 enum COLORS {
   blue="blue",
@@ -79,7 +76,7 @@ const alternateLanguages = [
   <body>
     <Nav />
 
-    <SparklingSphere totalParticles={totalParticles} backgroundColor={backgroundColors[colorSelected]} particleColors={particleColors[colorSelected]} client:only="react" />
+    <SparklingSphere backgroundColor={backgroundColors[colorSelected]} particleColors={particleColors[colorSelected]} client:only="react" />
     <Body />
     <Footer />
 
