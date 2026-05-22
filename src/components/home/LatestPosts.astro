@@ -1,0 +1,110 @@
+---
+import type { Language } from "../../lib/i18n";
+import { t, formatDateShort } from "../../lib/i18n";
+import { getAllPosts } from "../../lib/content";
+
+interface Props {
+  lang: Language;
+}
+
+const { lang } = Astro.props;
+
+// `posts` is intentionally separate from `projects`. It will fill up as
+// Edsel publishes long-form writing; until then we render a graceful
+// placeholder instead of pretending nothing is here.
+const posts = (await getAllPosts(lang)).slice(0, 3);
+
+const blogHref = lang === "en" ? "/en/blog" : "/blog";
+---
+
+<section
+  class="border-b border-border-default bg-bg"
+  aria-labelledby="latest-posts-title"
+>
+  <div class="mx-auto max-w-6xl px-6 py-20 sm:px-8 md:py-28">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-[0.18em] text-accent">
+          {t("home.posts.eyebrow", {}, lang)}
+        </p>
+        <h2
+          id="latest-posts-title"
+          class="mt-2 text-3xl font-bold tracking-tight text-fg-strong sm:text-4xl"
+        >
+          {t("home.posts.title", {}, lang)}
+        </h2>
+      </div>
+
+      <a
+        href={blogHref}
+        class="group inline-flex items-center gap-2 self-start text-sm font-medium text-fg-muted transition-colors hover:text-fg-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:self-auto"
+      >
+        {t("home.posts.view_all", {}, lang)}
+        <span
+          aria-hidden="true"
+          class="transition-transform duration-200 group-hover:translate-x-0.5"
+          >&rarr;</span
+        >
+      </a>
+    </div>
+
+    {
+      posts.length > 0 ? (
+        <ul class="mt-10 divide-y divide-border-default border-y border-border-default">
+          {posts.map((post) => {
+            const href =
+              lang === "en"
+                ? `/en/blog/${post.id}`
+                : `/blog/${post.id}`;
+            return (
+              <li>
+                <a
+                  href={href}
+                  class="group flex flex-col gap-1 py-5 transition-colors hover:bg-muted/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:flex-row sm:items-baseline sm:gap-6"
+                >
+                  <time
+                    datetime={post.data.date.toISOString()}
+                    class="shrink-0 font-mono text-xs uppercase tracking-wide text-fg-subtle sm:w-32"
+                  >
+                    {formatDateShort(post.data.date.toISOString(), lang)}
+                  </time>
+                  <div class="flex-1">
+                    <h3 class="text-base font-semibold leading-snug text-fg-strong transition-colors group-hover:text-accent sm:text-lg">
+                      {post.data.title}
+                    </h3>
+                    {post.data.description ? (
+                      <p class="mt-1 line-clamp-2 text-sm leading-relaxed text-fg-muted">
+                        {post.data.description}
+                      </p>
+                    ) : null}
+                  </div>
+                  <span
+                    class="hidden font-mono text-xs text-fg-subtle transition-colors group-hover:text-accent sm:inline"
+                    aria-hidden="true"
+                  >
+                    &rarr;
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div class="mt-10 rounded-lg border border-dashed border-border-default bg-surface/40 px-6 py-12 text-center">
+          <p class="text-sm text-fg-muted">
+            {t("home.posts.empty", {}, lang)}
+          </p>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
