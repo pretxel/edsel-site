@@ -1,21 +1,19 @@
 import rss from "@astrojs/rss";
 import type { APIRoute } from "astro";
-import { getLocalizedPosts } from "../../lib/data";
+import { getLocalizedProjects } from "../../lib/content";
 
 const SITE_URL = "https://edselserrano.com";
 
 export const GET: APIRoute = async () => {
-  const items = getLocalizedPosts("en")
-    .slice()
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .map((post) => ({
-      title: post.title,
-      description: post.description,
-      pubDate: new Date(post.date),
-      link: `/en/blog/${post.id}`,
-      categories: post.tags,
-      author: post.author,
-    }));
+  const projects = await getLocalizedProjects("en");
+  const items = projects.map((post) => ({
+    title: post.title,
+    description: post.description,
+    pubDate: post.pubDate,
+    link: `/en/blog/${post.id}`,
+    categories: post.tags,
+    author: post.author,
+  }));
 
   return rss({
     title: "Edsel Serrano - Blog",

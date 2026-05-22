@@ -1,13 +1,13 @@
 ---
 import Layout from "../../../layouts/BlogLayout.astro";
-import { getLocalizedPosts } from "../../../lib/data";
+import { getLocalizedProjects } from "../../../lib/content";
 import { t } from "../../../lib/i18n";
 import PostCard from "../../../components/PostCard.astro";
 import LanguageSwitcher from "../../../components/LanguageSwitcher.astro";
 import SEOHead from "../../../components/SEOHead.astro";
 
 const currentLanguage = 'en';
-const posts = getLocalizedPosts(currentLanguage);
+const posts = await getLocalizedProjects(currentLanguage);
 
 // SEO Data
 const seoTitle = 'Blog - Edsel Serrano | Web Development & Technology Insights';

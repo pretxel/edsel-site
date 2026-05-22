@@ -1,10 +1,10 @@
 ---
-import type { Post } from "../lib/data";
+import type { LocalizedProject } from "../lib/content";
 import type { Language } from "../lib/i18n";
 import { t, formatDateShort } from "../lib/i18n";
 
 interface Props {
-  post: Post & { title: string; description: string };
+  post: LocalizedProject;
   currentLanguage: Language;
 }
 
@@ -59,7 +59,7 @@ const { post, currentLanguage } = Astro.props;
 
     <!-- Description -->
     <p class="text-zinc-400 text-sm mb-4 line-clamp-3 leading-relaxed">
-      {post.description || post.content}
+      {post.description}
     </p>
 
     <!-- Metadata -->

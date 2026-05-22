@@ -1,5 +1,4 @@
-import { posts } from './data';
-import type { Language } from './i18n';
+import { getLocalizedProjects } from './content';
 
 export interface SitemapUrl {
     loc: string;
@@ -9,7 +8,7 @@ export interface SitemapUrl {
     alternates?: { hreflang: string; href: string }[];
 }
 
-export function generateSitemapUrls(): SitemapUrl[] {
+export async function generateSitemapUrls(): Promise<SitemapUrl[]> {
     const baseUrl = 'https://edselserrano.com';
     const today = new Date().toISOString().split('T')[0];
 
@@ -61,12 +60,16 @@ export function generateSitemapUrls(): SitemapUrl[] {
         ]
     });
 
-    // Individual blog posts
-    posts.forEach(post => {
+    // Individual blog posts — drive numbering from chronological order so
+    // /blog/1, /blog/2, … stay stable across edits to the projects collection.
+    const projects = await getLocalizedProjects('es');
+    projects.forEach((post) => {
+        const lastmod = post.pubDate.toISOString().split('T')[0];
+
         // Spanish version
         urls.push({
             loc: `${baseUrl}/blog/${post.id}`,
-            lastmod: post.date,
+            lastmod,
             changefreq: 'monthly',
             priority: 0.8,
             alternates: [
@@ -79,7 +82,7 @@ export function generateSitemapUrls(): SitemapUrl[] {
         // English version
         urls.push({
             loc: `${baseUrl}/en/blog/${post.id}`,
-            lastmod: post.date,
+            lastmod,
             changefreq: 'monthly',
             priority: 0.8,
             alternates: [
