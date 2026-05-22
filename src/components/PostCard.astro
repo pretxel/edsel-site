@@ -37,50 +37,63 @@ type Props = ProjectVariantProps | PostVariantProps;
 
 const props = Astro.props as Props;
 const currentLanguage = props.currentLanguage;
-const variant = props.variant ?? "project";
 
-// Normalize to a card-friendly view-model regardless of variant.
-const view = variant === "post"
-  ? (() => {
-      const p = props.post;
-      return {
-        id: p.id,
-        title: p.data.title,
-        description: p.data.description,
-        cover: p.data.cover ?? "/og-default.jpg",
-        accent: "var(--accent)" as string,
-        date: p.data.date.toISOString(),
-        tags: p.data.tags,
-        author: undefined as string | undefined,
-        href:
-          currentLanguage === "en" ? `/en/blog/${p.id}` : `/blog/${p.id}`,
-        category: t("category.article", {}, currentLanguage),
-        showRead: t("card.read_post", {}, currentLanguage),
-        readingMinutes: props.readingMinutes,
-        transitionKey: p.id,
-      };
-    })()
-  : (() => {
-      const p = props.project;
-      return {
-        id: p.id,
-        title: p.title,
-        description: p.description,
-        cover: p.cover,
-        accent: p.color.accent,
-        date: p.date,
-        tags: p.tags,
-        author: p.author,
-        href:
-          currentLanguage === "en"
-            ? `/en/projects/${p.slug}`
-            : `/projects/${p.slug}`,
-        category: t("card.project", {}, currentLanguage),
-        showRead: t("card.read_more", {}, currentLanguage),
-        readingMinutes: props.readingMinutes,
-        transitionKey: p.slug,
-      };
-    })();
+interface CardView {
+  id: string;
+  title: string;
+  description: string;
+  cover: string;
+  accent: string;
+  date: string;
+  tags: string[];
+  author?: string;
+  href: string;
+  category: string;
+  showRead: string;
+  readingMinutes?: number;
+  transitionKey: string;
+}
+
+let view: CardView;
+
+if (props.variant === "post") {
+  const p = props.post;
+  view = {
+    id: p.id,
+    title: p.data.title,
+    description: p.data.description,
+    cover: p.data.cover ?? "/og-default.jpg",
+    accent: "var(--accent)",
+    date: p.data.date.toISOString(),
+    tags: p.data.tags,
+    href:
+      currentLanguage === "en" ? `/en/blog/${p.id}` : `/blog/${p.id}`,
+    category: t("category.article", {}, currentLanguage),
+    showRead: t("card.read_post", {}, currentLanguage),
+    readingMinutes: props.readingMinutes,
+    transitionKey: p.id,
+  };
+} else {
+  const p = props.project;
+  view = {
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    cover: p.cover,
+    accent: p.color.accent,
+    date: p.date,
+    tags: p.tags,
+    author: p.author,
+    href:
+      currentLanguage === "en"
+        ? `/en/projects/${p.slug}`
+        : `/projects/${p.slug}`,
+    category: t("card.project", {}, currentLanguage),
+    showRead: t("card.read_more", {}, currentLanguage),
+    readingMinutes: props.readingMinutes,
+    transitionKey: p.slug,
+  };
+}
 ---
 
 <article
