@@ -29,14 +29,10 @@
     "@astrojs/react": "^5.0.2",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/svelte": "^8.0.4",
     "@astrojs/vercel": "^10.0.4",
-    "@fontsource/roboto": "^5.2.10",
     "@vercel/analytics": "^2.0.1",
     "astro-compress": "^2.4.0",
     "astro-icon": "^1.1.5",
-    "react-device-detect": "^2.2.3",
-    "svelte": "^5.55.1",
     "three": "^0.183.2"
   },
   "overrides": {

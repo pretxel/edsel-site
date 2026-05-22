@@ -2,7 +2,6 @@ import { defineConfig } from "astro/config";
 import robotsTxt from "astro-robots-txt";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
-import svelte from "@astrojs/svelte";
 import vercel from "@astrojs/vercel";
 import sitemap from "@astrojs/sitemap";
 import compress from "astro-compress";
@@ -17,7 +16,6 @@ export default defineConfig({
       sitemap: false,
     }),
     sitemap(),
-    svelte(),
     react(),
     compress({ SVG: false }),
   ],
