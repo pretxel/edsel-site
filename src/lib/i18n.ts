@@ -60,6 +60,29 @@ export const translations = {
         'language.spanish': 'Español',
         'language.english': 'English',
         'language.switch_to': 'Cambiar a {language}',
+
+        // Homepage — Hero
+        'home.hero.eyebrow': 'Software engineer · México',
+        'home.hero.title': 'Edsel Serrano',
+        'home.hero.subtitle': 'Construyo herramientas para equipos ágiles. Escribo sobre lo que aprendo en el camino.',
+        'home.hero.cta.projects': 'Ver proyectos',
+        'home.hero.cta.posts': 'Leer notas',
+
+        // Homepage — Featured work
+        'home.featured.eyebrow': 'Trabajo reciente',
+        'home.featured.title': 'Cosas que he construido',
+        'home.featured.view_all': 'Ver todos',
+
+        // Homepage — Now strip
+        'home.now.label': 'Now',
+        'home.now.more': 'Más',
+        'home.now.coming_soon': 'Próximamente',
+
+        // Homepage — Latest posts
+        'home.posts.eyebrow': 'Notas',
+        'home.posts.title': 'Últimas notas',
+        'home.posts.view_all': 'Ver blog',
+        'home.posts.empty': 'Próximamente notas — sigue el RSS.',
     },
     en: {
         // Navigation
@@ -110,6 +133,29 @@ export const translations = {
         'language.spanish': 'Español',
         'language.english': 'English',
         'language.switch_to': 'Switch to {language}',
+
+        // Homepage — Hero
+        'home.hero.eyebrow': 'Software engineer · Mexico',
+        'home.hero.title': 'Edsel Serrano',
+        'home.hero.subtitle': 'I build tools for agile teams. I write about what I learn along the way.',
+        'home.hero.cta.projects': 'See projects',
+        'home.hero.cta.posts': 'Read notes',
+
+        // Homepage — Featured work
+        'home.featured.eyebrow': 'Recent work',
+        'home.featured.title': 'Things I have built',
+        'home.featured.view_all': 'See all',
+
+        // Homepage — Now strip
+        'home.now.label': 'Now',
+        'home.now.more': 'More',
+        'home.now.coming_soon': 'Coming soon',
+
+        // Homepage — Latest posts
+        'home.posts.eyebrow': 'Notes',
+        'home.posts.title': 'Latest notes',
+        'home.posts.view_all': 'Go to blog',
+        'home.posts.empty': 'Notes coming soon — follow the RSS.',
     }
 } as const;
 

@@ -1,20 +1,20 @@
 ---
-import MainHead from "../components/MainHead.astro";
-import SEOHead from "../components/SEOHead.astro";
-import Nav from "../components/Nav/index.jsx";
-import Hero from "../components/home/Hero.astro";
-import FeaturedWork from "../components/home/FeaturedWork.astro";
-import NowStrip from "../components/home/NowStrip.astro";
-import LatestPosts from "../components/home/LatestPosts.astro";
-import Footer from "../components/Footer/index.astro";
+import MainHead from "../../components/MainHead.astro";
+import SEOHead from "../../components/SEOHead.astro";
+import Nav from "../../components/Nav/index.jsx";
+import Hero from "../../components/home/Hero.astro";
+import FeaturedWork from "../../components/home/FeaturedWork.astro";
+import NowStrip from "../../components/home/NowStrip.astro";
+import LatestPosts from "../../components/home/LatestPosts.astro";
+import Footer from "../../components/Footer/index.astro";
 import Analytics from "@vercel/analytics/astro";
 
-const lang = "es" as const;
+const lang = "en" as const;
 
 const seoTitle =
-  "Edsel Serrano | Software Engineer · Proyectos, notas y experimentos";
+  "Edsel Serrano | Software engineer — projects, notes, experiments";
 const seoDescription =
-  "Edsel Serrano construye herramientas para equipos ágiles y escribe sobre desarrollo web, productos y experimentos. Portafolio, blog y página /now.";
+  "Edsel Serrano builds tools for agile teams and writes about web development, products, and experiments. Portfolio, blog, and a /now page.";
 
 const keywords = [
   "Edsel Serrano",
@@ -40,7 +40,7 @@ const alternateLanguages = [
     <SEOHead
       title={seoTitle}
       description={seoDescription}
-      canonical="/"
+      canonical="/en/"
       language={lang}
       alternateLanguages={alternateLanguages}
       keywords={keywords}

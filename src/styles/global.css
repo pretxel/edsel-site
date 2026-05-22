@@ -102,89 +102,50 @@ pre {
   }
 }
 
-/* ── Home header/footer (legacy markup still used by /index.astro) ──
- * Agent 04 will redesign the homepage. Until then, keep the existing
- * layout working with tokens instead of hard-coded colors.
+/* ── Homepage footer ─────────────────────────────────────
+ * The old absolute-positioned `.footer` lived under the legacy
+ * "single-screen with sphere" home. The redesigned homepage scrolls,
+ * so the footer is now an in-flow block at the bottom of the page
+ * with the social icons centered inside it.
  */
-.header {
-  cursor: default;
-  display: inline-block;
-  opacity: 1;
-  position: absolute;
-  text-align: center;
-  vertical-align: middle;
-  width: 100%;
-  z-index: 10;
-  top: 30px;
-  left: 0;
-  bottom: 0;
-}
-
 .footer {
-  cursor: default;
-  display: inline-block;
-  opacity: 1;
-  position: absolute;
-  text-align: center;
-  vertical-align: middle;
-  width: 100%;
-  z-index: 10;
-  left: 0;
-  bottom: 30px;
-  right: 0;
-}
-
-@media only screen and (min-width: 600px) {
-  .header {
-    height: 100px;
-  }
-}
-
-.header h1 {
-  font-size: 4.35em;
-  font-weight: 900;
-  letter-spacing: -0.035em;
-  line-height: 1em;
-  color: var(--fg-strong);
-}
-
-.header p {
-  font-size: 1.25em;
-  margin: 0.75em 0 0.25em 0;
-  opacity: 0.75;
-  color: var(--fg-default);
-}
-
-.footer nav {
-  margin: 1.5em 0 0 0;
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 1.5rem 3rem;
+  border-top: 1px solid var(--border-default);
+  background: var(--bg-app);
 }
 
 .footer nav ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  gap: 0.75rem;
 }
 
 .footer nav li {
   display: inline-block;
-  margin: 0 0.5em;
 }
 
 .footer nav a {
-  border: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5em;
-  height: 2.5em;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: var(--radius-full);
   border: solid 1px var(--border-strong);
   color: var(--fg-strong);
-  transition: background-color var(--dur-base) var(--ease-out);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
 }
 
 .footer nav a:hover {
   background-color: var(--bg-muted);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .footer nav a:active {

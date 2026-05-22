@@ -1,0 +1,97 @@
+---
+import type { Language } from "../../lib/i18n";
+import { t, formatDateShort } from "../../lib/i18n";
+
+interface Props {
+  lang: Language;
+}
+
+const { lang } = Astro.props;
+
+// `now.md` is a single document — outside any astro:content collection —
+// so we resolve it through Vite's eager-glob. `?raw` would give us the
+// full file as a string, but importing the .md asks Astro to compile it,
+// returning `frontmatter`, the rendered HTML body via `compiledContent`,
+// and a `Content` component if we ever want richer rendering.
+type NowModule = {
+  frontmatter: { updated?: string };
+  compiledContent: () => string;
+};
+
+const nowModules = import.meta.glob<NowModule>("../../content/now.md", {
+  eager: true,
+});
+const nowEntry = Object.values(nowModules)[0];
+
+const updated = nowEntry?.frontmatter?.updated;
+const bodyHtml = nowEntry?.compiledContent?.() ?? "";
+
+// `/now` is owned by agent 06. While it doesn't ship, link to "#" but
+// label the action as "Coming soon" so users aren't surprised by a
+// dead-end navigation.
+const nowPageExists = false; // flip when 06 lands `/now`.
+const moreHref = nowPageExists ? (lang === "en" ? "/en/now" : "/now") : "#";
+const moreLabel = nowPageExists
+  ? t("home.now.more", {}, lang)
+  : t("home.now.coming_soon", {}, lang);
+---
+
+<section class="bg-surface" aria-label={t("home.now.label", {}, lang)}>
+  <div
+    class="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8"
+  >
+    <div class="flex flex-1 items-center gap-3 text-sm leading-snug">
+      <span
+        class="inline-flex shrink-0 items-center gap-2 rounded-full bg-muted px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-accent"
+      >
+        <span
+          class="h-1.5 w-1.5 animate-pulse rounded-full bg-accent"
+          aria-hidden="true"
+        ></span>
+        {t("home.now.label", {}, lang)}
+      </span>
+
+      {
+        bodyHtml ? (
+          <div
+            class="now-body text-fg [&_a]:underline [&_em]:italic [&_strong]:font-semibold [&_strong]:text-fg-strong"
+            set:html={bodyHtml}
+          />
+        ) : null
+      }
+    </div>
+
+    <div
+      class="flex items-center justify-between gap-4 text-xs text-fg-subtle sm:justify-end"
+    >
+      {
+        updated ? (
+          <time
+            datetime={updated}
+            class="font-mono uppercase tracking-wide text-fg-subtle"
+          >
+            {formatDateShort(updated, lang)}
+          </time>
+        ) : null
+      }
+      <a
+        href={moreHref}
+        class="inline-flex items-center gap-1 font-medium text-fg-muted transition-colors hover:text-fg-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        aria-disabled={!nowPageExists ? "true" : undefined}
+      >
+        {moreLabel}
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* `compiledContent()` returns a wrapper paragraph from the Markdown
+   * compiler. Trim its default block margins so the strip stays a
+   * single visual line on desktop. */
+  .now-body :global(p) {
+    margin: 0;
+    display: inline;
+  }
+</style>
