@@ -6,6 +6,7 @@ import vercel from "@astrojs/vercel";
 import sitemap from "@astrojs/sitemap";
 import compress from "astro-compress";
 import icon from "astro-icon";
+import mdx from "@astrojs/mdx";
 
 // https://astro.build/config
 export default defineConfig({
@@ -19,6 +20,7 @@ export default defineConfig({
     sitemap(),
     icon(),
     react(),
+    mdx(),
     compress({ SVG: false }),
   ],
   vite: {
