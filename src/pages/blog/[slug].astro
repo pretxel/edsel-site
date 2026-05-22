@@ -54,25 +54,25 @@ const alternateLanguages = [
 const ogImage = `/og/${entry.id}.png`;
 ---
 
-<SEOHead
-  title={seoTitle}
-  description={seoDescription}
-  canonical={currentLanguage === "en" ? `/en/blog/${entry.id}` : `/blog/${entry.id}`}
-  image={ogImage}
-  imageAlt={entry.data.title}
-  language={currentLanguage}
-  alternateLanguages={alternateLanguages}
-  keywords={entry.data.tags}
-  type="article"
-  publishedTime={publishedTime}
-  modifiedTime={publishedTime}
-/>
-
 <Layout
   title={entry.data.title}
   lang={currentLanguage}
   rssHref={currentLanguage === "en" ? "/en/rss.xml" : "/rss.xml"}
 >
+  <SEOHead
+    slot="head"
+    title={seoTitle}
+    description={seoDescription}
+    canonical={currentLanguage === "en" ? `/en/blog/${entry.id}` : `/blog/${entry.id}`}
+    image={ogImage}
+    imageAlt={entry.data.title}
+    language={currentLanguage}
+    alternateLanguages={alternateLanguages}
+    keywords={entry.data.tags}
+    type="article"
+    publishedTime={publishedTime}
+    modifiedTime={publishedTime}
+  />
   <ReadingProgress />
 
   <article class="min-h-screen">
@@ -197,7 +197,7 @@ const ogImage = `/og/${entry.id}.png`;
                 {entry.data.tags.map((tag) => (
                   <a
                     href={tagUrl(tag, currentLanguage)}
-                    class="px-2.5 py-0.5 text-xs rounded-full bg-elev text-fg-muted hover:text-fg-strong hover:bg-muted transition-colors"
+                    class="inline-flex items-center min-h-[24px] px-2.5 py-1 text-xs rounded-full bg-elev text-fg-muted hover:text-fg-strong hover:bg-muted transition-colors"
                   >
                     #{tag}
                   </a>

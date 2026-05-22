@@ -45,31 +45,34 @@ const alternateLanguages = [
 const ogImage = `/og/${post.slug}.png`;
 ---
 
-<SEOHead
-  title={seoTitle}
-  description={seoDescription}
-  canonical={
-    currentLanguage === "en"
-      ? `/en/projects/${post.slug}`
-      : `/projects/${post.slug}`
-  }
-  image={ogImage}
-  imageAlt={localizedPost.title}
-  language={currentLanguage}
-  alternateLanguages={alternateLanguages}
-  keywords={post.tags}
-  type="article"
-  publishedTime={publishedTime}
-  modifiedTime={publishedTime}
-  author={post.author}
-/>
-
 <Layout
   image={post.cover}
   title={localizedPost.title}
   lang={currentLanguage}
   rssHref={currentLanguage === "en" ? "/en/rss.xml" : "/rss.xml"}
 >
+  <SEOHead
+    slot="head"
+    title={seoTitle}
+    description={seoDescription}
+    canonical={
+      currentLanguage === "en"
+        ? `/en/projects/${post.slug}`
+        : `/projects/${post.slug}`
+    }
+    image={ogImage}
+    imageAlt={localizedPost.title}
+    language={currentLanguage}
+    alternateLanguages={alternateLanguages}
+    keywords={post.tags}
+    type="article"
+    publishedTime={publishedTime}
+    modifiedTime={publishedTime}
+    author={post.author}
+    schemaVariant="software-app"
+    appName={localizedPost.title}
+    appUrl={post.link}
+  />
   <ReadingProgress />
   <article class="min-h-screen">
     <div class="absolute top-4 left-4 right-4 z-50">
@@ -145,9 +148,15 @@ const ogImage = `/og/${post.slug}.png`;
       <div class="relative z-10 px-6 py-24 sm:py-32">
         <div class="max-w-4xl mx-auto">
           <div class="mb-6">
+            {/*
+             * Badge: each project ships its own accent color, which can be a
+             * very light cyan/teal. White text on those breaks WCAG. Use the
+             * zinc-950 token instead — it stays contrasty against the entire
+             * project palette and reads as a deliberate "label" chip.
+             */}
             <span
-              class="inline-block px-4 py-2 text-sm font-semibold text-white rounded-full shadow-lg"
-              style={`background: ${post.color.accent}`}
+              class="inline-block px-4 py-2 text-sm font-semibold rounded-full shadow-lg"
+              style={`background: ${post.color.accent}; color: var(--c-zinc-950);`}
             >
               {t("category.project_showcase", {}, currentLanguage)}
             </span>
@@ -217,9 +226,14 @@ const ogImage = `/og/${post.slug}.png`;
               {
                 post.link && (
                   <div class="mt-8 p-6 rounded-xl border border-border-default bg-gradient-to-r from-elev to-surface">
-                    <h3 class="text-xl font-bold text-fg-strong mb-3">
+                    {/*
+                     * Use h2 here: this is the next top-level section under
+                     * the page h1, and the previous h3 broke heading-order
+                     * (axe complained because no h2 preceded it).
+                     */}
+                    <h2 class="text-xl font-bold text-fg-strong mb-3">
                       {t("post.check_it_out", {}, currentLanguage)}
-                    </h3>
+                    </h2>
                     <p class="text-fg mb-4">
                       {t("post.visit_project", {}, currentLanguage)}
                     </p>
@@ -258,9 +272,9 @@ const ogImage = `/og/${post.slug}.png`;
           {
             post.tags.length > 0 && (
               <div class="mb-12">
-                <h3 class="text-lg font-semibold text-fg-strong mb-4">
+                <h2 class="text-lg font-semibold text-fg-strong mb-4">
                   {t("post.technologies_used", {}, currentLanguage)}
-                </h3>
+                </h2>
                 <div class="flex flex-wrap gap-2">
                   {post.tags.map((tag) => (
                     <a
