@@ -104,7 +104,6 @@ export const translations = {
         'language.switch_to': 'Cambiar a {language}',
 
         // Homepage — Hero
-        'home.hero.eyebrow': 'Software engineer · México',
         'home.hero.title': 'Edsel Serrano',
         'home.hero.subtitle': 'Software Engineer  •  Entrepreneur of Technology  •  Machine learning lover  •  Agentic Engineer',
         'home.hero.cta.projects': 'Ver proyectos',
@@ -214,7 +213,6 @@ export const translations = {
         'language.switch_to': 'Switch to {language}',
 
         // Homepage — Hero
-        'home.hero.eyebrow': 'Software engineer · Mexico',
         'home.hero.title': 'Edsel Serrano',
         'home.hero.subtitle': 'Software Engineer  •  Entrepreneur of Technology  •  Machine learning lover  •  Agentic Engineer',
         'home.hero.cta.projects': 'See projects',
