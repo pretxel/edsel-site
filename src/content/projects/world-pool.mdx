@@ -1,0 +1,37 @@
+---
+title: "26POOL"
+i18n:
+  es:
+    title: "26POOL"
+    description: "Quiniela global del Mundial 2026: predice el marcador exacto de cada partido, suma puntos en tiempo real y escala la tabla, sin cuotas ni grupos"
+  en:
+    title: "26POOL"
+    description: "Global prediction pool for the 2026 World Cup: call the exact score of every match, score points in real time, and climb the leaderboard — no fees, no groups"
+date: 2026-06-02
+cover: "/world-pool.webp"
+externalLink: "https://world-pool.edselserrano.com/"
+tags:
+  - "Next.js"
+  - "React"
+  - "TypeScript"
+  - "Tailwind CSS"
+  - "Vercel"
+color: green
+featured: false
+---
+
+<section data-lang="es">
+
+26POOL es una quiniela global para el Mundial 2026 (USA · Canadá · México): una sola pool, sin cuotas de entrada y sin grupos que armar, donde los jugadores llaman el marcador exacto de cada partido antes del pitido inicial. Cuando el partido termina y se carga el resultado, los puntos se reparten al instante y el ranking en vivo se reordena. El marcador premia la precisión: 5 puntos por el resultado exacto, 3 por acertar el ganador y la diferencia de goles, y 1 por solo el ganador, de modo que la tabla sigue viva hasta el último partido del torneo.
+
+El detalle de diseño central es el bloqueo al kickoff: las predicciones se bloquean a nivel de base de datos, no solo en el frontend, así que la propia base rechaza las escrituras tardías y nadie gana ventaja recargando la página un segundo tarde. Está construida con Next.js y React y desplegada en Vercel, con una interfaz limpia y minimalista, soporte bilingüe (ES/EN) y modo claro/oscuro. La portada incluye una tarjeta de demo con un cuadro de eliminatorias de muestra —cuartos, semifinales y final— mostrando el pick del usuario, los puntos ganados y el rango diario; los datos reales aparecen en cuanto arrancan los partidos.
+
+</section>
+
+<section data-lang="en">
+
+26POOL is a global prediction pool for the 2026 World Cup (USA · Canada · Mexico): one single pool, no entry fees and no groups to set up, where players call the exact score of every match before kickoff. When a match ends and the final score is entered, points are awarded instantly and the live leaderboard re-sorts. Scoring rewards precision: 5 points for the exact result, 3 for the correct winner plus goal difference, and 1 for the correct winner only, so the table stays alive until the tournament's final match.
+
+The core design detail is the kickoff lock: picks lock at the database level, not just in the frontend, so the database itself rejects late writes and nobody gains an edge by refreshing a second too late. It's built with Next.js and React and deployed on Vercel, with a clean, minimal interface, bilingual support (EN/ES), and light/dark mode. The landing page features a demo card with a sample knockout bracket — quarters, semis, and final — showing the user's pick, the points earned, and the daily rank; real data appears once matches begin.
+
+</section>
