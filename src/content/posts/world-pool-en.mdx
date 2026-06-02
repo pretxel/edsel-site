@@ -1,0 +1,43 @@
+---
+title: "26POOL: a global prediction pool for the 2026 World Cup"
+description: "A global prediction pool for the 2026 World Cup: call the exact score of every match, score points in real time, and climb the leaderboard. Built with Next.js."
+date: 2026-06-02
+lang: en
+tags:
+  - "Next.js"
+  - "React"
+  - "TypeScript"
+  - "Tailwind CSS"
+  - "Vercel"
+cover: "/world-pool.webp"
+---
+
+[**26POOL**](http://world-pool.edselserrano.com/) is a global prediction pool for the 2026 World Cup (USA · Canada · Mexico): one single pool, no fees and no entry, where you call the exact score of every match before kickoff and your ranking shifts the moment the final whistle blows.
+
+[![26POOL screenshot — the 2026 World Cup landing screen](/world-pool.webp)](http://world-pool.edselserrano.com/)
+
+## What 26POOL is
+
+The pitch is simple: *Call the score. Climb the table.* Before each match you submit an exact-score pick. No groups to set up, no fees, no invites — everyone competes in the same global pool. When a match ends and the final score is entered, points are awarded instantly and the leaderboard re-sorts live.
+
+## How scoring works
+
+The points system rewards precision:
+
+- **5 points** — exact score (you nailed the full result).
+- **3 points** — correct winner + goal difference.
+- **1 point** — correct winner only.
+
+This scale keeps the table alive until the very last match: a single exact score can flip the standings in one matchday.
+
+## The kickoff lock
+
+My favorite design detail: **picks lock at kickoff at the database level**. It isn't a check that lives only in the frontend — the database itself rejects late writes. You can edit your pick as many times as you like until the match starts; after that, the door closes for everyone equally. Zero advantage for anyone who refreshes a second too late.
+
+## Tech stack
+
+26POOL is built with **Next.js** and **React**, deployed on **Vercel**. The interface is clean and minimal, with bilingual support (EN/ES) and light/dark mode. The demo card on the landing page shows a sample knockout bracket — quarters, semis, and final — with your pick, the points earned, and your daily rank; real data appears once matches begin.
+
+## Go live
+
+The 2026 World Cup kicks off in a matter of days. If you want to call the scores and climb the table, head to [world-pool.edselserrano.com](http://world-pool.edselserrano.com/), lock in your prediction, and let the final whistle do the rest.

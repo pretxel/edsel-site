@@ -205,6 +205,27 @@ export async function getPostBySlug(
 }
 
 /**
+ * The same post in the other language, if it exists.
+ *
+ * Posts follow the `<base>-<lang>` filename convention (e.g.
+ * `world-pool-es.mdx` / `world-pool-en.mdx`), so the sibling is found by
+ * swapping the language suffix. Returns `undefined` when the article has not
+ * been translated, letting callers fall back to the blog index instead of
+ * linking to a 404.
+ */
+export async function getSiblingPost(
+  entry: PostEntry,
+): Promise<PostEntry | undefined> {
+  const otherLang: Language = entry.data.lang === "es" ? "en" : "es";
+  const base = entry.id.replace(/-(es|en)$/, "");
+  const candidates = await getCollection(
+    "posts",
+    ({ data }) => data.lang === otherLang && !data.draft,
+  );
+  return candidates.find((e) => e.id === `${base}-${otherLang}`);
+}
+
+/**
  * Related posts: same lang, intersect tags, sorted by shared-tag count
  * desc then date desc. Falls back to most recent posts when there is no
  * overlap so the section never renders empty for a post with content.

@@ -6,9 +6,23 @@ import { t, languages, getOppositeLanguage, addLanguageToUrl, removeLanguageFrom
 interface Props {
   currentLanguage: Language;
   currentPath?: string;
+  /**
+   * Explicit per-language targets (path WITHOUT the `?lang=` query). Use when
+   * a page's two language URLs aren't a simple `/en` prefix swap — e.g. blog
+   * posts whose es/en files have different slugs. When omitted, the URL is
+   * derived from `currentPath` as before, so every other call-site is
+   * unaffected.
+   */
+  spanishHref?: string;
+  englishHref?: string;
 }
 
-const { currentLanguage, currentPath = '/' } = Astro.props;
+const {
+  currentLanguage,
+  currentPath = '/',
+  spanishHref,
+  englishHref,
+} = Astro.props;
 const otherLanguage = getOppositeLanguage(currentLanguage);
 
 // Build URLs for language switching
@@ -18,8 +32,10 @@ const cleanPath = removeLanguageFromUrl(currentPath);
 // middleware: it persists the choice in a cookie and 302s to the same
 // URL with the query stripped, so the address bar stays clean and the
 // next visit respects the user's pick instead of re-running detection.
-const spanishUrl = `${cleanPath || "/"}?lang=es`;
-const englishUrl = `/en${cleanPath}?lang=en`;
+const withLang = (path: string, lang: Language) =>
+  `${path}${path.includes("?") ? "&" : "?"}lang=${lang}`;
+const spanishUrl = withLang(spanishHref ?? (cleanPath || "/"), "es");
+const englishUrl = withLang(englishHref ?? `/en${cleanPath}`, "en");
 ---
 
 <div class="relative inline-block">
