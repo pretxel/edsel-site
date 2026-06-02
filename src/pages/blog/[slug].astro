@@ -12,7 +12,7 @@
  *   • OG image references `/og/<slug>.png` (dynamic).
  */
 import Layout from "../../layouts/BlogLayout.astro";
-import { getPostBySlug, getRelatedPosts } from "../../lib/content";
+import { getPostBySlug, getRelatedPosts, getSiblingPost } from "../../lib/content";
 import {
   getLanguageFromUrl,
   t,
@@ -42,13 +42,22 @@ const { Content, headings } = await render(entry);
 const minutes = readingTime(entry.body ?? "");
 const related = await getRelatedPosts(entry, 3);
 
+// Resolve the same article in the other language. es/en posts are separate
+// files with different slugs, so the language switcher and hreflang tags need
+// the real sibling URL — falling back to the blog index when untranslated.
+const sibling = await getSiblingPost(entry);
+const esPost = entry.data.lang === "es" ? entry : sibling;
+const enPost = entry.data.lang === "en" ? entry : sibling;
+const spanishHref = esPost ? `/blog/${esPost.id}` : "/blog";
+const englishHref = enPost ? `/en/blog/${enPost.id}` : "/en/blog";
+
 const seoTitle = `${entry.data.title} | Blog - Edsel Serrano`;
 const seoDescription = entry.data.description;
 const publishedTime = entry.data.date.toISOString();
 
 const alternateLanguages = [
-  { lang: "es" as const, url: `/blog/${entry.id}` },
-  { lang: "en" as const, url: `/en/blog/${entry.id}` },
+  ...(esPost ? [{ lang: "es" as const, url: `/blog/${esPost.id}` }] : []),
+  ...(enPost ? [{ lang: "en" as const, url: `/en/blog/${enPost.id}` }] : []),
 ];
 
 const ogImage = `/og/${entry.id}.png`;
@@ -100,6 +109,8 @@ const ogImage = `/og/${entry.id}.png`;
         <LanguageSwitcher
           currentLanguage={currentLanguage}
           currentPath={Astro.url.pathname}
+          spanishHref={spanishHref}
+          englishHref={englishHref}
         />
       </div>
     </div>
