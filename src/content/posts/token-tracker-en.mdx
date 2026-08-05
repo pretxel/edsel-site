@@ -1,0 +1,108 @@
+---
+title: "Token Tracker: what I actually spend on Claude Code, Codex, and OpenCode"
+description: "I have been running three coding assistants daily for three months with no idea what they cost me. So I built a free, open source macOS app that measures it all locally."
+date: 2026-08-05
+lang: en
+tags:
+  - "Tauri"
+  - "Rust"
+  - "React"
+  - "TypeScript"
+  - "macOS"
+  - "Open Source"
+  - "AI"
+draft: false
+---
+
+For about three months I have had **Claude Code**, **Codex CLI**, and
+**OpenCode** open more or less all day. Each one is good at different things, and
+I drifted into using all three in parallel without thinking much about it.
+
+What I did start thinking about was the bill. Not any particular month's total,
+but the more basic question: *which of the three is the money going to?* I had no
+idea. Each tool stores its transcripts in its own format, in its own directory,
+and none of them tells you "you have spent X today."
+
+So I built **Token Tracker**: a macOS desktop app that reads those local
+transcripts and shows you estimated spend across all three, side by side. Free,
+open source, MIT licensed.
+
+## What it shows
+
+- **Spend by model** — bars per model (Opus 4.8, Sonnet 5, GPT-5.6 Sol, Haiku
+  4.5, Fable 5…) with the input / output / cache-write / cache-read token
+  breakdown inline.
+- **Daily activity** — a timeline of up to 90 days, toggling between cost,
+  tokens, or breakdown, plus a calendar-style heatmap covering up to 12 months.
+- **Top projects** — cost, messages, sessions, and last-used per project.
+- **Menu bar icon** — today's estimated cost, updating live.
+
+Six headline stat cards sit on top: estimated spend, today, average per day,
+tokens, messages, and sessions. A source filter lets you isolate a single tool.
+
+## Where the data comes from
+
+Files already sitting on your disk. That is all:
+
+| Source | Location | Format |
+| ------ | -------- | ------ |
+| Claude Code | `~/.claude/projects/**/*.jsonl` | JSONL transcripts |
+| Codex CLI | `~/.codex/sessions/**/rollout-*.jsonl` | JSONL rollout files |
+| OpenCode | `~/.local/share/opencode/opencode.db` | SQLite database |
+
+**Zero network, zero telemetry.** There is no server to send anything to, no
+account to create, no analytics. Pull the wifi and the app works exactly the
+same. For something that reads your work transcripts, that felt like the only
+defensible design.
+
+## How it is built
+
+The backend is **Rust**, inside [Tauri v2](https://tauri.app). The pipeline is
+straightforward: walk the transcript directories, parse JSONL and SQLite in
+parallel with `rayon`, dedup by key, apply pricing, and aggregate by model, day,
+and project. The result is a single JSON blob the frontend consumes.
+
+Deduplication matters more than you would expect: all three tools can write the
+same message more than once, so every entry carries a key derived from its
+origin and gets filtered before anything is summed.
+
+Pricing is computed per model version, which is the most tedious part to
+maintain. Opus 4.5 and 4.8 do not cost the same, Sonnet 5 had introductory
+pricing, and on the OpenAI side you have to distinguish GPT-5.6 from 5.5 from
+5.4, and so on backwards.
+
+The frontend is **React 19** with **TypeScript**. No charting library — every
+visualization is hand-rolled CSS bars and grids. For this kind of data, pulling
+in a chart dependency would have weighed more than the value it added.
+
+A `notify` watcher monitors the transcript directories with an 800 ms debounce,
+so the dashboard and the menu bar icon update themselves while you work.
+
+## One important caveat
+
+The numbers are **estimates**. The app computes cost by applying pricing tables
+to the tokens found in your local transcripts — it does not query anyone's actual
+billing API. It is built to show you proportions and trends ("Opus is eating 70%
+of my spend", "my usage spikes on Tuesdays"), not to reconcile an invoice to the
+cent.
+
+## Try it
+
+You will need macOS, Node 20+, pnpm, and stable Rust:
+
+```bash
+git clone https://github.com/pretxel/ai-usage-bar.git
+cd ai-usage-bar
+pnpm install
+pnpm tauri build
+```
+
+That leaves a `.dmg` under `src-tauri/target/release/bundle/`. Open it, drag
+**Token Tracker** into Applications, done.
+
+The repo lives at
+[github.com/pretxel/ai-usage-bar](https://github.com/pretxel/ai-usage-bar), MIT
+licensed. If you try it and something looks off — a mispriced model, a source it
+fails to detect — issues and PRs are welcome. Pricing especially: it shifts every
+few weeks, and keeping it current is exactly the kind of thing that works better
+with more than one person on it.

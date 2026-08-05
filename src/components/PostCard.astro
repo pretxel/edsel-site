@@ -62,7 +62,9 @@ if (props.variant === "post") {
     id: p.id,
     title: p.data.title,
     description: p.data.description,
-    cover: p.data.cover ?? "/og-default.jpg",
+    // Fall back to the generated OG image for the post itself. `/og-default.jpg`
+    // never existed in `public/`, so a post without `cover` 404'd the card image.
+    cover: p.data.cover ?? `/og/${p.id}.png`,
     accent: "var(--accent)",
     date: p.data.date.toISOString(),
     tags: p.data.tags,
