@@ -51,7 +51,9 @@
   },
   "pnpm": {
     "overrides": {
-      "astro-compress>svgo": "4.0.2"
+      "astro-compress>svgo": "4.0.2",
+      "@vercel/og>sharp": "^0.35.3",
+      "svelte": "^5.56.8"
     }
   },
   "volta": {

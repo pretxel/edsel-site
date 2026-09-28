@@ -1,0 +1,38 @@
+---
+title: "Token Tracker"
+i18n:
+  es:
+    title: "Token Tracker"
+    description: "App de macOS gratuita y open source que mide cuánto gastas realmente en Claude Code, Codex CLI y OpenCode, leyendo tus transcripciones en local"
+  en:
+    title: "Token Tracker"
+    description: "Free, open source macOS app that shows what you actually spend across Claude Code, Codex CLI, and OpenCode, read straight from your local transcripts"
+date: 2026-07-30
+cover: "/token-tracker.webp"
+externalLink: "https://github.com/pretxel/ai-usage-bar"
+tags:
+  - "Tauri"
+  - "Rust"
+  - "React"
+  - "TypeScript"
+  - "macOS"
+  - "Open Source"
+color: pink
+featured: false
+---
+
+<section data-lang="es">
+
+Token Tracker nació de tres meses usando Claude Code, Codex CLI y OpenCode a diario sin tener ni idea de en cuál se me iba el dinero. Cada herramienta guarda sus transcripciones en su propio formato y en su propia carpeta, y ninguna responde a la pregunta básica: cuánto llevo gastado hoy. La app lee esas tres fuentes —los JSONL de Claude Code, los archivos rollout de Codex y la base SQLite de OpenCode— y las pone lado a lado: gasto estimado por modelo, con el desglose de tokens de entrada, salida y caché; actividad diaria en una línea temporal de hasta 90 días; un mapa de calor tipo calendario de 12 meses; y un top de proyectos por coste. Un icono en la barra de menús muestra el coste estimado de hoy y se actualiza solo mientras trabajas.
+
+La decisión de diseño que lo define es que no hay red: cero peticiones, cero telemetría, cero cuenta que crear. Todo se parsea en local y la app funciona igual con el wifi desconectado, que para algo que lee tus transcripciones de trabajo era la única opción defendible. El backend es Rust dentro de Tauri v2, con una tubería que recorre los directorios, parsea JSONL y SQLite en paralelo con rayon, deduplica por clave —las tres herramientas pueden escribir el mismo mensaje más de una vez— y aplica precios por versión de modelo, la parte más tediosa de mantener: Opus 4.5 y 4.8 no cuestan lo mismo y en OpenAI hay que distinguir cada escalón de GPT-5. El frontend es React 19 con TypeScript y sin librería de gráficas: todas las visualizaciones son barras y rejillas hechas a mano con CSS. Las cifras son estimaciones calculadas sobre tus tokens, no facturación real: sirven para ver proporciones y tendencias, no para cuadrar una factura al céntimo. Licencia MIT.
+
+</section>
+
+<section data-lang="en">
+
+Token Tracker came out of three months running Claude Code, Codex CLI, and OpenCode daily with no idea which one the money was going to. Each tool stores its transcripts in its own format, in its own directory, and none of them answers the basic question: how much have I spent today. The app reads all three sources — Claude Code's JSONL transcripts, Codex's rollout files, and OpenCode's SQLite database — and puts them side by side: estimated spend by model, with the input, output, and cache token breakdown; daily activity on a timeline of up to 90 days; a calendar-style heatmap covering 12 months; and a top-projects table by cost. A menu bar icon shows today's estimated cost and updates itself live while you work.
+
+The defining design decision is that there is no network: zero requests, zero telemetry, zero account to create. Everything is parsed locally and the app works exactly the same with the wifi off, which for something that reads your work transcripts was the only defensible option. The backend is Rust inside Tauri v2, with a pipeline that walks the directories, parses JSONL and SQLite in parallel with rayon, dedups by key — all three tools can write the same message more than once — and applies pricing per model version, the most tedious part to maintain: Opus 4.5 and 4.8 do not cost the same, and on the OpenAI side every GPT-5 tier has to be told apart. The frontend is React 19 with TypeScript and no charting library: every visualization is hand-rolled CSS bars and grids. The figures are estimates computed from your tokens, not real billing — they show proportions and trends, not an invoice reconciled to the cent. MIT licensed.
+
+</section>
