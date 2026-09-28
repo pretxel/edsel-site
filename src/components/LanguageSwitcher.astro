@@ -122,10 +122,12 @@ const englishUrl = withLang(englishHref ?? `/en${cleanPath}`, "en");
 <script>
   // Language switcher functionality
   function initLanguageSwitcher() {
-    const button = document.getElementById('language-switcher-button');
-    const dropdown = document.getElementById('language-dropdown');
+    const buttonEl = document.getElementById('language-switcher-button');
+    const dropdownEl = document.getElementById('language-dropdown');
     
-    if (!button || !dropdown) return;
+    if (!buttonEl || !dropdownEl) return;
+    const button: HTMLElement = buttonEl;
+    const dropdown: HTMLElement = dropdownEl;
     
     let isOpen = false;
     

@@ -25,7 +25,7 @@ function dataSection(body: string, lang: "es" | "en"): string {
 
 export const GET: APIRoute = async () => {
   const projects = await getLocalizedProjects("es");
-  const aboutEntries = await getCollection("pages", ({ data }) => data.slug === "about");
+  const aboutEntries = await getCollection("pages", ({ data }) => data.kind === "about");
 
   const lines: string[] = [];
   lines.push("# edselserrano.com — full content dump");
