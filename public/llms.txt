@@ -17,13 +17,18 @@ The site has two language variants — Spanish (default, `/`) and English (`/en/
 
 Each project page contains a bilingual write-up (two `<section data-lang>` blocks inside the MDX). Project metadata: cover image, external link, tech stack tags, color accent.
 
-- [Daily Potato](https://edselserrano.com/projects/daily-potato): Innovative tool for remote Daily Scrum meetings with random participation and team productivity metrics. Stack: Next.js, TypeScript, PostgreSQL, JWT, WebSockets, Tailwind CSS.
-- [Chat Edsel](https://edselserrano.com/projects/chat-edsel): Personal AI assistant integration project.
-- [Dineqrs](https://edselserrano.com/projects/dineqrs): QR-based payment/dining tooling experiment.
-- [F1 Stats](https://edselserrano.com/projects/f1-stats): Formula 1 statistics dashboard with race analytics.
-- [Pong (Svelte)](https://edselserrano.com/projects/pong-svelte): Classic Pong remade in Svelte as a framework learning exercise.
-- [Pokémon Poker](https://edselserrano.com/projects/pokemon-poker): Pokémon-themed poker variant.
-- [Retro Ball](https://edselserrano.com/projects/retro-ball): Ephemeral agile retrospective tool currently being built.
+- [qr-magic](https://edselserrano.com/projects/qr-magic): Custom QR code generator that runs entirely in the browser — URL, Wi-Fi, vCard or email, with styles, gradients, a center logo, and PNG/SVG/JPEG export. Stack: JavaScript, qr-code-styling, Vercel.
+- [Winscore](https://edselserrano.com/projects/winscore): Football predictions with a live leaderboard — call the exact score of every match before kickoff and compete in private pools. Stack: Next.js, React, TypeScript, Stripe.
+- [GridScore](https://edselserrano.com/projects/gridscore): Formula 1 Grand Prix predictions — call pole, podium, and fastest lap before every session and compete in private leagues. Stack: Next.js, React, TypeScript, Tailwind CSS, Stripe.
+- [Token Tracker](https://edselserrano.com/projects/token-tracker): Free, open-source macOS app that shows what you spend across Claude Code, Codex CLI, and OpenCode from local transcripts. Stack: Tauri, Rust, React, TypeScript.
+- [26POOL](https://edselserrano.com/projects/world-pool): Global prediction pool for the 2026 World Cup with real-time scoring and a leaderboard. Stack: Next.js, React, TypeScript, Tailwind CSS, Vercel.
+- [Retro Ball](https://edselserrano.com/projects/retro-ball): Frictionless agile retrospective tool with ephemeral rooms, no accounts, and access codes. Stack: real-time, Vercel.
+- [Pokémon Poker](https://edselserrano.com/projects/pokemon-poker): Scrum planning-poker estimation tool themed around Pokémon. Stack: Next.js, React, TypeScript, Vercel.
+- [Pong (Svelte)](https://edselserrano.com/projects/pong-svelte): Classic Pong built with Svelte 5 and HTML5 Canvas, with AI opponent and touch controls. Stack: Svelte 5, Vite, JavaScript.
+- [F1 Stats](https://edselserrano.com/projects/f1-stats): Formula 1 statistics web app with historical data and interactive analysis. Live at https://f1-stats.pretlabs.app/. Stack: React, TypeScript, Tailwind CSS.
+- [Dineqrs](https://edselserrano.com/projects/dineqrs): SaaS that lets restaurants publish QR-code digital menus/catalogs, updatable in real time without reprinting. Stack: Next.js, React, TypeScript, Tailwind CSS.
+- [Chat Edsel](https://edselserrano.com/projects/chat-edsel): AI chatbot that answers questions about Edsel's professional experience and projects. Stack: OpenAI GPT, LangChain, Next.js, TypeScript.
+- [Daily Potato](https://edselserrano.com/projects/daily-potato): Tool for remote Daily Scrum meetings with random participation and team productivity metrics. Stack: Next.js, TypeScript, PostgreSQL, JWT, WebSockets, Tailwind CSS.
 
 ## Blog
 
