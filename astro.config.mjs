@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import robotsTxt from "astro-robots-txt";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
 import vercel from "@astrojs/vercel";
@@ -35,14 +34,21 @@ const LEGACY_PROJECT_REDIRECTS = {
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://edselserrano.com/",
+  site: "https://www.edselserrano.com/",
   output: "server",
-  adapter: USE_NODE_ADAPTER ? node({ mode: "standalone" }) : vercel(),
+  adapter: USE_NODE_ADAPTER
+    ? node({ mode: "standalone" })
+    : vercel({
+        // `@vercel/og` reads harfbuzz's wasm from disk at runtime (see
+        // src/pages/og/[slug].png.ts). File tracing can't see that read, so
+        // ship the file with the function explicitly.
+        includeFiles: ["./node_modules/harfbuzzjs/hb.wasm"],
+      }),
   redirects: LEGACY_PROJECT_REDIRECTS,
   integrations: [
-    robotsTxt({
-      sitemap: false,
-    }),
+    // No robots.txt integration: `public/robots.txt` is the single source.
+    // `astro-robots-txt` used to overwrite it at build time with a bare
+    // "User-agent: * / Allow: /", dropping the sitemap line and crawler rules.
     // `@astrojs/sitemap` removed: it generates a static `sitemap-index.xml`
     // that shadows the richer SSR endpoint at `src/pages/sitemap-index.xml.ts`
     // (which references `/sitemap.xml` with hreflang alternates for every

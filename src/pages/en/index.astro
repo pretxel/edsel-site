@@ -1,4 +1,5 @@
 ---
+import "../../styles/global.css";
 import MainHead from "../../components/MainHead.astro";
 import SEOHead from "../../components/SEOHead.astro";
 import Nav from "../../components/Nav/index.jsx";
@@ -20,19 +21,6 @@ const seoTitle =
 const seoDescription =
   "Edsel Serrano builds tools for agile teams and writes about web development, products, and experiments. Portfolio and blog.";
 
-const keywords = [
-  "Edsel Serrano",
-  "Software Engineer",
-  "Full Stack Developer",
-  "JavaScript",
-  "TypeScript",
-  "React",
-  "Astro",
-  "Web Development",
-  "Portfolio",
-  "Blog",
-];
-
 const alternateLanguages = [
   { lang: "es" as const, url: "/" },
   { lang: "en" as const, url: "/en/" },
@@ -48,7 +36,6 @@ const alternateLanguages = [
       canonical="/en/"
       language={lang}
       alternateLanguages={alternateLanguages}
-      keywords={keywords}
       type="website"
       schemaVariant="home"
     />

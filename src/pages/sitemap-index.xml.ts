@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
 import { generateSitemapIndex } from '../lib/sitemap';
 
-export const GET: APIRoute = () => {
-    const xmlContent = generateSitemapIndex();
+export const GET: APIRoute = async () => {
+    const xmlContent = await generateSitemapIndex();
 
     return new Response(xmlContent, {
         headers: {

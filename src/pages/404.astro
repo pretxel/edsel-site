@@ -1,4 +1,5 @@
 ---
+import "../styles/global.css";
 import MainHead from "../components/MainHead.astro";
 import SEOHead from "../components/SEOHead.astro";
 import Footer from "../components/Footer/index.astro";
@@ -6,7 +7,6 @@ import Nav from "../components/Nav/index.jsx";
 
 const seoTitle = "404 - Página no encontrada | Edsel Serrano";
 const seoDescription = "La página que buscas no existe. Descubre mi trabajo en desarrollo web y proyectos tecnológicos.";
-const keywords = ['404', 'página no encontrada', 'Edsel Serrano', 'desarrollador web'];
 ---
 
 <html lang="es">
@@ -16,7 +16,6 @@ const keywords = ['404', 'página no encontrada', 'Edsel Serrano', 'desarrollado
 	<SEOHead
 		title={seoTitle}
 		description={seoDescription}
-		keywords={keywords}
 		type="website"
 		noindex={true}
 	/>

@@ -46,57 +46,28 @@ const alternateLanguages = [
 const ogImage = `/og/${entry.id}.png`;
 ---
 
-<SEOHead
-  title={seoTitle}
-  description={seoDescription}
-  canonical={`/en/blog/${entry.id}`}
-  image={ogImage}
-  imageAlt={entry.data.title}
-  language={currentLanguage}
-  alternateLanguages={alternateLanguages}
-  keywords={entry.data.tags}
-  type="article"
-  publishedTime={publishedTime}
-  modifiedTime={publishedTime}
-/>
-
 <Layout
   title={entry.data.title}
   lang={currentLanguage}
   rssHref="/en/rss.xml"
 >
+  <SEOHead
+    slot="head"
+    title={seoTitle}
+    description={seoDescription}
+    canonical={`/en/blog/${entry.id}`}
+    image={ogImage}
+    imageAlt={entry.data.title}
+    language={currentLanguage}
+    alternateLanguages={alternateLanguages}
+    keywords={entry.data.tags}
+    type="article"
+    publishedTime={publishedTime}
+    modifiedTime={publishedTime}
+    markdownAlternate={`/en/blog/${entry.id}.md`}
+  />
   <ReadingProgress />
   <article class="min-h-screen">
-    <div class="absolute top-4 left-4 right-4 z-50">
-      <div class="flex justify-between items-center">
-        <a
-          href="/en/"
-          class="inline-flex items-center px-4 py-2 text-sm font-medium text-fg-muted hover:text-fg-strong bg-elev/60 hover:bg-elev rounded-lg border border-border-default hover:border-border-strong transition-all duration-200 group backdrop-blur-sm"
-        >
-          <svg
-            class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-            ></path>
-          </svg>
-          Home
-        </a>
-        <LanguageSwitcher
-          currentLanguage={currentLanguage}
-          currentPath={Astro.url.pathname}
-          spanishHref={spanishHref}
-          englishHref={englishHref}
-        />
-      </div>
-    </div>
-
     <header
       class="sticky top-0 z-50 bg-bg/80 backdrop-blur-xl border-b border-border-default"
     >
@@ -104,7 +75,7 @@ const ogImage = `/og/${entry.id}.png`;
         <div class="flex items-center justify-between">
           <a
             href="/en/blog"
-            class="inline-flex items-center px-4 py-2 text-fg-muted hover:text-fg-strong hover:bg-elev rounded-lg transition-all duration-200 group relative z-10"
+            class="inline-flex items-center min-h-11 px-4 py-2 text-fg-muted hover:text-fg-strong hover:bg-elev rounded-lg transition-all duration-200 group relative z-10"
           >
             <svg
               class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
@@ -120,7 +91,20 @@ const ogImage = `/og/${entry.id}.png`;
             </svg>
             Back to Blog
           </a>
-          <ShareButtons title={entry.data.title} language={currentLanguage} />
+          {/*
+           * Language switcher lives in the sticky bar. It used to sit in an
+           * absolutely positioned row that this header painted over, which left
+           * it unreachable on every viewport.
+           */}
+          <div class="flex items-center gap-2">
+            <LanguageSwitcher
+              currentLanguage={currentLanguage}
+              currentPath={Astro.url.pathname}
+              spanishHref={spanishHref}
+              englishHref={englishHref}
+            />
+            <ShareButtons title={entry.data.title} language={currentLanguage} />
+          </div>
         </div>
       </div>
     </header>
