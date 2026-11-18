@@ -1,12 +1,22 @@
 ---
-import type { Language } from '../lib/i18n';
+/**
+ * SEO head: everything a crawler or link-unfurler reads about the page —
+ * title, description, canonical, robots, hreflang, Open Graph, Twitter Card
+ * and one Schema.org JSON-LD graph.
+ *
+ * Technical tags (charset, viewport, theme-color, favicon, manifest, font
+ * preload) belong to MainHead.astro, so nothing is emitted twice.
+ */
+import { getAlternates, hreflangCodes, type Language } from '../lib/i18n';
+import { buildGraph, isCollectionPath, type PageKind } from '../lib/schema';
+import { AUTHOR_NAME, SITE_NAME, absoluteUrl } from '../lib/site';
 
 /**
- * Structured-data variant. Drives which JSON-LD blocks are emitted in
- * addition to the always-present WebSite/BlogPosting graph:
- *   - `home`            → adds Person (single source of truth for /).
- *   - `software-app`    → adds SoftwareApplication for /projects/[slug].
- *   - default           → no additional graph (used by /about, /now, /uses).
+ * Structured-data variant. Selects the Schema.org page node:
+ *   - `home`            → WebPage about the Person entity.
+ *   - `software-app`    → SoftwareApplication + BreadcrumbList (projects).
+ * Otherwise inferred: `type="article"` → BlogPosting, `type="profile"` →
+ * ProfilePage, index routes → CollectionPage, anything else → WebPage.
  */
 type SchemaVariant = 'home' | 'software-app';
 
@@ -21,14 +31,21 @@ interface Props {
   modifiedTime?: string;
   author?: string;
   language?: Language;
+  /**
+   * Explicit language alternates. Only needed when the two variants are not
+   * a plain `/en` prefix swap (blog posts have per-language slugs, and may
+   * exist in a single language). Defaults to `getAlternates(canonical)`.
+   */
   alternateLanguages?: { lang: Language; url: string }[];
+  /** Topic tags; emitted as `article:tag` and Schema.org keywords. */
   keywords?: string[];
   noindex?: boolean;
-  /** Opt-in to additional Schema.org payloads. */
   schemaVariant?: SchemaVariant;
-  /** When set, emits a SoftwareApplication block (project detail pages). */
+  /** Project pages: application name and live URL. */
   appName?: string;
   appUrl?: string;
+  /** Site-relative URL of a Markdown rendition of this page, if any. */
+  markdownAlternate?: string;
 }
 
 const {
@@ -40,55 +57,86 @@ const {
   type = 'website',
   publishedTime,
   modifiedTime,
-  author = 'Edsel Serrano',
+  author = AUTHOR_NAME,
   language = 'es',
-  alternateLanguages = [],
+  alternateLanguages,
   keywords = [],
   noindex = false,
   schemaVariant,
   appName,
   appUrl,
+  markdownAlternate,
 } = Astro.props;
 
-// Construct full URLs
-const siteUrl = 'https://edselserrano.com';
-const fullCanonical = canonical ? `${siteUrl}${canonical}` : `${siteUrl}${Astro.url.pathname}`;
-const fullImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
+const canonicalPath = canonical ?? Astro.url.pathname;
+const fullCanonical = absoluteUrl(canonicalPath);
+const fullImage = absoluteUrl(image);
+const langCode = hreflangCodes[language];
 
-// Default keywords
-const defaultKeywords = language === 'en' 
-  ? ['Edsel Serrano', 'Full Stack Developer', 'Web Development', 'JavaScript', 'TypeScript', 'React', 'Next.js', 'Astro']
-  : ['Edsel Serrano', 'Desarrollador Full Stack', 'Desarrollo Web', 'JavaScript', 'TypeScript', 'React', 'Next.js', 'Astro'];
+// ── hreflang ──────────────────────────────────────────────────────────
+// x-default is the Spanish variant of *this* page. A page that exists in a
+// single language only self-references and gets no x-default.
+let hreflangLinks: { hreflang: string; href: string }[] = [];
+if (!noindex) {
+  let es: string | undefined;
+  let en: string | undefined;
+  if (alternateLanguages) {
+    es = alternateLanguages.find((a) => a.lang === 'es')?.url;
+    en = alternateLanguages.find((a) => a.lang === 'en')?.url;
+  } else {
+    ({ es, en } = getAlternates(canonicalPath));
+  }
+  if (es) hreflangLinks.push({ hreflang: hreflangCodes.es, href: absoluteUrl(es) });
+  if (en) hreflangLinks.push({ hreflang: hreflangCodes.en, href: absoluteUrl(en) });
+  if (es && en) hreflangLinks.push({ hreflang: 'x-default', href: absoluteUrl(es) });
+}
+const localeAlternates = hreflangLinks
+  .map((link) => link.hreflang)
+  .filter((code) => code !== 'x-default' && code !== langCode);
 
-const allKeywords = [...defaultKeywords, ...keywords];
+// ── Structured data ───────────────────────────────────────────────────
+let kind: PageKind = 'page';
+if (schemaVariant === 'home') kind = 'home';
+else if (schemaVariant === 'software-app') kind = 'project';
+else if (type === 'article') kind = 'post';
+else if (type === 'profile') kind = 'about';
+else if (isCollectionPath(canonicalPath)) kind = 'collection';
 
-// Language codes
-const langCode = language === 'en' ? 'en-US' : 'es-ES';
-const langShort = language;
+const graph = buildGraph({
+  kind,
+  url: fullCanonical,
+  title,
+  description,
+  language,
+  image: fullImage,
+  imageAlt,
+  publishedTime,
+  modifiedTime,
+  keywords,
+  appName,
+  appUrl,
+});
 ---
 
-<!-- Basic Meta Tags -->
 <title>{title}</title>
 <meta name="description" content={description} />
-<meta name="keywords" content={allKeywords.join(', ')} />
 <meta name="author" content={author} />
-<meta name="language" content={langShort} />
-
-<!-- Canonical URL -->
 <link rel="canonical" href={fullCanonical} />
 
-<!-- Robots -->
 {noindex ? (
   <meta name="robots" content="noindex, nofollow" />
 ) : (
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 )}
 
-<!-- Hreflang for multilingual SEO -->
-{alternateLanguages.map(({ lang, url }) => (
-  <link rel="alternate" hreflang={lang === 'en' ? 'en-US' : 'es-ES'} href={`${siteUrl}${url}`} />
+{hreflangLinks.map(({ hreflang, href }) => (
+  <link rel="alternate" hreflang={hreflang} href={href} />
 ))}
-<link rel="alternate" hreflang="x-default" href={`${siteUrl}/`} />
+
+{/* Markdown rendition for LLM agents — see /llms.txt for the full index. */}
+{markdownAlternate && (
+  <link rel="alternate" type="text/markdown" href={absoluteUrl(markdownAlternate)} />
+)}
 
 <!-- Open Graph -->
 <meta property="og:type" content={type} />
@@ -99,21 +147,19 @@ const langShort = language;
 <meta property="og:image:alt" content={imageAlt} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:site_name" content="Edsel Serrano" />
-<meta property="og:locale" content={langCode} />
-
-{alternateLanguages.map(({ lang }) => (
-  <meta property="og:locale:alternate" content={lang === 'en' ? 'en-US' : 'es-ES'} />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:locale" content={langCode.replace('-', '_')} />
+{localeAlternates.map((code) => (
+  <meta property="og:locale:alternate" content={code.replace('-', '_')} />
 ))}
 
-<!-- Article specific Open Graph -->
 {type === 'article' && (
   <>
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
     {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
     <meta property="article:author" content={author} />
     <meta property="article:section" content={language === 'en' ? 'Technology' : 'Tecnología'} />
-    {allKeywords.slice(0, 5).map(keyword => (
+    {keywords.slice(0, 5).map((keyword) => (
       <meta property="article:tag" content={keyword} />
     ))}
   </>
@@ -128,174 +174,7 @@ const langShort = language;
 <meta name="twitter:image" content={fullImage} />
 <meta name="twitter:image:alt" content={imageAlt} />
 
-<!-- Additional SEO Meta Tags -->
-<meta name="theme-color" content="#18181b" />
-<meta name="msapplication-TileColor" content="#18181b" />
 <meta name="format-detection" content="telephone=no" />
 
-<!-- LLM Context — see also /llms-full.txt for the bulk dump. -->
-<link rel="llm-context" href="/llms.txt" type="text/plain" />
-
-<!-- Schema.org JSON-LD — primary entity for the current URL. -->
-<script type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": type === 'article' ? 'Article' : 'WebSite',
-  "@id": fullCanonical,
-  "url": fullCanonical,
-  "name": title,
-  "headline": title,
-  "description": description,
-  "image": {
-    "@type": "ImageObject",
-    "url": fullImage,
-    "width": 1200,
-    "height": 630,
-    "alt": imageAlt
-  },
-  "author": {
-    "@type": "Person",
-    "name": author,
-    "url": siteUrl,
-    "sameAs": [
-      "https://github.com/pretxel",
-      "https://www.linkedin.com/in/edselserrano",
-      "https://twitter.com/edselserrano"
-    ]
-  },
-  ...(type === 'article' && publishedTime ? {
-    "datePublished": publishedTime,
-    "dateModified": modifiedTime || publishedTime,
-    "publisher": {
-      "@type": "Organization",
-      "name": "Edsel Serrano",
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${siteUrl}/favicon.ico`
-      }
-    },
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": fullCanonical
-    }
-  } : {}),
-  ...(type === 'website' ? {
-    "publisher": {
-      "@type": "Person",
-      "name": author
-    },
-    "inLanguage": langCode
-  } : {})
-})} />
-
-<!--
-  Person schema for the home page. Single source of truth that lets Google
-  knit together the social profiles (sameAs) under one knowledge graph entity.
--->
-{schemaVariant === 'home' && (
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "@id": `${siteUrl}/#edsel`,
-    "name": author,
-    "url": siteUrl,
-    "image": fullImage,
-    "jobTitle": language === 'en' ? 'Software Engineer' : 'Software Engineer',
-    "worksFor": { "@type": "Organization", "name": "Embat", "url": "https://www.embat.com" },
-    "homeLocation": { "@type": "Place", "name": "Madrid, Spain" },
-    "sameAs": [
-      "https://github.com/pretxel",
-      "https://www.linkedin.com/in/edselserrano",
-      "https://twitter.com/edselserrano",
-    ],
-    "knowsAbout": [
-      "JavaScript", "TypeScript", "React", "Astro", "Next.js",
-      "Node.js", "PostgreSQL", "Machine Learning", "LLMs", "IoT",
-      "Web Development", "Agile",
-    ],
-  })} />
-)}
-
-<!--
-  SoftwareApplication schema for project detail pages. Helps Google surface
-  the project as a discrete app rather than a blog post.
--->
-{schemaVariant === 'software-app' && appName && (
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "@id": fullCanonical + "#app",
-    "name": appName,
-    "description": description,
-    "url": appUrl || fullCanonical,
-    "applicationCategory": "WebApplication",
-    "operatingSystem": "Web",
-    "image": fullImage,
-    "author": { "@type": "Person", "name": author, "url": siteUrl },
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  })} />
-)}
-
-<!-- Breadcrumb Schema for Articles -->
-{type === 'article' && (
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": language === 'en' ? 'Home' : 'Inicio',
-        "item": `${siteUrl}/`
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Blog",
-        "item": language === 'en' ? `${siteUrl}/en/blog/` : `${siteUrl}/blog/`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": title,
-        "item": fullCanonical
-      }
-    ]
-  })} />
-)}
-
-<!-- Person Schema for Author -->
-{type === 'article' && (
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": author,
-    "url": siteUrl,
-    "jobTitle": "Software Engineer",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "Embat",
-      "url": "https://www.embat.com"
-    },
-    "sameAs": [
-      "https://github.com/pretxel",
-      "https://www.linkedin.com/in/edselserrano"
-    ],
-    "knowsAbout": [
-      "JavaScript",
-      "TypeScript",
-      "React",
-      "Next.js",
-      "Node.js",
-      "Web Development",
-      "Full Stack Development"
-    ]
-  })} />
-)}
-
-<!--
-  Favicon + manifest only. Apple touch icon and PNG favicons would 404
-  (the assets aren't in /public), so we omit them to avoid console errors
-  in Lighthouse Best Practices. MainHead.astro mirrors this decision.
--->
-<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-<link rel="manifest" href="/site.webmanifest" />
+<!-- Schema.org JSON-LD: one graph per page (see src/lib/schema.ts). -->
+<script type="application/ld+json" set:html={JSON.stringify(graph).replace(/</g, '\\u003c')} />

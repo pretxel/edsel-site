@@ -6,6 +6,7 @@ import {
   t,
 } from "../lib/i18n";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
+import MainHead from "../components/MainHead.astro";
 import "./layout.css";
 import "../styles/blog.css";
 
@@ -46,23 +47,14 @@ const updatedLabel = updated
 <!doctype html>
 <html lang={lang}>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="generator" content={Astro.generator} />
-    {/*
-     * Preload the Latin Inter variable font. Same rationale as BlogLayout/
-     * MainHead — discovered before CSS parses, saves ~300ms FCP on 4G.
-     */}
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      crossorigin="anonymous"
-      href="/_astro/inter-latin-wght-normal.Dx4kXJAl.woff2"
-    />
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
+    <MainHead />
+    {/* Fallback title/description for pages that don't pass SEOHead. */}
+    {!Astro.slots.has("head") && (
+      <>
+        <title>{title}</title>
+        {description && <meta name="description" content={description} />}
+      </>
+    )}
     <slot name="head" />
   </head>
   <body class="bg-bg text-fg font-sans min-h-screen">
@@ -73,7 +65,7 @@ const updatedLabel = updated
         <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <a
             href={homeHref}
-            class="inline-flex items-center text-sm font-medium text-fg-muted hover:text-fg-strong transition-colors"
+            class="inline-flex items-center min-h-11 text-sm font-medium text-fg-muted hover:text-fg-strong transition-colors"
           >
             <span>{t("page.back_home", {}, lang)}</span>
           </a>

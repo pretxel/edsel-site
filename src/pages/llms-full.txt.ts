@@ -4,39 +4,48 @@
  *
  * Spec inspiration: https://llmstxt.org/
  *
- * The response is plain text/Markdown, UTF-8, with a stable section
- * ordering: site overview → about → projects (newest first) →
- * machine-readable feeds.
+ * Stable section ordering: site overview → about → projects (newest first,
+ * both languages) → posts (newest first, both languages) → feeds.
  */
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
-import { getLocalizedProjects } from "../lib/content";
+import { getAllPosts, getLocalizedProjects } from "../lib/content";
+import {
+  dataSection,
+  LLMS_INTRO,
+  LLMS_SUMMARY,
+  postPath,
+  projectPath,
+  TEXT_CACHE_CONTROL,
+} from "../lib/llms";
+import { SITE_URL } from "../lib/site";
 
-const SITE_URL = "https://edselserrano.com";
-
-function dataSection(body: string, lang: "es" | "en"): string {
-  const re = new RegExp(
-    `<section[^>]*data-lang="${lang}"[^>]*>([\\s\\S]*?)</section>`,
-    "i",
-  );
-  const match = body.match(re);
-  return (match ? match[1] : body).trim();
-}
+const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 
 export const GET: APIRoute = async () => {
   const projects = await getLocalizedProjects("es");
-  const aboutEntries = await getCollection("pages", ({ data }) => data.kind === "about");
+  const aboutEntries = await getCollection(
+    "pages",
+    ({ data }) => data.kind === "about",
+  );
+  // `getAllPosts` already excludes drafts.
+  const posts = [...(await getAllPosts("es")), ...(await getAllPosts("en"))].sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+  );
 
   const lines: string[] = [];
-  lines.push("# edselserrano.com — full content dump");
+  lines.push("# Edsel Serrano — full content");
+  lines.push("");
+  lines.push(`> ${LLMS_SUMMARY}`);
+  lines.push("");
+  lines.push(LLMS_INTRO[0]);
   lines.push("");
   lines.push(
-    "> Concatenated Markdown of every public page on edselserrano.com. " +
-      "Generated from the same content collection that powers the live site.",
+    "This document concatenates every public page on edselserrano.com, generated from the same content collections that power the live site.",
   );
   lines.push("");
   lines.push(`Source: ${SITE_URL}`);
-  lines.push(`Generated: ${new Date().toISOString()}`);
+  lines.push(`Index: ${SITE_URL}/llms.txt`);
   lines.push("");
 
   // ── About ─────────────────────────────────────────────────────────
@@ -52,7 +61,7 @@ export const GET: APIRoute = async () => {
       lines.push(`Summary: ${entry.data.description}`);
     }
     if (entry.data.updated) {
-      lines.push(`Last updated: ${entry.data.updated.toISOString().slice(0, 10)}`);
+      lines.push(`Last updated: ${isoDate(entry.data.updated)}`);
     }
     lines.push("");
     lines.push(entry.body?.trim() ?? "");
@@ -70,12 +79,12 @@ export const GET: APIRoute = async () => {
     lines.push("");
     lines.push(`## Project · ${entry.data.title}`);
     lines.push("");
-    lines.push(`Source (es): ${SITE_URL}/projects/${entry.id}`);
-    lines.push(`Source (en): ${SITE_URL}/en/projects/${entry.id}`);
+    lines.push(`Source (es): ${SITE_URL}${projectPath(entry.id, "es")}`);
+    lines.push(`Source (en): ${SITE_URL}${projectPath(entry.id, "en")}`);
     if (entry.data.externalLink) {
       lines.push(`Live: ${entry.data.externalLink}`);
     }
-    lines.push(`Date: ${entry.data.date.toISOString().slice(0, 10)}`);
+    lines.push(`Date: ${isoDate(entry.data.date)}`);
     if (entry.data.tags?.length) {
       lines.push(`Tags: ${entry.data.tags.join(", ")}`);
     }
@@ -98,6 +107,23 @@ export const GET: APIRoute = async () => {
     }
   }
 
+  // ── Posts ────────────────────────────────────────────────────────
+  for (const post of posts) {
+    lines.push("---");
+    lines.push("");
+    lines.push(`## Article · ${post.data.title} (${post.data.lang})`);
+    lines.push("");
+    lines.push(`Source: ${SITE_URL}${postPath(post.id, post.data.lang)}`);
+    lines.push(`Summary: ${post.data.description}`);
+    lines.push(`Date: ${isoDate(post.data.date)}`);
+    if (post.data.tags.length) {
+      lines.push(`Tags: ${post.data.tags.join(", ")}`);
+    }
+    lines.push("");
+    lines.push((post.body ?? "").trim());
+    lines.push("");
+  }
+
   // ── Feeds ────────────────────────────────────────────────────────
   lines.push("---");
   lines.push("");
@@ -111,8 +137,8 @@ export const GET: APIRoute = async () => {
 
   return new Response(lines.join("\n"), {
     headers: {
-      "content-type": "text/plain; charset=utf-8",
-      "cache-control": "public, max-age=300, s-maxage=3600",
+      "content-type": "text/markdown; charset=utf-8",
+      "cache-control": TEXT_CACHE_CONTROL,
     },
   });
 };

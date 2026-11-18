@@ -1,4 +1,8 @@
-import { getLocalizedProjects, getAllPosts, getAllTags } from './content';
+import { getCollection } from 'astro:content';
+import { getAllPosts, getAllTags, getItemsByTagSlug, getLocalizedProjects, getSiblingPost } from './content';
+import { getAlternates, hreflangCodes, type Language } from './i18n';
+import { postPath } from './llms';
+import { SITE_URL } from './site';
 import { slugifyTag } from './tags';
 
 export interface SitemapUrl {
@@ -9,143 +13,134 @@ export interface SitemapUrl {
     alternates?: { hreflang: string; href: string }[];
 }
 
-export async function generateSitemapUrls(): Promise<SitemapUrl[]> {
-    const baseUrl = 'https://edselserrano.com';
-    const today = new Date().toISOString().split('T')[0];
+const isoDate = (date: Date) => date.toISOString().split('T')[0];
 
+/** Most recent of the given dates, as an ISO day; undefined when empty. */
+function latest(dates: (Date | undefined)[]): string | undefined {
+    const times = dates.filter((d): d is Date => !!d).map((d) => d.getTime());
+    return times.length ? isoDate(new Date(Math.max(...times))) : undefined;
+}
+
+/** hreflang trio for a page whose variants differ only by the `/en` prefix. */
+function alternatesFor(path: string): SitemapUrl['alternates'] {
+    const { es, en, xDefault } = getAlternates(path);
+    return [
+        { hreflang: hreflangCodes.es, href: `${SITE_URL}${es}` },
+        { hreflang: hreflangCodes.en, href: `${SITE_URL}${en}` },
+        { hreflang: 'x-default', href: `${SITE_URL}${xDefault}` },
+    ];
+}
+
+/**
+ * Every public route in both languages.
+ *
+ * `lastmod` always derives from content: an entry's own date, or — for
+ * index pages — the newest date among the entries it lists. It is never the
+ * request date; crawlers learn to ignore `lastmod` on sites where it changes
+ * on every fetch. Pages with no dated content omit it.
+ */
+export async function generateSitemapUrls(): Promise<SitemapUrl[]> {
     const urls: SitemapUrl[] = [];
 
-    // Homepage
-    urls.push({
-        loc: `${baseUrl}/`,
-        lastmod: today,
-        changefreq: 'weekly',
-        priority: 1.0,
-        alternates: [
-            { hreflang: 'es-ES', href: `${baseUrl}/` },
-            { hreflang: 'en-US', href: `${baseUrl}/en/` },
-            { hreflang: 'x-default', href: `${baseUrl}/` }
-        ]
-    });
-
-    // LLM Context File
-    urls.push({
-        loc: `${baseUrl}/llms.txt`,
-        lastmod: today,
-        changefreq: 'monthly',
-        priority: 0.5
-    });
-
-    // Blog index pages
-    urls.push({
-        loc: `${baseUrl}/blog/`,
-        lastmod: today,
-        changefreq: 'daily',
-        priority: 0.9,
-        alternates: [
-            { hreflang: 'es-ES', href: `${baseUrl}/blog/` },
-            { hreflang: 'en-US', href: `${baseUrl}/en/blog/` },
-            { hreflang: 'x-default', href: `${baseUrl}/blog/` }
-        ]
-    });
-
-    urls.push({
-        loc: `${baseUrl}/en/blog/`,
-        lastmod: today,
-        changefreq: 'daily',
-        priority: 0.9,
-        alternates: [
-            { hreflang: 'es-ES', href: `${baseUrl}/blog/` },
-            { hreflang: 'en-US', href: `${baseUrl}/en/blog/` },
-            { hreflang: 'x-default', href: `${baseUrl}/blog/` }
-        ]
-    });
-
-    // Projects index pages (new canonical location for portfolio entries)
-    urls.push({
-        loc: `${baseUrl}/projects/`,
-        lastmod: today,
-        changefreq: 'weekly',
-        priority: 0.9,
-        alternates: [
-            { hreflang: 'es-ES', href: `${baseUrl}/projects/` },
-            { hreflang: 'en-US', href: `${baseUrl}/en/projects/` },
-            { hreflang: 'x-default', href: `${baseUrl}/projects/` }
-        ]
-    });
-    urls.push({
-        loc: `${baseUrl}/en/projects/`,
-        lastmod: today,
-        changefreq: 'weekly',
-        priority: 0.9,
-        alternates: [
-            { hreflang: 'es-ES', href: `${baseUrl}/projects/` },
-            { hreflang: 'en-US', href: `${baseUrl}/en/projects/` },
-            { hreflang: 'x-default', href: `${baseUrl}/projects/` }
-        ]
-    });
-
-    // Individual project detail pages — use slug-based URLs.
     const projects = await getLocalizedProjects('es');
-    projects.forEach((p) => {
-        const lastmod = p.pubDate.toISOString().split('T')[0];
-        urls.push({
-            loc: `${baseUrl}/projects/${p.slug}`,
-            lastmod,
-            changefreq: 'monthly',
-            priority: 0.8,
-            alternates: [
-                { hreflang: 'es-ES', href: `${baseUrl}/projects/${p.slug}` },
-                { hreflang: 'en-US', href: `${baseUrl}/en/projects/${p.slug}` },
-                { hreflang: 'x-default', href: `${baseUrl}/projects/${p.slug}` }
-            ]
-        });
-        urls.push({
-            loc: `${baseUrl}/en/projects/${p.slug}`,
-            lastmod,
-            changefreq: 'monthly',
-            priority: 0.8,
-            alternates: [
-                { hreflang: 'es-ES', href: `${baseUrl}/projects/${p.slug}` },
-                { hreflang: 'en-US', href: `${baseUrl}/en/projects/${p.slug}` },
-                { hreflang: 'x-default', href: `${baseUrl}/projects/${p.slug}` }
-            ]
-        });
-    });
+    const posts = { es: await getAllPosts('es'), en: await getAllPosts('en') };
+    const pages = await getCollection('pages');
 
-    // Individual blog posts (long-form articles).
-    for (const lang of ['es', 'en'] as const) {
-        const posts = await getAllPosts(lang);
-        posts.forEach((p) => {
-            const lastmod = p.data.date.toISOString().split('T')[0];
-            const path = lang === 'en' ? `/en/blog/${p.id}` : `/blog/${p.id}`;
+    const projectsLastmod = latest(projects.map((p) => p.pubDate));
+    const postsLastmod = (lang: Language) => latest(posts[lang].map((p) => p.data.date));
+    const allPostsLastmod = latest([...posts.es, ...posts.en].map((p) => p.data.date));
+    const siteLastmod = latest([
+        ...projects.map((p) => p.pubDate),
+        ...[...posts.es, ...posts.en].map((p) => p.data.date),
+        ...pages.map((p) => p.data.updated),
+    ]);
+
+    /** Push the es + en variants of a prefix-swappable page. */
+    const pushPair = (
+        esPath: string,
+        entry: Omit<SitemapUrl, 'loc' | 'alternates' | 'lastmod'>,
+        lastmod: (lang: Language) => string | undefined,
+    ) => {
+        const { es, en } = getAlternates(esPath);
+        for (const [lang, path] of [['es', es], ['en', en]] as const) {
             urls.push({
-                loc: `${baseUrl}${path}`,
-                lastmod,
-                changefreq: 'monthly',
-                priority: 0.7,
+                loc: `${SITE_URL}${path}`,
+                lastmod: lastmod(lang),
+                ...entry,
+                alternates: alternatesFor(esPath),
             });
-        });
+        }
+    };
+
+    // Home — features the newest projects and posts.
+    pushPair('/', { changefreq: 'weekly', priority: 1.0 }, () => siteLastmod);
+
+    // About — `updated` frontmatter per language.
+    pushPair('/about', { changefreq: 'monthly', priority: 0.8 }, (lang) =>
+        latest(pages.filter((p) => p.data.kind === 'about' && p.data.lang === lang).map((p) => p.data.updated)),
+    );
+
+    // Index pages.
+    pushPair('/projects/', { changefreq: 'weekly', priority: 0.9 }, () => projectsLastmod);
+    pushPair('/blog/', { changefreq: 'weekly', priority: 0.7 }, (lang) => postsLastmod(lang) ?? allPostsLastmod);
+
+    // Project detail pages.
+    for (const project of projects) {
+        pushPair(
+            `/projects/${project.slug}`,
+            { changefreq: 'monthly', priority: 0.8 },
+            () => isoDate(project.pubDate),
+        );
     }
 
-    // Tag index + tag detail pages
+    // Blog posts — slugs differ per language, so alternates come from the
+    // translated sibling (when there is one) rather than a prefix swap.
     for (const lang of ['es', 'en'] as const) {
-        const base = lang === 'en' ? '/en/tags' : '/tags';
-        urls.push({
-            loc: `${baseUrl}${base}/`,
-            lastmod: today,
-            changefreq: 'weekly',
-            priority: 0.6,
-        });
-        const tags = await getAllTags(lang);
-        tags.forEach((tag) => {
+        for (const post of posts[lang]) {
+            const sibling = await getSiblingPost(post);
+            const esPost = lang === 'es' ? post : sibling;
+            const enPost = lang === 'en' ? post : sibling;
+            const alternates: SitemapUrl['alternates'] = [];
+            if (esPost) alternates.push({ hreflang: hreflangCodes.es, href: `${SITE_URL}${postPath(esPost.id, 'es')}` });
+            if (enPost) alternates.push({ hreflang: hreflangCodes.en, href: `${SITE_URL}${postPath(enPost.id, 'en')}` });
+            if (esPost && enPost) alternates.push({ hreflang: 'x-default', href: `${SITE_URL}${postPath(esPost.id, 'es')}` });
             urls.push({
-                loc: `${baseUrl}${base}/${slugifyTag(tag)}`,
-                lastmod: today,
+                loc: `${SITE_URL}${postPath(post.id, lang)}`,
+                lastmod: isoDate(post.data.date),
+                changefreq: 'monthly',
+                priority: 0.7,
+                alternates,
+            });
+        }
+    }
+
+    // Tag index + tag detail pages. Tag sets are per language, so a tag
+    // detail page only lists an alternate when the tag exists in both.
+    const tags = { es: await getAllTags('es'), en: await getAllTags('en') };
+    const tagSlugs = {
+        es: new Set(tags.es.map(slugifyTag)),
+        en: new Set(tags.en.map(slugifyTag)),
+    };
+    pushPair('/tags/', { changefreq: 'weekly', priority: 0.6 }, () => siteLastmod);
+    for (const lang of ['es', 'en'] as const) {
+        const other: Language = lang === 'es' ? 'en' : 'es';
+        for (const tag of tags[lang]) {
+            const slug = slugifyTag(tag);
+            const items = await getItemsByTagSlug(slug, lang);
+            const esPath = `/tags/${slug}`;
+            urls.push({
+                loc: `${SITE_URL}${getAlternates(esPath)[lang]}`,
+                lastmod: latest([
+                    ...items.projects.map((p) => p.pubDate),
+                    ...items.posts.map((p) => p.data.date),
+                ]),
                 changefreq: 'weekly',
                 priority: 0.5,
+                alternates: tagSlugs[other].has(slug)
+                    ? alternatesFor(esPath)
+                    : [{ hreflang: hreflangCodes[lang], href: `${SITE_URL}${getAlternates(esPath)[lang]}` }],
             });
-        });
+        }
     }
 
     return urls;
@@ -186,24 +181,23 @@ export function generateSitemapXml(urls: SitemapUrl[]): string {
     return `${xmlHeader}\n${urlsetStart}\n${urlElements}\n${urlsetEnd}`;
 }
 
-export function generateSitemapIndex(): string {
-    const baseUrl = 'https://edselserrano.com';
-    const today = new Date().toISOString().split('T')[0];
+/** Sitemap index; its `lastmod` is the newest `lastmod` in the sitemap. */
+export async function generateSitemapIndex(): Promise<string> {
+    const urls = await generateSitemapUrls();
+    const lastmod = urls
+        .map((url) => url.lastmod)
+        .filter((value): value is string => !!value)
+        .sort()
+        .pop();
 
     const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
     const sitemapIndexStart = '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
     const sitemapIndexEnd = '</sitemapindex>';
 
-    const sitemaps = [
-        {
-            loc: `${baseUrl}/sitemap.xml`,
-            lastmod: today
-        }
-    ];
+    const sitemapElement =
+        `  <sitemap>\n    <loc>${SITE_URL}/sitemap.xml</loc>\n` +
+        (lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : '') +
+        '  </sitemap>';
 
-    const sitemapElements = sitemaps.map(sitemap =>
-        `  <sitemap>\n    <loc>${sitemap.loc}</loc>\n    <lastmod>${sitemap.lastmod}</lastmod>\n  </sitemap>`
-    ).join('\n');
-
-    return `${xmlHeader}\n${sitemapIndexStart}\n${sitemapElements}\n${sitemapIndexEnd}`;
+    return `${xmlHeader}\n${sitemapIndexStart}\n${sitemapElement}\n${sitemapIndexEnd}`;
 }

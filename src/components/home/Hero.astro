@@ -33,13 +33,20 @@ const projectsHref = lang === "en" ? "/en/projects" : "/projects";
     Decorative sphere. Lives behind the hero copy at low opacity so it
     feels like depth, not the whole show. Hidden from assistive tech.
 
-    Hydration policy:
-      • `client:media="(min-width: 768px)"` → skip the ~525KB Three.js
-        bundle entirely on phones (where it pushes LCP past 6s and tanks
-        the mobile Lighthouse score), keep it on desktop where it's a nice
-        visual flourish.
-      • The gradient at the bottom of the section already gives the hero
-        depth on mobile, so dropping the sphere doesn't break the design.
+    Two mounts, one per viewport class, so each gets the cheapest path:
+
+      • Desktop (≥768px): React island, `client:media`, 600 particles.
+      • Mobile  (<768px): no island. The inline module script below waits
+        for `load` + an idle period, then dynamically imports the plain
+        Three.js scene (no React runtime) with fewer particles, a capped
+        pixel ratio, no MSAA and no bloom pass. The hero heading is server-rendered text
+        and stays the LCP element; the ~500KB Three.js chunk is fetched
+        only once the page is already painted and interactive.
+
+    Both containers are absolutely positioned inside a section with a fixed
+    min-height, so a late canvas mount cannot shift layout. The scene
+    itself skips mounting under prefers-reduced-motion and Save-Data, and
+    pauses its render loop while offscreen or in a background tab.
   -->
   <div
     class="pointer-events-none absolute inset-0 -z-10 hidden opacity-40 md:block"
@@ -51,6 +58,13 @@ const projectsHref = lang === "en" ? "/en/projects" : "/projects";
       mobileTotalParticles={300}
       client:media="(min-width: 768px)"
     />
+  </div>
+  <div
+    class="pointer-events-none absolute inset-0 -z-10 opacity-60 md:hidden"
+    aria-hidden="true"
+    data-hero-sphere
+    data-colors={JSON.stringify(particleColors)}
+  >
   </div>
 
   <!-- Subtle gradient fade-to-bg at the bottom so the next section meets a
@@ -80,7 +94,7 @@ const projectsHref = lang === "en" ? "/en/projects" : "/projects";
     <div class="mt-10 flex flex-wrap items-center gap-3">
       <a
         href={projectsHref}
-        class="inline-flex items-center justify-center rounded-md bg-accent px-5 py-3 text-sm font-semibold text-bg shadow-sm transition-colors duration-200 hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        class="inline-flex items-center justify-center rounded-md bg-accent px-5 py-3 text-sm font-semibold text-bg shadow-sm transition-colors duration-200 hover:bg-accent-hover active:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {t("home.hero.cta.projects", {}, lang)}
         <span aria-hidden="true" class="ml-2">&rarr;</span>
@@ -88,3 +102,63 @@ const projectsHref = lang === "en" ? "/en/projects" : "/projects";
     </div>
   </div>
 </section>
+
+<script>
+  // Mobile hero animation — see the comment on the sphere containers above.
+  const MOBILE = "(max-width: 767.98px)";
+  const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+  const MOBILE_PARTICLES = 220;
+
+  let cleanup: (() => void) | null = null;
+
+  const whenIdle = (callback: () => void) => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(callback, { timeout: 2500 });
+    } else {
+      // Safari: no requestIdleCallback. A short timeout after `load` gets
+      // us past first paint and hydration of anything else on the page.
+      setTimeout(callback, 400);
+    }
+  };
+
+  const mount = async () => {
+    const host = document.querySelector<HTMLElement>("[data-hero-sphere]");
+    if (!host || host.dataset.mounted === "true") return;
+    if (!window.matchMedia(MOBILE).matches) return;
+    if (window.matchMedia(REDUCED_MOTION).matches) return;
+    const connection = (
+      navigator as Navigator & { connection?: { saveData?: boolean } }
+    ).connection;
+    if (connection?.saveData) return;
+
+    host.dataset.mounted = "true";
+    const { mountSphere } = await import("../Particles/sphereScene");
+    // The visitor may have navigated away while the chunk was loading.
+    if (!host.isConnected) return;
+    cleanup = mountSphere(host, {
+      particleColors: JSON.parse(host.dataset.colors ?? "[]"),
+      totalParticles: MOBILE_PARTICLES,
+      mobileTotalParticles: MOBILE_PARTICLES,
+      maxPixelRatio: 1.5,
+      antialias: false,
+      bloom: false,
+      fadeIn: true,
+    });
+  };
+
+  const schedule = () => {
+    if (document.readyState === "complete") {
+      whenIdle(mount);
+    } else {
+      window.addEventListener("load", () => whenIdle(mount), { once: true });
+    }
+  };
+
+  // `astro:page-load` fires on first load and after every ClientRouter
+  // navigation; tear the scene down before the DOM is swapped out.
+  document.addEventListener("astro:page-load", schedule);
+  document.addEventListener("astro:before-swap", () => {
+    cleanup?.();
+    cleanup = null;
+  });
+</script>

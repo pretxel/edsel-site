@@ -1,136 +1,69 @@
-# Robots.txt for edselserrano.com
+# robots.txt for edselserrano.com
 #
-# Policy: open access to all classical search engines and major
-# AI / LLM crawlers. Spam-grade scrapers are denied explicitly.
+# Policy: open to classical search engines and to AI / LLM crawlers, so the
+# site can be indexed, cited and used as grounding by answer engines.
+# A handful of SEO-tool scrapers that give nothing back are denied.
+#
+# This file is the single source of truth — it is served as-is from /public.
+# AI user-agent list last reviewed: 2026-11-18.
 
 User-agent: *
 Allow: /
 
-# Sitemaps
-Sitemap: https://edselserrano.com/sitemap-index.xml
-
-# LLM / AI ingestion helpers (see also llms.txt + llms-full.txt)
-# https://edselserrano.com/llms.txt
-# https://edselserrano.com/llms-full.txt
-
-# Crawl delay — be polite by default
-Crawl-delay: 1
-
-# ── Allow major search engines explicitly ─────────────────────────────
+# ── Search engines ────────────────────────────────────────────────────
 User-agent: Googlebot
-Allow: /
-
 User-agent: Bingbot
-Allow: /
-
 User-agent: Slurp
-Allow: /
-
 User-agent: DuckDuckBot
-Allow: /
-
 User-agent: Baiduspider
-Allow: /
-
 User-agent: YandexBot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: LinkedInBot
-Allow: /
-
-# ── Allow major AI / LLM crawlers explicitly ──────────────────────────
-# These bots train and/or ground LLM responses. Allowing them surfaces
-# this site in AI answer engines (ChatGPT, Claude, Perplexity, Gemini).
-
-User-agent: GPTBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: OAI-SearchBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Perplexity-User
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: GoogleOther
-Allow: /
-
-User-agent: CCBot
-Allow: /
-
 User-agent: Applebot
 Allow: /
 
-User-agent: Applebot-Extended
+# ── Link previews ─────────────────────────────────────────────────────
+User-agent: facebookexternalhit
+User-agent: Twitterbot
+User-agent: LinkedInBot
 Allow: /
 
-User-agent: cohere-ai
-Allow: /
-
-User-agent: Bytespider
-Allow: /
-
-User-agent: Amazonbot
-Allow: /
-
-User-agent: Meta-ExternalAgent
-Allow: /
-
+# ── AI search and answer engines (retrieval + citation) ───────────────
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
+User-agent: YouBot
 User-agent: Meta-ExternalFetcher
 Allow: /
 
+# ── AI model training / general-purpose AI crawlers ───────────────────
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: Google-CloudVertexBot
+User-agent: Applebot-Extended
+User-agent: Meta-ExternalAgent
 User-agent: FacebookBot
-Allow: /
-
+User-agent: Amazonbot
+User-agent: Bytespider
+User-agent: CCBot
 User-agent: Diffbot
 Allow: /
 
-User-agent: YouBot
-Allow: /
-
-User-agent: DuckAssistBot
-Allow: /
-
-User-agent: MistralAI-User
-Allow: /
-
-# ── Block well-known spam / scraper bots ──────────────────────────────
+# ── Denied: SEO-tool scrapers ─────────────────────────────────────────
 User-agent: AhrefsBot
-Disallow: /
-
 User-agent: MJ12bot
-Disallow: /
-
 User-agent: DotBot
-Disallow: /
-
 User-agent: SemrushBot
-Disallow: /
-
 User-agent: PetalBot
 Disallow: /
 
-Host: https://edselserrano.com
+Sitemap: https://www.edselserrano.com/sitemap-index.xml
+
+# LLM-friendly entry points:
+#   https://www.edselserrano.com/llms.txt       link index (Markdown)
+#   https://www.edselserrano.com/llms-full.txt  full content dump (Markdown)

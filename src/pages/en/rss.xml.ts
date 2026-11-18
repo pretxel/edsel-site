@@ -7,8 +7,8 @@
 import rss from "@astrojs/rss";
 import type { APIRoute } from "astro";
 import { getAllPosts, getLocalizedProjects } from "../../lib/content";
+import { SITE_URL } from "../../lib/site";
 
-const SITE_URL = "https://edselserrano.com";
 
 export const GET: APIRoute = async () => {
   const projects = await getLocalizedProjects("en");

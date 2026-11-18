@@ -12,10 +12,30 @@
  * is identical either way.
  */
 import type { APIRoute } from "astro";
-import { ImageResponse } from "@vercel/og";
+import { createRequire } from "node:module";
+import { dirname } from "node:path";
 import * as React from "react";
 import { getProjectBySlug, getPostBySlug } from "../../lib/content";
 import { colors } from "../../lib/colors";
+
+/**
+ * `@vercel/og` 1.x bundles harfbuzzjs, whose wasm loader still relies on the
+ * CommonJS globals `require` and `__dirname` (to read `hb.wasm` from disk).
+ * The package's Node build is ESM, where neither exists, so a plain static
+ * import throws "Dynamic require of fs is not supported" and every OG image
+ * request fails. Define both before loading the package — `__dirname`
+ * pointing at the harfbuzzjs install that actually ships `hb.wasm` — and
+ * load it lazily so its module scope sees them.
+ */
+async function loadImageResponse() {
+  const scope = globalThis as { require?: NodeJS.Require; __dirname?: string };
+  const require = createRequire(import.meta.url);
+  const ogRequire = createRequire(require.resolve("@vercel/og"));
+  scope.require ??= require;
+  scope.__dirname ??= dirname(ogRequire.resolve("harfbuzzjs/hb.wasm"));
+  const { ImageResponse } = await import("@vercel/og");
+  return ImageResponse;
+}
 
 const WIDTH = 1200;
 const HEIGHT = 630;
@@ -53,6 +73,7 @@ export const GET: APIRoute = async ({ params }) => {
     accent = "#46b4ff";
   }
 
+  const ImageResponse = await loadImageResponse();
   return new ImageResponse(
     h(
       "div",

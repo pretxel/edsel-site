@@ -28,24 +28,24 @@ const alternateLanguages = [
 ];
 ---
 
-<SEOHead
-  title={`${t("tags.title", {}, currentLanguage)} - Edsel Serrano`}
-  description={
-    currentLanguage === "en"
-      ? "Browse content by tag — programming languages, frameworks, and topics covered by Edsel Serrano."
-      : "Explora el contenido por etiqueta — lenguajes de programación, frameworks y temas que cubre Edsel Serrano."
-  }
-  canonical={currentLanguage === "en" ? "/en/tags/" : "/tags/"}
-  language={currentLanguage}
-  alternateLanguages={alternateLanguages}
-/>
-
 <Layout title={t("tags.title", {}, currentLanguage)} lang={currentLanguage}>
+  <SEOHead
+    slot="head"
+    title={`${t("tags.title", {}, currentLanguage)} - Edsel Serrano`}
+    description={
+      currentLanguage === "en"
+        ? "Browse content by tag — programming languages, frameworks, and topics covered by Edsel Serrano."
+        : "Explora el contenido por etiqueta — lenguajes de programación, frameworks y temas que cubre Edsel Serrano."
+    }
+    canonical={currentLanguage === "en" ? "/en/tags/" : "/tags/"}
+    language={currentLanguage}
+    alternateLanguages={alternateLanguages}
+  />
   <div class="min-h-screen">
     <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center">
       <a
         href={currentLanguage === "en" ? "/en/" : "/"}
-        class="inline-flex items-center px-4 py-2 text-sm font-medium text-fg-muted hover:text-fg-strong bg-elev/60 hover:bg-elev rounded-lg border border-border-default hover:border-border-strong transition-all duration-200"
+        class="inline-flex items-center min-h-11 px-4 py-2 text-sm font-medium text-fg-muted hover:text-fg-strong bg-elev/60 hover:bg-elev rounded-lg border border-border-default hover:border-border-strong transition-all duration-200"
       >
         {currentLanguage === "en" ? "Home" : "Inicio"}
       </a>
@@ -69,7 +69,7 @@ const alternateLanguages = [
           tagsWithCount.map(({ tag, slug, count }) => (
             <a
               href={currentLanguage === "en" ? `/en/tags/${slug}` : `/tags/${slug}`}
-              class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-elev hover:bg-muted border border-border-default hover:border-border-strong text-fg transition-colors"
+              class="inline-flex items-center gap-2 pointer-coarse:min-h-11 px-4 py-2 rounded-full bg-elev hover:bg-muted active:bg-muted border border-border-default hover:border-border-strong text-fg transition-colors"
             >
               <span class="font-medium">#{tag}</span>
               <span class="text-xs text-fg-subtle">{count}</span>

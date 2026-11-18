@@ -294,3 +294,37 @@ export function formatDateShort(date: string, lang: Language): string {
         day: 'numeric'
     });
 }
+
+// ── hreflang ─────────────────────────────────────────────────────────
+
+/** BCP 47 tags used in hreflang, og:locale and Schema.org `inLanguage`. */
+export const hreflangCodes: Record<Language, string> = {
+    es: 'es-ES',
+    en: 'en-US',
+};
+
+export interface Alternates {
+    /** Site-relative Spanish URL of the page. */
+    es: string;
+    /** Site-relative English URL of the page. */
+    en: string;
+    /** `x-default` target — the Spanish (default-language) variant. */
+    xDefault: string;
+}
+
+/**
+ * Language alternates for a page whose two variants differ only by the
+ * `/en` prefix (everything except blog posts, whose slugs differ per
+ * language). Trailing slashes are preserved so the result matches the
+ * page's canonical URL exactly.
+ *
+ *   getAlternates('/en/projects/qr-magic')
+ *   → { es: '/projects/qr-magic', en: '/en/projects/qr-magic', xDefault: '/projects/qr-magic' }
+ */
+export function getAlternates(pathname: string): Alternates {
+    const trailingSlash = pathname.length > 1 && pathname.endsWith('/');
+    const clean = removeLanguageFromUrl(pathname); // '/', '/about', '/projects'
+    const es = clean === '/' ? '/' : `${clean}${trailingSlash ? '/' : ''}`;
+    const en = clean === '/' ? '/en/' : `/en${clean}${trailingSlash ? '/' : ''}`;
+    return { es, en, xDefault: es };
+}

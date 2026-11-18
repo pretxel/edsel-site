@@ -24,11 +24,26 @@ export default defineConfig({
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:4500",
     trace: "retain-on-failure",
+    // The middleware redirects first-time visitors on `/` to `/en/` when
+    // the browser prefers English. Pin Spanish so `/` means the Spanish
+    // home in every test; English pages are requested via `/en/...`.
+    locale: "es-ES",
   },
   projects: [
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+    },
+    // Mobile projects: layout, tap-target and hero-animation checks in
+    // tests/mobile.spec.ts only make sense on phone viewports, and the
+    // smoke + SEO specs double as cross-engine coverage.
+    {
+      name: "mobile-chrome",
+      use: { ...devices["Pixel 7"] },
+    },
+    {
+      name: "mobile-safari",
+      use: { ...devices["iPhone 14"] },
     },
   ],
 });
