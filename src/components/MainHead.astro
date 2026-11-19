@@ -10,6 +10,7 @@
 // `?url` resolves to the same fingerprinted asset the `@font-face` rule in
 // @fontsource-variable/inter points at, so the preload can never go stale
 // the way a hand-copied hash does.
+import GoogleAnalytics from "./GoogleAnalytics.astro";
 import interLatin from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 ---
 
@@ -42,3 +43,5 @@ import interLatin from "@fontsource-variable/inter/files/inter-latin-wght-normal
 -->
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 <link rel="manifest" href="/site.webmanifest" />
+
+<GoogleAnalytics />

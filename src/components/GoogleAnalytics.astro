@@ -1,0 +1,63 @@
+---
+/**
+ * Google Analytics 4 (gtag.js). Rendered from MainHead so every page gets it.
+ *
+ * Only emitted on real Vercel production builds, same rule as Vercel
+ * Analytics, so local dev, Lighthouse and Playwright runs stay clean.
+ *
+ * The site uses Astro's ClientRouter, so soft navigations don't reload the
+ * page. Automatic page_view is disabled and one is sent on every
+ * `astro:page-load` (fires on first load and after each transition). The
+ * `__gaInit` guard keeps the listener from stacking if the head script runs
+ * again after a navigation.
+ */
+import { GA_MEASUREMENT_ID } from "../lib/site";
+
+const enabled = import.meta.env.PROD && process.env.VERCEL === "1";
+---
+
+{
+  enabled && (
+    <>
+      <script
+        is:inline
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+      />
+      <script is:inline define:vars={{ id: GA_MEASUREMENT_ID }}>
+        if (!window.__gaInit) {
+          window.__gaInit = true;
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () {
+            window.dataLayer.push(arguments);
+          };
+          window.gtag("js", new Date());
+          window.gtag("config", id, { send_page_view: false });
+          var sendPageView = function () {
+            window.gtag("event", "page_view", {
+              page_location: location.href,
+              page_path: location.pathname,
+              page_title: document.title,
+            });
+          };
+          // ClientRouter pages fire astro:page-load on first load and on every
+          // soft navigation. Pages without ClientRouter (404, PageLayout) never
+          // fire it, so they send one page_view once the DOM is parsed. The
+          // meta check runs after parsing because ClientRouter renders it
+          // later in <head> than this script.
+          document.addEventListener("astro:page-load", sendPageView);
+          var sendIfNoRouter = function () {
+            if (!document.querySelector('meta[name="astro-view-transitions-enabled"]')) {
+              sendPageView();
+            }
+          };
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", sendIfNoRouter);
+          } else {
+            sendIfNoRouter();
+          }
+        }
+      </script>
+    </>
+  )
+}
