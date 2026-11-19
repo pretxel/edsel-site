@@ -60,5 +60,11 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    // Resolve "is this a Vercel deploy?" at build time. `VERCEL=1` is set in
+    // the Vercel build environment but not inside the serverless runtime, so a
+    // runtime `process.env.VERCEL` check rendered no analytics in production.
+    define: {
+      "import.meta.env.IS_VERCEL": JSON.stringify(process.env.VERCEL === "1"),
+    },
   },
 });
