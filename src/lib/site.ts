@@ -22,3 +22,6 @@ export function absoluteUrl(path: string): string {
   if (/^https?:\/\//.test(path)) return path;
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+/** Google Analytics 4 measurement ID (loaded only in Vercel production). */
+export const GA_MEASUREMENT_ID = "G-76748FJ47B";
