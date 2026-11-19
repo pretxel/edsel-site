@@ -14,7 +14,7 @@ const lang = "en" as const;
 
 // Same rationale as `/`: skip the Analytics web component locally so the
 // /_vercel/insights/script.js 404 doesn't trash Lighthouse Best Practices.
-const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
+const showAnalytics = import.meta.env.PROD && import.meta.env.IS_VERCEL;
 
 const seoTitle =
   "Edsel Serrano | Software engineer — projects, notes, experiments";

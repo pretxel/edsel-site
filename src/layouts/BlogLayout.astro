@@ -24,7 +24,7 @@ import "../styles/blog.css";
 
 // Only inject Vercel Analytics in real production deploys. Locally the
 // `_vercel/insights/script.js` endpoint 404s and contaminates Lighthouse.
-const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
+const showAnalytics = import.meta.env.PROD && import.meta.env.IS_VERCEL;
 ---
 
 <!doctype html>

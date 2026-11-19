@@ -15,7 +15,7 @@ const lang = "es" as const;
 // `<Analytics>` injects `/_vercel/insights/script.js`, which only exists when
 // the site is deployed to Vercel. Hide it in non-production builds so local
 // audits (Lighthouse, Playwright) don't report bogus 404s.
-const showAnalytics = import.meta.env.PROD && process.env.VERCEL === "1";
+const showAnalytics = import.meta.env.PROD && import.meta.env.IS_VERCEL;
 
 const seoTitle =
   "Edsel Serrano | Software Engineer · Proyectos, notas y experimentos";

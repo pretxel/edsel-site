@@ -13,7 +13,7 @@
  */
 import { GA_MEASUREMENT_ID } from "../lib/site";
 
-const enabled = import.meta.env.PROD && process.env.VERCEL === "1";
+const enabled = import.meta.env.PROD && import.meta.env.IS_VERCEL;
 ---
 
 {
